@@ -1,6 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PostForm from './PostForm';
 import makeStyles from '@material-ui/core/styles/makeStyles'
+
+import propTypes from 'prop-types'
+import { connect } from 'react-redux'
+import { fetchPost } from '../redux/actions/postActions'
+
 
 const useStyle = makeStyles({
     posts: {
@@ -10,23 +15,13 @@ const useStyle = makeStyles({
 })
 
 
-const Post = props => {
+const Post = ({posts}) => {
 
     const clases = useStyle()
 
-    const [post, setPost] = useState([])
-
-
-    useEffect(() => {
-
-        fetch('http://localhost:5000/api')
-            .then(res => res.json())
-            .then(data => setPost(data))
-            .catch(e => console.log(e))
-
-    }, []);
-
-    const postItems = post.reverse().map(post => (
+   
+   
+    const postItems = posts.reverse().map(post => (
         <div key={post.id}>
             <h3>{post.title}</h3>
             <p>{post.body}</p>
@@ -44,4 +39,17 @@ const Post = props => {
     )
 
 }
-export default Post;
+
+
+Post.propTypes={
+    fetchPost:propTypes.func.isRequired,
+    posts:propTypes.array.isRequired
+}
+
+const mapStateToProps = (state) => ({
+    posts: state.data.items
+})
+
+
+
+export default connect(mapStateToProps, fetchPost)(Post);
