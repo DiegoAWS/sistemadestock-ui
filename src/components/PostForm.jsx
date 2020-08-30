@@ -1,13 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
+
+import { connect } from 'react-redux'
 import makeStyles from '@material-ui/core/styles/makeStyles'
+
+import { ADD_COUNTER, FORM_CHANGE,CLEAR_FORM,POSTED } from "../redux/types"
+
 
 const useStyle = makeStyles({
     root: {
         backgroundColor: 'black',
         color: 'white',
         textAlign: 'center',
+
         '& input': {
-            margin: '10px'
+            margin: '10px',
+            borderRadius: '10px'
         }
     },
 
@@ -18,37 +25,35 @@ const useStyle = makeStyles({
 
 
 
-const PostForm = props => {
+const PostForm = ({ counter, addCounter, formData, handleForm,clearForm,posted }) => {
 
     const clases = useStyle()
 
-    const [title, setTitle] = useState('')
-    const [body, setBody] = useState('')
+
 
     const submit = () => {
- console.log('Here')
 
-        const post = {
-            title,
-            body
-        }
 
-        fetch('http://localhost:5000/api', {
-            method: 'post',
+        fetch("http://localhost:5000/api", {
+            method: "post",
             headers: {
-                'content-type': 'application/json'
+                "content-type": "application/json",
             },
-            body: JSON.stringify(post)
+            body: JSON.stringify(formData),
         })
-            .then(res => res.json())
-            .then(data => console.log(data))
-            .catch(e => console.log(e))
+            .then( posted()        )
+            .catch((e) => console.log(e))
 
-
-            setTitle('')
-            setBody('')
+    
+       clearForm()
     }
 
+    const click = (e) => {
+        e.preventDefault()
+
+        addCounter()
+
+    }
     return (
         <div>
             <div className={clases.root}>
@@ -57,13 +62,61 @@ const PostForm = props => {
                 <br /><br />
 
                 <form>
-                    <input type="text" placeholder="title" value={title} onChange={(e) => setTitle(e.target.value)} />
+                    <button onClick={click}>Value:{counter}</button>
+
+                    <input type="text"
+                        placeholder="title"
+                        name='name'
+                        value={formData.name}
+                        onChange={(e) => handleForm(e)} />
+
                     <input type="button" value="Submit!" onClick={() => submit()} />
-                    <input type="text" placeholder="body" className={clases.bodyTextArea} value={body} onChange={(e) => setBody(e.target.value)} />
+
+                    <input type="text"
+                        placeholder="body"
+                        name='coment'
+                        className={clases.bodyTextArea}
+                        value={formData.coment}
+                        onChange={(e) => handleForm(e)} />
                 </form>
             </div>
         </div>
     )
 
 }
-export default PostForm;
+const mapStateToProps = (state) => ({
+    counter: state.data.counter,
+    formData: {
+        name: state.data.name,
+        coment: state.data.coment
+    }
+})
+const mapDispatchToProps = (dispatch) => ({
+    addCounter() {
+        dispatch({
+            type: ADD_COUNTER
+        })
+    },
+    handleForm(item) {
+        dispatch({
+            type: FORM_CHANGE,
+            payload: {
+                element: item.target.name,
+                value: item.target.value
+            }
+        })
+    },
+    clearForm(){
+        dispatch({
+            type:CLEAR_FORM
+        })
+    
+    },
+    posted(){
+        dispatch({
+            type:POSTED
+        })
+    }
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostForm)
