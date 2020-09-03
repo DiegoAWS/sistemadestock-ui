@@ -1,7 +1,12 @@
 import axios from "axios";
+import "dotenv/config";
 
+var HOST =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:80"
+    : process.env.APP_API;
 export const register = (newUser) => {
-  return axios.post("/api/register", newUser, {
+  return axios.post(HOST + "/api/register", newUser, {
     headers: { "Content-Type": "application/json" },
   });
 };
@@ -9,7 +14,7 @@ export const register = (newUser) => {
 export const login = (user) => {
   return axios
     .post(
-      "api/login",
+      HOST + "api/login",
       {
         username: user.username,
         password: user.password,
@@ -20,7 +25,7 @@ export const login = (user) => {
     )
     .then((response) => {
       localStorage.setItem("usertoken", response.data.token);
-      return response
+      return response;
     })
     .catch((err) => {
       console.log(err);
@@ -29,11 +34,10 @@ export const login = (user) => {
 
 export const getProfile = () => {
   return axios
-    .get("api/profile", {
+    .get(HOST + "api/profile", {
       headers: { Authorization: `Bearer ${localStorage.usertoken}` },
     })
     .then((response) => {
-
       return response.data;
     })
     .catch((err) => {
