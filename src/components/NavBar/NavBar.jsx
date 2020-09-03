@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import logo from '../../assets/images/logo.png'
 import FormLogin from './FormLogin'
@@ -17,10 +17,11 @@ const useStyles = makeStyles({
 
 });
 
-const NavBar = ({ user }) => {
+const NavBar = () => {
     const classes = useStyles();
+ const [,updateState]=useState()
+    const SeccionDerechaNavBar = (localStorage.UserOficialName) ? <ControlLinks logout={()=>{updateState({})}} /> : <FormLogin logIn={()=>{updateState({})}} />
 
-    const SeccionDerechaNavBar = (user) ? <ControlLinks /> : <FormLogin />
 
 
 

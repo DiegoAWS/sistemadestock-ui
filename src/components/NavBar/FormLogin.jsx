@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 
-import { login } from '../../auth/axiosLoginFunctions'
+import { withRouter } from 'react-router-dom'
+import { login, getProfile } from '../../auth/axiosLoginFunctions'
 
 import { makeStyles } from "@material-ui/core/styles";
+
+import loading from '../../assets/images/loading.gif'
 
 
 
@@ -11,8 +14,15 @@ const useStyles = makeStyles({
         position: 'absolute',
         top: '70px',
         fontWeight: 'bold',
-        backgroundColor: ' #80808099',
+        backgroundColor: '#b5b5b563',
         borderRadius: '3px',
+    },
+    BotonAcceso: {
+        width: '70px'
+    },
+    loadingGif: {
+        width: '15px',
+        display: 'inline'
     }
 
 });
@@ -21,7 +31,7 @@ element.style {
     
 } */
 
-const FormLogin = props => {
+const FormLogin = ({ history, logIn }) => {
     const classes = useStyles();
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -29,38 +39,50 @@ const FormLogin = props => {
     const SubmitHandler = e => {
         e.preventDefault()
 
+        var LoadingGif = document.getElementById('loadingGif')
+        var errorSpan = document.getElementById('errorSpan')
+
+        LoadingGif.hidden = false
+
+
         const user = {
             username,
             password
         }
 
-        var BotonAcceso = document.getElementById('BotonAcceso')
-
-        BotonAcceso.innerHTML = 'Cargando'
-
-
-        var errorSpan = document.getElementById('errorSpan')
-
-
         login(user).then((response) => {
 
+
             if (response) {
-                console.log(response);
+
+
+                getProfile().then((respons) => {
+
+
+                    if (respons && respons.user) {
+
+                        LoadingGif.hidden = true
+                        localStorage.setItem("UserOficialName", respons.user.name);
+                        localStorage.setItem("UserRole", respons.user.role);
+
+
+                        logIn()
+                        history.push('/dashboard')
+                    }
+                })
+
+
+
+
             }
             else {
-                console.log('ERROR AQUI');
-                BotonAcceso.innerHTML = 'Entrar'
-
-
-
-                console.log(errorSpan.hidden)
-
 
                 errorSpan.hidden = false
-                console.log(errorSpan.hidden)
+
+
                 setTimeout(() => {
                     errorSpan.hidden = true
-                }, 1000)
+                }, 2000)
                 setUsername('')
                 setPassword('')
             }
@@ -81,7 +103,7 @@ const FormLogin = props => {
 
         <form className="form-inline my-2 my-lg-0" method='post' onSubmit={SubmitHandler}>
 
-            <span id='errorSpan' className={'mx-2 text-danger'+classes.error} >Usuario o contraseña incorrecta</span>
+            <span id='errorSpan' hidden className={'mx-2 text-danger ' + classes.error} >Usuario o contraseña incorrecta</span>
 
             <input className="form-control  mr-sm-2" type="text" id="login" name="login" placeholder="Usuario"
                 aria-label="usuario" required autoComplete="usuario" autoFocus value={username} onChange={e => setUsername(e.target.value)} />
@@ -93,7 +115,13 @@ const FormLogin = props => {
 
 
 
-            <button id='BotonAcceso' className="btn btn-outline-success bg-primary text-white ml-2 my-2 my-sm-0" type="submit" >Entrar</button>
+            <button id='BotonAcceso' className={classes.BotonAcceso + " btn bg-primary text-white ml-2 my-2 my-sm-0"} type="submit" >
+
+
+                Entrar
+
+                <img hidden id='loadingGif' className={classes.loadingGif} src={loading} alt="loading" />
+            </button>
 
 
 
@@ -101,7 +129,7 @@ const FormLogin = props => {
     )
 
 }
-export default FormLogin;
+export default withRouter(FormLogin)
 
 
 

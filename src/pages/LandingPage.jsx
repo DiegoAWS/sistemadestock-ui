@@ -1,4 +1,5 @@
 import React from 'react'
+import { withRouter } from 'react-router-dom'
 
 import { makeStyles } from "@material-ui/core/styles"
 
@@ -32,22 +33,25 @@ const useStyles = makeStyles({
 
 
 
-const LandingPage = props => {
+const LandingPage = ({ history }) => {
     const classes = useStyles()
+
+    if (localStorage.usertoken)
+        history.push('/dashboard')
 
 
     return (
 
-            <main className="app">
-                <div className="wrapper">
+        <main className="app">
+            <div className="wrapper">
 
-                    <div className={classes.mainBackground}>
+                <div className={classes.mainBackground}>
 
-                    </div>
                 </div>
-            </main>
-     
+            </div>
+        </main>
+
     )
 
 }
-export default LandingPage
+export default withRouter(LandingPage)

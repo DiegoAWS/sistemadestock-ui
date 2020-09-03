@@ -1,31 +1,61 @@
 import React, { useEffect } from 'react';
+import { withRouter } from 'react-router-dom'
+
 import { Route, Redirect } from 'react-router-dom'
+import { getProfile } from '../auth/axiosLoginFunctions'
+
+const SecureRoute = ({ path, redirect = '/', component: Component, history }) => {
 
 
-const SecureRoute = ({ path, redirect = '/', component: Component }) => {
+    var Auth = false
 
-    console.log('directo')
+    if (localStorage.usertoken)
+        Auth = true
 
-    var Auth = true
     useEffect(() => {
-        console.log('Use Effect')
-    }, [])
+
+
+
+
+        getProfile().then((response) => {
+
+
+            if (response && response.user) {
+
+                localStorage.setItem("UserOficialName", response.user.name);
+                localStorage.setItem("UserRole", response.user.role);
+            }
+            else {
+
+
+                localStorage.removeItem('usertoken')
+                localStorage.removeItem('UserOficialName')
+                localStorage.removeItem('UserRole')
+
+                history.push('/')
+            }
+
+
+
+
+
+
+
+        })
+
+
+
+    })
     return (
         <Route path={path}
 
             render={(componentProps) => {
 
                 if (Auth) {
-                    console.log(Auth)
-
-                    console.log('Aqui')
-
                     return (<Component {...componentProps} />)
                 }
 
                 else {
-                    console.log('Redirect')
-
                     return (<Redirect from={path} to={redirect} />)
                 }
             }}
@@ -33,4 +63,4 @@ const SecureRoute = ({ path, redirect = '/', component: Component }) => {
     )
 
 }
-export default SecureRoute;
+export default withRouter(SecureRoute)

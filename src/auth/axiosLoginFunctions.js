@@ -20,7 +20,7 @@ export const login = (user) => {
     )
     .then((response) => {
       localStorage.setItem("usertoken", response.data.token);
-      return response.data.token;
+      return response
     })
     .catch((err) => {
       console.log(err);
@@ -33,7 +33,7 @@ export const getProfile = () => {
       headers: { Authorization: `Bearer ${localStorage.usertoken}` },
     })
     .then((response) => {
-      console.log(response);
+
       return response.data;
     })
     .catch((err) => {

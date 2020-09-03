@@ -1,9 +1,15 @@
 import React from 'react';
-
-const ControlLinks = props => {
+import { withRouter } from 'react-router-dom'
+const ControlLinks = ({history,logout}) => {
 
     const logoutHandler = e => {
-        console.log('Cerrar Sesion')
+      
+        localStorage.removeItem('usertoken')
+        localStorage.removeItem('UserOficialName')
+        localStorage.removeItem('UserRole')
+
+        logout()
+        history.push('/')
 
     }
 
@@ -51,4 +57,4 @@ const ControlLinks = props => {
     )
 
 }
-export default ControlLinks;
+export default withRouter(ControlLinks)

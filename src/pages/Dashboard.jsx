@@ -1,15 +1,15 @@
 import React from 'react';
 
 const Dashboard = props => {
+    var user= localStorage.UserOficialName
 
-
-
+   
     return (
 
 
         <div id="ContenidoPrincipal" className="content-wrapper">
 
-
+    <h1>{user}</h1>
             {/*<!-- Main content-->*/}
             <section className="content">
                 <div className="container-fluid">
