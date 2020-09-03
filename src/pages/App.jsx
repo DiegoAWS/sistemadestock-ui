@@ -1,6 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
+
+import "dotenv/config";
+
 import NavBar from '../components/NavBar/NavBar'
 import LandingPage from './LandingPage';
 import SecureRoute from './SecureRoute';
@@ -9,7 +12,8 @@ import Dashboard from './Dashboard';
 
 export default function App() {
 
-
+  console.log(process.env.PUBLIC_URL)
+  console.log(process.env.NODE_ENV)
 
   return (
     <Router>

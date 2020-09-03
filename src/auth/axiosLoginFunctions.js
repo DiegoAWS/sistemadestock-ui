@@ -3,8 +3,8 @@ import "dotenv/config";
 
 var HOST =
   process.env.NODE_ENV === "development"
-    ? "http://localhost:80"
-    : process.env.APP_API;
+    ? ""
+    : "https://sistemadestock.herokuapp.com";
 export const register = (newUser) => {
   return axios.post(HOST + "/api/register", newUser, {
     headers: { "Content-Type": "application/json" },
