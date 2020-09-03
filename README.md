@@ -1,3 +1,4 @@
-<h1>Full Real-World Web Site </h1>
-<hr>
-<p> Here it's where all Start...</p>
+<h1>Sistema de Stock UI </h1>
+<hr><br>
+<p> v 0.5 </p>
+<p> By Diego Escobar</p>
