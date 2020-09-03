@@ -3,7 +3,7 @@ import "dotenv/config";
 
 var HOST =
   process.env.NODE_ENV === "development"
-    ? ""
+    ? "https://sistemadestock.herokuapp.com"
     : "https://sistemadestock.herokuapp.com";
 export const register = (newUser) => {
   return axios.post(HOST + "/api/register", newUser, {
@@ -35,13 +35,15 @@ export const login = (user) => {
 export const getProfile = () => {
   axios.defaults.headers.post["X-CSRF-Token"] = localStorage.usertoken;
   return axios
-    .get(HOST + "/api/profile", {
+    .post(HOST + "/api/profile", {
       headers: { Authorization: `Bearer ${localStorage.usertoken}` },
     })
     .then((response) => {
       return response.data;
     })
     .catch((err) => {
+       console.log('Por Aqui')
+      
       console.log(err);
     });
 };
