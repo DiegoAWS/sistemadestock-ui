@@ -33,6 +33,7 @@ export const login = (user) => {
 };
 
 export const getProfile = () => {
+  axios.defaults.headers.post["X-CSRF-Token"] = localStorage.usertoken;
   return axios
     .get(HOST + "/api/profile", {
       headers: { Authorization: `Bearer ${localStorage.usertoken}` },

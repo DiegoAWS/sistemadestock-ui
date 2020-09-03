@@ -55,20 +55,28 @@ const FormLogin = ({ history, logIn }) => {
 
             if (response) {
 
+                console.log(response)
+
 
                 getProfile().then((respons) => {
 
 
+
                     if (respons && respons.user) {
 
-                        LoadingGif.hidden = true
+
                         localStorage.setItem("UserOficialName", respons.user.name);
                         localStorage.setItem("UserRole", respons.user.role);
 
 
+                        console.log(response)
                         logIn()
                         history.push('/dashboard')
                     }
+                }).finally(() => {
+
+                    LoadingGif.hidden = true
+
                 })
 
 
@@ -78,7 +86,7 @@ const FormLogin = ({ history, logIn }) => {
             else {
 
                 errorSpan.hidden = false
-                LoadingGif.hidden = true
+
 
                 setTimeout(() => {
                     errorSpan.hidden = true
@@ -89,8 +97,6 @@ const FormLogin = ({ history, logIn }) => {
 
 
         })
-            .catch((err) => { });
-
 
 
 
