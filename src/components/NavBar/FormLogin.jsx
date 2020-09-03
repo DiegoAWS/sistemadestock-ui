@@ -78,7 +78,7 @@ const FormLogin = ({ history, logIn }) => {
             else {
 
                 errorSpan.hidden = false
-
+                LoadingGif.hidden = true
 
                 setTimeout(() => {
                     errorSpan.hidden = true
