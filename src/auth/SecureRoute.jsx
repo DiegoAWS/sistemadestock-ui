@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom'
 
 import { Route, Redirect } from 'react-router-dom'
-import { getProfile } from '../auth/axiosLoginFunctions'
+import { getProfile } from './loginFunctions'
 
 const SecureRoute = ({ path, redirect = '/', component: Component, history }) => {
 
@@ -20,7 +20,7 @@ const SecureRoute = ({ path, redirect = '/', component: Component, history }) =>
         getProfile().then((response) => {
 
 
-            if (response && response.user) {
+            if (response&&response.data && response.data.user) {
 
                 localStorage.setItem("UserOficialName", response.user.name);
                 localStorage.setItem("UserRole", response.user.role);

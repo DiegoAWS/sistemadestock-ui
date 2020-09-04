@@ -8,11 +8,7 @@ import background from "../assets/images/background.jpg";
 
 
 const useStyles = makeStyles({
-    navbar: {
-        height: '80px',
-        backgroundColor: 'rgba(141, 141, 141, 0.26)',
-        backgroundPosition: 'center'
-    },
+
 
 
     mainBackground: {
@@ -36,9 +32,12 @@ const useStyles = makeStyles({
 const LandingPage = ({ history }) => {
     const classes = useStyles()
 
+  
+
+  
+
     if (localStorage.usertoken)
         history.push('/dashboard')
-
 
     return (
 
@@ -47,6 +46,7 @@ const LandingPage = ({ history }) => {
 
                 <div className={classes.mainBackground}>
 
+                   
                 </div>
             </div>
         </main>

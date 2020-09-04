@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
 import { withRouter } from 'react-router-dom'
-import { login, getProfile } from '../../auth/axiosLoginFunctions'
+import { login, getProfile } from '../../auth/loginFunctions'
 
-import { makeStyles } from "@material-ui/core/styles";
+
 
 import loading from '../../assets/images/loading.gif'
 
-
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({
     error: {
@@ -50,34 +50,12 @@ const FormLogin = ({ history, logIn }) => {
             password
         }
 
-        login(user).then((response) => {
+        login(user).then((res) => {
 
 
-            if (response) {
+            if (res&&res.statusText&&res.statusText=="OK") {
 
-                console.log(response)
-
-
-                getProfile().then((respons) => {
-
-
-
-                    if (respons && respons.user) {
-
-
-                        localStorage.setItem("UserOficialName", respons.user.name);
-                        localStorage.setItem("UserRole", respons.user.role);
-
-
-                        console.log(response)
-                        logIn()
-                        history.push('/dashboard')
-                    }
-                }).finally(() => {
-
-                    LoadingGif.hidden = true
-
-                })
+                history.push('/dashboard')
 
 
 
@@ -91,11 +69,11 @@ const FormLogin = ({ history, logIn }) => {
                 setTimeout(() => {
                     errorSpan.hidden = true
                 }, 2000)
-                setUsername('')
-                setPassword('')
+
             }
-
-
+            setUsername('')
+            setPassword('')
+            LoadingGif.hidden = true
         })
 
 
@@ -126,7 +104,7 @@ const FormLogin = ({ history, logIn }) => {
 
                 Entrar
 
-                <img hidden id='loadingGif' className={classes.loadingGif} src={loading} alt="loading" />
+                <img hidden id='loadingGif' className={classes.loadingGif + ' ml-2'} src={loading} alt="loading" />
             </button>
 
 

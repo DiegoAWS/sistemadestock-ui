@@ -19,7 +19,7 @@ const ControlLinks = ({history,logout}) => {
         <ul className="navbar-nav ml-auto">
             <li className="mr-4">
                 <h4>
-                    Dashboard
+                    DashBoard
                     </h4>
             </li>
             <li className="nav-item dropdown">
@@ -32,7 +32,7 @@ const ControlLinks = ({history,logout}) => {
                 <div id="navbarDropdown" className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 
                     <button className="dropdown-item" >
-                        Dashboard
+                        DashBoard
                         </button>
 
                     <button className="dropdown-item disabled" >
