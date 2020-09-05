@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 const NavBar = () => {
     const classes = useStyles();
     const [, updateState] = useState()
-    const SeccionDerechaNavBar = (localStorage.UserOficialName) ? <ControlLinks logout={() => { updateState({}) }} /> : <FormLogin logIn={() => { updateState({}) }} />
+    const SeccionDerechaNavBar = (localStorage.usertoken) ? <ControlLinks loggout={() => { updateState({}) }} /> : <FormLogin logIn={() => { updateState({}) }} />
 
     const ColorBgHandler = () => {
 

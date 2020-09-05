@@ -6,15 +6,12 @@ var HOST =
     ? ""
     : "https://sistemadestock.herokuapp.com";
 
-export const userSecure = () => {
-  axios.defaults.headers.post["X-CSRF-Token"] = localStorage.usertoken;
-  axios.defaults.headers.post[
-    "Authorization"
-  ] = `Bearer ${localStorage.usertoken}`;
-
+export const getRequest = (url) => {
   return axios
-    .post(HOST + "/api/user", {
-      headers: { "Content-Type": "application/json" },
+    .get(HOST + "/api/" + url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
     })
     .then((response) => {
       return response;
@@ -23,10 +20,12 @@ export const userSecure = () => {
       console.log(err);
     });
 };
-export const user = () => {
+export const postRequest = (url,data) => {
   return axios
-    .post(HOST + "/api/user", {
-      headers: { "Content-Type": "application/json" },
+    .post(HOST + "/api/" + url,data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
     })
     .then((response) => {
       return response;

@@ -1,23 +1,30 @@
 import React from 'react';
-import DashBoardHeader from '../components/DashBoard/DashBoardHeader';
+import { Link } from 'react-router-dom';
+
+const Dashboard = props => {
 
 
-
-const DashBoard = props => {
-    var user = localStorage.UserOficialName
-
-  
 
     return (
 
+        <div className='container-fluid  '>
+            <div className="row">
 
-        <div id="ContenidoPrincipal" className="content-wrapper">
+                <div className="col-10 mx-auto">
 
-            <h1>{user}</h1>
-            <hr /> 
-            <DashBoardHeader />
+                    <h1>Data Analisis</h1>
+
+                    <Link to='/productos'>
+                        <button className="btn btn-primary" >Productos</button>
+                    </Link>
+                </div>
+
+            </div>
+
         </div>
     )
 
 }
-export default DashBoard;
+
+
+export default Dashboard;

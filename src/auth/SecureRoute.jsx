@@ -1,16 +1,16 @@
 import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom'
 
-import { Route, Redirect } from 'react-router-dom'
+import { Route} from 'react-router-dom'
 import { getProfile } from './loginFunctions'
 
 const SecureRoute = ({ path, redirect = '/', component: Component, history }) => {
 
 
-    var Auth = false
 
-    if (localStorage.usertoken)
-        Auth = true
+    if (!localStorage.usertoken)
+        history.push('/')
+        //Redireccion Inmediata si no existe Token
 
     useEffect(() => {
 
@@ -19,11 +19,10 @@ const SecureRoute = ({ path, redirect = '/', component: Component, history }) =>
 
         getProfile().then((response) => {
 
+            if (response && response.data) {
 
-            if (response&&response.data && response.data.user) {
-
-                localStorage.setItem("UserOficialName", response.user.name);
-                localStorage.setItem("UserRole", response.user.role);
+                localStorage.setItem("UserOficialName", response.data.name);
+                localStorage.setItem("UserRole", response.data.role);
             }
             else {
 
@@ -35,31 +34,13 @@ const SecureRoute = ({ path, redirect = '/', component: Component, history }) =>
                 history.push('/')
             }
 
-
-
-
-
-
-
         })
 
 
 
     })
     return (
-        <Route path={path}
-
-            render={(componentProps) => {
-
-                if (Auth) {
-                    return (<Component {...componentProps} />)
-                }
-
-                else {
-                    return (<Redirect from={path} to={redirect} />)
-                }
-            }}
-        />
+        <Route path={path} render={(componentProps) => (<Component {...componentProps} />)} />
     )
 
 }

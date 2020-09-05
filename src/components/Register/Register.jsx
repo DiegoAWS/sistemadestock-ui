@@ -14,6 +14,7 @@ const useStyles = makeStyles({
 
     loadingGif: {
         width: '15px',
+        height: '15px',
         display: 'inline'
     }
 
@@ -37,17 +38,19 @@ const Register = ({ history }) => {
         e.preventDefault()
 
         var LoadingGif = document.getElementById('loadinggGif')
+        var helper = document.getElementById('passwordHelpBlock')
 
         LoadingGif.hidden = false
 
         if (password !== password_confirmation || (password.length < 8)) {
 
 
-            var helper = document.getElementById('passwordHelpBlock')
+
+
             var newPassword = document.getElementById('new-password')
             var passwordConfirm = document.getElementById('password-confirm')
             if (password.length < 8)
-                helper.innerText = 'Son necesarias 8 o más letras'
+                helper.innerText = 'Contraseña de 8 o más letras'
             else
                 helper.innerText = 'Contraseñas no coinciden'
             newPassword.style.border = '3px solid red'
@@ -79,20 +82,23 @@ const Register = ({ history }) => {
             password_confirmation
         }
         register(user).then((res) => {
-            console.log(res)
-            if (res&&res.statusText && res.statusText === "Created") {
+
+
+
+            if (res && res.statusText && res.statusText === "Created") {
 
                 history.push('/dashboard')
 
-
-
-
             }
-            setRole('empleado')
-            setUsername('')
-            setPassword('')
-            setPassword_confirmation('')
-            setName('')
+            else {
+                helper.innerText = 'Error en el Nombre de Usuario '
+
+                setTimeout(() => {
+                    helper.innerText = ''
+
+                }, 2000)
+            }
+
             LoadingGif.hidden = true
         })
 
@@ -143,6 +149,9 @@ const Register = ({ history }) => {
                                         <input id="username" type="text" className="form-control" name="username"
                                             required autoComplete="username" value={username} onChange={e => { setUsername(e.target.value) }} />
 
+                                        <small id="passwordHelpBlock" className="form-text text-danger">
+                                        </small>
+
                                     </div>
                                 </div>
 
@@ -157,8 +166,7 @@ const Register = ({ history }) => {
                                             className="form-control" name="password"
                                             required autoComplete="new-password" value={password} onChange={e => { setPassword(e.target.value) }} />
 
-                                        <small id="passwordHelpBlock" className="form-text text-danger">
-                                        </small>
+
                                     </div>
 
                                 </div>
@@ -176,9 +184,9 @@ const Register = ({ history }) => {
 
                                 <div className="form-group row mb-0">
                                     <div className="col-md-6 offset-md-4">
-                                        <button type="submit" className="btn btn-primary">
+                                        <button id='submitB' type="submit" className="btn btn-primary">
                                             Registrar
-                                            <img hidden id='loadinggGif' className={classes.loadingGif+' ml-2'} src={loading} alt="loading" />
+                                            <img hidden id='loadinggGif' className={classes.loadingGif + ' ml-2'} src={loading} alt="loading" />
                                         </button>
                                     </div>
                                 </div>

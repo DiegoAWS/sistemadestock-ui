@@ -13,6 +13,7 @@ const useStyles = makeStyles({
 
     mainBackground: {
 
+
         zIndex: '-1',
         position: 'fixed',
         top: '0',

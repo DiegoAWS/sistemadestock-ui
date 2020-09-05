@@ -8,12 +8,7 @@ var HOST =
 
 export const register = (newUser) => {
   return axios
-    .post(HOST + "/api/auth/signup", newUser, {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Requested-With": "XMLHttpRequest"
-      },
-    })
+    .post(HOST + "/api/auth/signup", newUser)
     .then((response) => {
       return response;
     })
@@ -24,18 +19,9 @@ export const register = (newUser) => {
 
 export const login = (user) => {
   return axios
-    .post(
-      HOST + "/api/auth/login",
-      {
-        username: user.username,
-        password: user.password,
-      },
-      {
-        headers: { "Content-Type": "application/json" },
-      }
-    )
+    .post(HOST + "/api/auth/login", user)
     .then((response) => {
-     localStorage.setItem("usertoken", response.data.access_token);
+      localStorage.setItem("usertoken", response.data.access_token);
       return response;
     })
     .catch((err) => {
@@ -44,19 +30,31 @@ export const login = (user) => {
 };
 
 export const getProfile = () => {
-  axios.defaults.headers.post["X-CSRF-Token"] = localStorage.usertoken;
-  axios.defaults.headers.post[
-    "Authorization"
-  ] = `Bearer ${localStorage.usertoken}`;
-
   return axios
-    .get(HOST + "/api/auth/user")
+    .get(HOST + "/api/auth/user", {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
+    })
     .then((response) => {
       return response;
     })
     .catch((err) => {
-     
+      console.log(err);
+    });
+};
 
+export const logout = () => {
+  return axios
+    .get(HOST + "/api/auth/logout", {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
       console.log(err);
     });
 };

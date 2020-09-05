@@ -36,6 +36,7 @@ const FormLogin = ({ history, logIn }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
+
     const SubmitHandler = e => {
         e.preventDefault()
 
@@ -48,15 +49,35 @@ const FormLogin = ({ history, logIn }) => {
         const user = {
             username,
             password
+
         }
+
 
         login(user).then((res) => {
 
 
-            if (res&&res.statusText&&res.statusText=="OK") {
 
-                history.push('/dashboard')
+            if (res && res.statusText && res.statusText === "OK") {
 
+
+                getProfile().then((response) => {
+
+
+                    if (response && response.data) {
+
+                        localStorage.setItem("UserOficialName", response.data.name);
+                        localStorage.setItem("UserRole", response.data.role);
+
+
+
+                        //Actualizar la navBar
+                        logIn()
+                        history.push('/dashboard')
+
+                    }
+
+
+                })
 
 
 
@@ -65,15 +86,16 @@ const FormLogin = ({ history, logIn }) => {
 
                 errorSpan.hidden = false
 
-
                 setTimeout(() => {
                     errorSpan.hidden = true
                 }, 2000)
 
+                setUsername('')
+                setPassword('')
+                LoadingGif.hidden = true
+
             }
-            setUsername('')
-            setPassword('')
-            LoadingGif.hidden = true
+
         })
 
 
