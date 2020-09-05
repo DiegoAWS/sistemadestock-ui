@@ -44,7 +44,7 @@ const NavBar = () => {
                     <img src={logo} height="60px" alt="" />
                 </div>
             </Link>
-            <h3> Sistema de Stock</h3>
+            <h3 className='d-none d-sm-block'> Sistema de Stock</h3>
             <button onClick={e => { ColorBgHandler() }} className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 

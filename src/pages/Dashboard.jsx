@@ -12,13 +12,15 @@ const Dashboard = props => {
 
                 <div className="col-10 mx-auto">
 
-                    <h1>Data Analisis</h1>
-
                     <Link to='/productos'>
                         <button className="btn btn-primary" >Productos</button>
                     </Link>
                 </div>
 
+            </div>
+
+            <div className="row">
+               
             </div>
 
         </div>

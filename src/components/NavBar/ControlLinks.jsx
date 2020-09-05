@@ -40,7 +40,7 @@ const ControlLinks = ({ history, loggout }) => {
 
 
         <ul className="navbar-nav ml-auto">
-           
+
 
             <li className="nav-item dropdown">
                 <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -53,8 +53,9 @@ const ControlLinks = ({ history, loggout }) => {
 
                     <Link to='/dashboard'>   <button className="dropdown-item" type="button">DashBoard</button></Link>
                     <Link to='/productos'>   <button className="dropdown-item" type="button">Productos</button></Link>
-
-                    <Link to='/register'>  <button className=" dropdown-item disabled" >  Usuario Nuevo </button>   </Link>
+                    <Link to='/table'>  <button className=" dropdown-item" >  Kitchen  </button>   </Link>
+                    <Link to='/table1'>  <button className=" dropdown-item" >  Finder Module </button>   </Link>
+                    <Link to='/register'>  <button className=" dropdown-item " >  Usuario Nuevo </button>   </Link>
                     <button className="dropdown-item" onClick={logoutHandler}>
                         Cerrar Sessión
                         </button>

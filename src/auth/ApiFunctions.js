@@ -8,7 +8,7 @@ var HOST =
 
 export const getRequest = (url) => {
   return axios
-    .get(HOST + "/api/" + url, {
+    .get(HOST + "/api" + url, {
       headers: {
         Authorization: `Bearer ${localStorage.usertoken}`,
       },
@@ -22,7 +22,22 @@ export const getRequest = (url) => {
 };
 export const postRequest = (url,data) => {
   return axios
-    .post(HOST + "/api/" + url,data, {
+    .post(HOST + "/api" + url,data, {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const deleteRequest = (url) => {
+  return axios
+    .post(HOST + "/api" + url, {
       headers: {
         Authorization: `Bearer ${localStorage.usertoken}`,
       },
