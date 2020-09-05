@@ -25,7 +25,7 @@ const NavBar = () => {
     const classes = useStyles();
     const [, updateState] = useState()
     const SeccionDerechaNavBar = (localStorage.usertoken) ? <ControlLinks loggout={() => { updateState({}) }} /> : <FormLogin logIn={() => { updateState({}) }} />
-
+    const expand = (localStorage.usertoken) ? '' : '-md'
     const ColorBgHandler = () => {
 
         var menu = document.getElementById('navbarSupportedContent')
@@ -38,7 +38,7 @@ const NavBar = () => {
 
 
     return (
-        <nav className={'navbar navbar-expand-md navbar-light ' + classes.navbar}>
+        <nav className={'navbar navbar-expand' + expand + ' navbar-light ' + classes.navbar}>
             <Link to='/register'>
                 <div className="navbar-brand" >
                     <img src={logo} height="60px" alt="" />

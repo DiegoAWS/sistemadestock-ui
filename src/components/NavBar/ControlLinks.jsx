@@ -40,23 +40,7 @@ const ControlLinks = ({ history, loggout }) => {
 
 
         <ul className="navbar-nav ml-auto">
-            <li className="mr-4">
-                <h4>
-                    DashBoard
-                    </h4>
-            </li>
-            <li className="nav-item dropdown mx-3">
-                <button className="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Sistema</button>
-                <div className="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <Link to='/dashboard'>   <button className="dropdown-item" type="button">DashBoard</button></Link>
-                    <Link to='/productos'>   <button className="dropdown-item" type="button">Productos</button></Link>
-                    <Link to='/'>   <button className="dropdown-item" type="button">Another action</button></Link>
-                    <Link to='/'>    <button className="dropdown-item" type="button">Something else here</button></Link>
-                </div>
-            </li>
-
-
+           
 
             <li className="nav-item dropdown">
                 <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
@@ -67,21 +51,10 @@ const ControlLinks = ({ history, loggout }) => {
 
                 <div id="navbarDropdown" className="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
 
-                    <button className="dropdown-item disabled" >
-                        Panel de Control
-                        </button>
+                    <Link to='/dashboard'>   <button className="dropdown-item" type="button">DashBoard</button></Link>
+                    <Link to='/productos'>   <button className="dropdown-item" type="button">Productos</button></Link>
 
-
-                    <button className="dropdown-item" >
-                        Registrar Usuario
-                        </button>
-
-                    <Link to='/register'>
-
-                        <button className=" dropdown-item disabled" >
-                            Control de Usuarios
-                        </button>
-                    </Link>
+                    <Link to='/register'>  <button className=" dropdown-item disabled" >  Usuario Nuevo </button>   </Link>
                     <button className="dropdown-item" onClick={logoutHandler}>
                         Cerrar Sessión
                         </button>
