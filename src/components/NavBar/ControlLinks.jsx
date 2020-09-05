@@ -61,7 +61,7 @@ const ControlLinks = ({ history, loggout }) => {
             <li className="nav-item dropdown">
                 <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Administración
+                    Usuario
                     </button>
 
 
