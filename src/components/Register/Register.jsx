@@ -87,7 +87,7 @@ const Register = ({ history }) => {
 
             if (res && res.statusText && res.statusText === "Created") {
 
-                history.push('/dashboard')
+                history.push('/')
 
             }
             else {

@@ -3,7 +3,7 @@ import "dotenv/config";
 
 var HOST =
   process.env.NODE_ENV === "development"
-    ? ""
+    ? "https://sistemadestock.herokuapp.com"
     : "https://sistemadestock.herokuapp.com";
 
 export const register = (newUser) => {
