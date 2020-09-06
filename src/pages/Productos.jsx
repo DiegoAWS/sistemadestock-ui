@@ -1,123 +1,127 @@
-import React from 'react';
+import React, { useState } from 'react';
 // import { getRequest, postRequest } from '../auth/ApiFunctions'
-import ModalFormAddProducto from '../components/Dashboard/ModalFormAddProducto';
+import FormAddProducto from '../components/Dashboard/FormAddProducto'
 
 
 import Datatable from '../components/Dashboard/Datatable';
 
 
 import faker from 'faker'
+
+import Popup from '../components/Popup';
+
+
+
+const createFakeProducto = () => {
+  const precioBase = faker.commerce.price()
+  const camposProductos = [
+
+
+    ['Codigo', 'Código', 'varchar', faker.finance.account()],
+    ['CategoriaId', 'Categoría', 'varchar', faker.commerce.department()],
+    ['Producto', 'Producto', 'varchar', faker.commerce.productName()],
+    ['Descripcion', 'Descripción', 'varchar', faker.commerce.productAdjective()],
+
+    ['Cantidad', 'Cantidad', 'int', faker.random.number(2000)],
+
+    ['Proveedor', 'Proveedor', 'varchar', faker.company.companyName()],
+    ['FacturaCompra', 'Factura', 'varchar', faker.finance.bitcoinAddress()],
+
+    ['FechaCompra', 'Fecha de Compra', 'datetime', faker.date.recent(1000).toISOString().slice(0, 19).replace('T', ' ')],
+
+    ['CostoUnitario', 'Costo Unitario', 'double', (precioBase * 0.6).toFixed(2)],
+
+    ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'Código', (precioBase * 0.8).toFixed(2)],
+
+    ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double', precioBase],
+
+    ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double', (precioBase * 1.2).toFixed(2)],
+    ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double', (precioBase * 1.4).toFixed(2)],
+    ['PrecioVenta9Cuotas', 'Precio Venta 9 Cuota', 'double', (precioBase * 1.6).toFixed(2)],
+    ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuota', 'double', (precioBase * 1.8).toFixed(2)],
+    ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuota', 'double', (precioBase * 2).toFixed(2)],
+    ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuota', 'double', (precioBase * 2.2).toFixed(2)]
+  ]
+
+  return camposProductos
+}
+
 const Productos = props => {
 
 
-    const createUser = () => ({
-        id: faker.random.uuid(),
-        name: faker.name.findName(),
-        email: faker.internet.email(),
-        address: faker.address.streetAddress(),
-        bio: faker.lorem.sentence()
-      });
-      
-      const createUsers = (numUsers = 5) =>
-        new Array(numUsers).fill(undefined).map(createUser);
-      
-      const data = createUsers(2000);
-
-    //#region
 
 
-    const columns = [
-        {
-          name: 'Name',
-          selector: 'name',
-          sortable: true,
-        },
-        {
-          name: 'Email',
-          selector: 'email',
-          sortable: true,
-        },
-        {
-          name: 'Address',
-          selector: 'address',
-          sortable: true,
-        },
-      ];
 
-    const camposProductos = [
+  console.log(faker.date.recent(1000).toISOString().slice(0, 19).replace('T', ' '))
 
-        'Codigo',
-        'CategoriaId',
-        'Producto',
-        'Descripcion',
+  // new Date().toISOString().slice(0, 19).replace('T', ' ');
 
-        'Cantidad',
+  const [openPopup, setOpenPopup] = useState(false)
 
-        'Proveedor',
-        'FacturaCompra',
+  // const SendData = data => {
+  //   console.log(data)
 
-        'FechaCompra',
+  // }
 
-        'CostoUnitario',
-        'PrecioVentaContadoMayorista',
-        'PrecioVentaContadoMinorista',
-        'PrecioVenta3Cuotas',
-        'PrecioVenta6Cuotas',
-        'PrecioVenta9Cuotas',
-        'PrecioVenta12Cuotas',
-        'PrecioVenta18Cuotas',
-        'PrecioVenta24Cuotas',
-    ]
+  const dataTable = []
 
-    const camposProductosUsuario = [
-
-        'Código',
-        'Categoria',
-        'Nombre del Producto',
-        'Descripcion',
-
-        'Cantidad',
-
-        'Proveedor',
-        'Factura de Compra',
-
-        'Fecha de Compra',
-
-        'Costo Unitario',
-        'Precio de Venta Mayorista',
-        'Precio de Venta al Contado',
-        'Precio de Venta 3 Cuotas',
-        'Precio de Venta 6 Cuotas',
-        'Precio de Venta 9 Cuotas',
-        'Precio de Venta 12 Cuotas',
-        'Precio de Venta 18 Cuotas',
-        'Precio de Venta 24 Cuotas',
-    ]
-    //#endregion 
+  //#region
 
 
-    return (
 
-        <div className='container-fluid'>
-            <div className='row p-5'>
-                <button type="button" className="btn btn-info" data-toggle="modal" data-target="#staticBackdrop">
-                    Añadir Productos
+
+  const columns = [
+    {
+      name: 'Name',
+      selector: 'name',
+      sortable: true,
+    },
+    {
+      name: 'Email',
+      selector: 'email',
+      sortable: true,
+    },
+    {
+      name: 'Address',
+      selector: 'address',
+      sortable: true,
+    },
+  ];
+
+
+
+  //#endregion 
+
+
+  return (
+
+    <div className='container-fluid'>
+      <div className='row p-5'>
+        <button type="button" className="btn btn-info" onClick={() => setOpenPopup(true)}>
+          Añadir Productos
             </button>
-            </div>
-            <ModalFormAddProducto
-                titleForm='Agregar Producto'
-                datos={camposProductos}
-                camposUsuario={camposProductosUsuario}
-            />
-            <div className="card p-2 my-2">
-                <Datatable data={data} columns={columns} />
-            </div>
+      </div>
 
 
 
 
-        </div>
-    )
+      <div className="card p-2 my-2">
+        <Datatable data={dataTable} columns={columns} />
+      </div>
+
+      <Popup
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
+        title='Añadir Producto'
+
+      >
+        <FormAddProducto
+          datos={createFakeProducto()} />
+      </Popup>
+
+
+    </div>
+  )
 
 }
 export default Productos;
