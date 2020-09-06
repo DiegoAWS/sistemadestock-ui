@@ -25,7 +25,7 @@ const NavBar = () => {
     const classes = useStyles();
     const [, updateState] = useState()
     const SeccionDerechaNavBar = (localStorage.usertoken) ? <ControlLinks loggout={() => { updateState({}) }} /> : <FormLogin logIn={() => { updateState({}) }} />
-    const expand = (localStorage.usertoken) ? '' : '-md'
+    const expand = ''//(localStorage.usertoken) ? '' : '-md'
     const ColorBgHandler = () => {
 
         var menu = document.getElementById('navbarSupportedContent')
