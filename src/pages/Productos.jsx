@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-// import { getRequest, postRequest } from '../auth/ApiFunctions'
+import React, { useState, useEffect } from 'react';
+import { getRequest, postRequest } from '../auth/ApiFunctions'
 import FormAddProducto from '../components/Dashboard/FormAddProducto'
-
-
+import logo from '../assets/images/logo.png'
+import loadinGif from '../assets/images/loading.gif'
 import Datatable from '../components/Dashboard/Datatable';
 
 
-import faker from 'faker'
+import faker from 'faker/locale/es'
 
-import Popup from '../components/Popup';
-
+import Popup from '../components/Dashboard/Popup';
+import { Button } from '@material-ui/core';
 
 
 const createFakeProducto = () => {
@@ -25,7 +25,7 @@ const createFakeProducto = () => {
     ['Cantidad', 'Cantidad', 'int', faker.random.number(2000)],
 
     ['Proveedor', 'Proveedor', 'varchar', faker.company.companyName()],
-    ['FacturaCompra', 'Factura', 'varchar', faker.finance.bitcoinAddress()],
+    ['FacturaCompra', 'Factura', 'varchar', faker.finance.bitcoinAddress().slice(0, 16)],
 
     ['FechaCompra', 'Fecha de Compra', 'datetime', faker.date.recent(1000).toISOString().slice(0, 19).replace('T', ' ')],
 
@@ -37,10 +37,10 @@ const createFakeProducto = () => {
 
     ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double', (precioBase * 1.2).toFixed(2)],
     ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double', (precioBase * 1.4).toFixed(2)],
-    ['PrecioVenta9Cuotas', 'Precio Venta 9 Cuota', 'double', (precioBase * 1.6).toFixed(2)],
-    ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuota', 'double', (precioBase * 1.8).toFixed(2)],
-    ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuota', 'double', (precioBase * 2).toFixed(2)],
-    ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuota', 'double', (precioBase * 2.2).toFixed(2)]
+    ['PrecioVenta9Cuotas', 'Precio Venta 9 Cuotas', 'double', (precioBase * 1.6).toFixed(2)],
+    ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double', (precioBase * 1.8).toFixed(2)],
+    ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double', (precioBase * 2).toFixed(2)],
+    ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double', (precioBase * 2.2).toFixed(2)]
   ]
 
   return camposProductos
@@ -49,78 +49,92 @@ const createFakeProducto = () => {
 const Productos = props => {
 
 
-
-
-
-  console.log(faker.date.recent(1000).toISOString().slice(0, 19).replace('T', ' '))
-
-  // new Date().toISOString().slice(0, 19).replace('T', ' ');
-
+  const [loading, setLoading] = useState(true)
   const [openPopup, setOpenPopup] = useState(false)
+  const [cargaD, setCargaD] = useState(1)
 
-  // const SendData = data => {
-  //   console.log(data)
+  const [data, setData] = useState([])
 
-  // }
+  var init = {}
 
-  const dataTable = []
+  createFakeProducto().forEach(ite => { init = { ...init, [ite[0]]: ite[3] } })
 
-  //#region
-
-
+  const [formData, SetFormData] = useState(init)
 
 
-  const columns = [
-    {
-      name: 'Name',
-      selector: 'name',
-      sortable: true,
-    },
-    {
-      name: 'Email',
-      selector: 'email',
-      sortable: true,
-    },
-    {
-      name: 'Address',
-      selector: 'address',
-      sortable: true,
-    },
-  ];
+  useEffect(() => { cargaDatos() }, [cargaD])
+
+const onRowClicked=e=>{
+   console.log(e)
+  
+}
 
 
+  const saveData = () => {
+    setLoading(true)
+    postRequest('/productos', formData)
+      .then(response => {
 
-  //#endregion 
+        setCargaD(cargaD * -1)
+      })
 
+    setOpenPopup(false);
+  }
+  const cargaDatos = () => {
+    setLoading(true)
+    getRequest('/productos')
+      .then(request => {
+        setLoading(false)
+        if (request && request.data && request.data[0] && request.data[0].Codigo)
+
+          setData(request.data)
+
+      })
+  }
+
+
+  const columns = createFakeProducto().map(item => ({
+    name: item[1],
+    selector: item[0],
+    sortable: true
+
+  }))
 
   return (
+    <>
+      <Button className=" m-2" variant="contained" color="primary"
+        onClick={() => cargaDatos()} >
 
-    <div className='container-fluid'>
-      <div className='row p-5'>
-        <button type="button" className="btn btn-info" onClick={() => setOpenPopup(true)}>
-          Añadir Productos
-            </button>
-      </div>
+        {loading ?
+          <img height='20px' width='20px' src={loadinGif} alt="loading" />
+          : <span>Actualizar</span>}
 
+      </Button>
+
+      <Button className=" m-2" variant="contained" color="primary"
+        onClick={() => setOpenPopup(true)} > Añadir Productos</Button>
 
 
 
       <div className="card p-2 my-2">
-        <Datatable data={dataTable} columns={columns} />
+        <Datatable data={data} columns={columns} onRowClicked={onRowClicked} />
       </div>
 
       <Popup
         openPopup={openPopup}
         setOpenPopup={setOpenPopup}
         title='Añadir Producto'
-
-      >
+        logo={logo}
+        saveData={saveData}>
         <FormAddProducto
-          datos={createFakeProducto()} />
+          datos={createFakeProducto()}
+          formData={formData}
+          SetFormData={SetFormData}
+        />
       </Popup>
 
 
-    </div>
+    </>
   )
 
 }

@@ -6,7 +6,6 @@ import { login, getProfile } from '../../auth/loginFunctions'
 
 
 import loading from '../../assets/images/loading.gif'
-
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles({

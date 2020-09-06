@@ -1,20 +1,20 @@
 import React from 'react';
 import DataTable, { createTheme } from 'react-data-table-component'
 
-function Datatable({ title, columns, data }) {
+function Datatable({ columns, data, onRowClicked }) {
 
   var op = {
     rowsPerPageText: 'Filas por Pagina:',
     rangeSeparatorText: 'de'
   }
   createTheme('solarized', {
-  /*  text: {
-      primary: '#268bd2',
-      secondary: '#2aa198',
-    },
-    background: {
-      default: 'white',
-    },*/
+    /*  text: {
+        primary: '#268bd2',
+        secondary: '#2aa198',
+      },
+      background: {
+        default: 'white',
+      },*/
     context: {
       background: '#cb4b16',
       text: '#FFFFFF',
@@ -37,19 +37,17 @@ function Datatable({ title, columns, data }) {
     },
   });
 
+
   return (
     <DataTable
-      title={title}
       columns={columns}
       data={data}
-      defaultSortField={'name'}
-      responsive
+      defaultSortField={'id'}
+      defaultSortAsc={false}
+      onRowClicked={onRowClicked}
       pagination
       highlightOnHover
-
-      persistTableHead
-      fixedHeader
-      fixedHeaderScrollHeight="70vh"
+      dense
       noHeader
       noDataComponent={'No hay resultados que mostrar'}
       paginationComponentOptions={op}

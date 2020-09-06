@@ -1,17 +1,22 @@
 import React from 'react';
 import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+
 
 const useStyle = makeStyles((theme) => ({
 
     dialogWrapper: {
         padding: theme.spacing(2),
-        background: 'linear-gradient(180deg, rgba(2,0,36,1) 0%, rgba(142,142,153,1) 13%, rgba(121,121,121,1) 100%)'
+        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);',
+
     }
 }))
 
 
-const Popup = ({ title, children, openPopup, setOpenPopup }) => {
+const Popup = ({ title, children, openPopup, setOpenPopup, logo, saveData }) => {
+
+
 
     const classes = useStyle()
 
@@ -21,7 +26,17 @@ const Popup = ({ title, children, openPopup, setOpenPopup }) => {
             <DialogTitle>
                 <div style={{ display: 'flex' }}>
 
-                    <Typography variant="h6" component="div" style={{ flexGrow: 1 }}>{title}</Typography>
+                    <img src={logo} height="60px" alt="" />
+                    <Typography variant="h6" component="div" style={{ flexGrow: 1, textAlign: 'center' }}>{title}</Typography>
+
+
+                    <Button
+                        color="primary"
+                        onClick={saveData} >
+
+                        Guardar
+ <SaveAltIcon />
+                    </Button>
 
                     <Button
                         color="secondary"

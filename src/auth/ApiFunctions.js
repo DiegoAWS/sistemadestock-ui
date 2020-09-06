@@ -2,9 +2,11 @@ import axios from "axios";
 import "dotenv/config";
 
 var HOST =
-  process.env.NODE_ENV === "development"
+  process.env.PUBLIC_URL === ""
     ? ""
     : "https://sistemadestock.herokuapp.com";
+
+
 
 export const getRequest = (url) => {
   return axios
@@ -21,12 +23,10 @@ export const getRequest = (url) => {
     });
 };
 export const postRequest = (url,data) => {
+
+   axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.usertoken}`
   return axios
-    .post(HOST + "/api" + url,data, {
-      headers: {
-        Authorization: `Bearer ${localStorage.usertoken}`,
-      },
-    })
+    .post(HOST + "/api" + url,data)
     .then((response) => {
       return response;
     })
@@ -49,3 +49,5 @@ export const deleteRequest = (url) => {
       console.log(err);
     });
 };
+
+

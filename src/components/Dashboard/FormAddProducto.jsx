@@ -1,23 +1,25 @@
-import React, { useState } from 'react';
-
-const FormAddProducto = ({ datos, sendResponse }) => {
-
+import React from 'react';
+import { TextField } from '@material-ui/core';
 
 
-    const init = []
-
-    datos.forEach(ite => {
-
-        init[ite[0]] = ite[3]
-
-    })
-
-
-    const [formData, SetFormData] = useState(init)
+const FormAddProducto = ({ datos, formData, SetFormData }) => {
 
 
 
 
+
+
+    const varchar = (item) => (
+
+        <TextField label={item[1]} variant="outlined" margin='normal' size="small"
+            value={formData[item[0]]} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }} />
+    )
+
+    const double = (item) => (
+
+        <TextField label={item[1]} variant="outlined" margin='normal' size="small"
+            value={formData[item[0]]} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }} />
+    )
 
     return (
 
@@ -26,21 +28,15 @@ const FormAddProducto = ({ datos, sendResponse }) => {
             <div className="row">
                 {datos.map((item, i) => (
 
-                    <div className="form-group col-12 col-md-6 col-lg-4" key={i}>
-                        <label htmlFor="NombreProducto">{item[1]}</label>
-                        <input type="text" className="form-control" id="NombreProducto"
-                            value={formData[item[0]]}
-                            onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }}
-                            placeholder={item[1]} />
+                    <div className="col-12 col-md-6 col-lg-4" key={i}>
+
+                        {item[2] === 'varchar' ? varchar(item) : double(item)}
+
+
                     </div>
                 ))}
             </div>
-            <div className="row">
-                <div className="col-12">
-                    <button type="button" onClick={e => { sendResponse(formData) }} className="btn btn-primary" >Guardar</button>
-                    <button type="button" className="btn btn-danger">Cancelar</button>
-                </div>
-            </div>
+
 
 
         </div>

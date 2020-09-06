@@ -2,7 +2,7 @@ import axios from "axios";
 import "dotenv/config";
 
 var HOST =
-  process.env.NODE_ENV === "development"
+  process.env.PUBLIC_URL === ""
     ? ""
     : "https://sistemadestock.herokuapp.com";
 
@@ -18,6 +18,8 @@ export const register = (newUser) => {
 };
 
 export const login = (user) => {
+ 
+  
   return axios
     .post(HOST + "/api/auth/login", user)
     .then((response) => {
@@ -30,6 +32,7 @@ export const login = (user) => {
 };
 
 export const getProfile = () => {
+
   return axios
     .get(HOST + "/api/auth/user", {
       headers: {
