@@ -1,10 +1,7 @@
 import axios from "axios";
 import "dotenv/config";
-
-var HOST =
-  process.env.PUBLIC_URL === ""
-    ? ""
-    : "https://sistemadestock.herokuapp.com";
+//localhost??
+var HOST = false ? "" : "https://sistemadestock.herokuapp.com";
 
 
 
