@@ -1,10 +1,10 @@
 import axios from "axios";
 
 
+var localhost=false
 
 
-//localhost??
-var HOST = true
+var HOST = localhost
   ? "http://localhost:80"
   : "https://sistemadestock.herokuapp.com";
 
