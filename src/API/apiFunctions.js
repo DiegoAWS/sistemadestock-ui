@@ -1,7 +1,17 @@
 import axios from "axios";
 
+
+
+
 //localhost??
-var HOST = true ? "http://localhost:80" : "https://sistemadestock.herokuapp.com";
+var HOST = true
+  ? "http://localhost:80"
+  : "https://sistemadestock.herokuapp.com";
+
+
+
+//#region  SECURITY ----------------------------------
+
 
 export const register = (newUser) => {
   return axios
@@ -44,6 +54,54 @@ export const getProfile = () => {
 export const logout = () => {
   return axios
     .get(HOST + "/api/auth/logout", {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+
+//#endregion SECURITY
+
+
+
+export const getRequest = (url) => {
+  return axios
+    .get(HOST + "/api" + url, {
+      headers: {
+        Authorization: `Bearer ${localStorage.usertoken}`,
+      },
+    })
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+export const postRequest = (url, data) => {
+  axios.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${localStorage.usertoken}`;
+  return axios
+    .post(HOST + "/api" + url, data)
+    .then((response) => {
+      return response;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+};
+
+export const deleteRequest = (url) => {
+  return axios
+    .delete(HOST + "/api" + url, {
       headers: {
         Authorization: `Bearer ${localStorage.usertoken}`,
       },

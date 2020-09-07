@@ -1,8 +1,8 @@
 import React from 'react';
 import { TextField } from '@material-ui/core';
 
-
 const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
+
 
 
 
@@ -22,13 +22,23 @@ const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
     const varchar = (item) => (
 
         <TextField label={item[1]} variant="outlined" margin='normal' size="small"
-            value={formData[item[0]]} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }} />
+            value={formData[item[0]] || ''} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }} />
     )
 
     const double = (item) => (
 
         <TextField label={item[1]} variant="outlined" margin='normal' size="small"
-            value={espaciado(formData[item[0]])} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
+            value={espaciado(formData[item[0]]) || ''}
+            onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
+
+    )
+
+    const date = (item) => (
+
+        <TextField label={item[1]} type="date" value={formData[item[0]]}
+            onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }}
+            InputLabelProps={{ shrink: true, }} />
+
     )
 
     return (
@@ -40,7 +50,7 @@ const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
 
                     <div className="col-12 col-md-6 col-lg-4" key={i}>
 
-                        {item[2] === 'varchar' ? varchar(item) : double(item)}
+                        {item[2] === 'varchar' ? varchar(item) : (item[2] === 'date' ? date(item) : double(item))}
 
 
                     </div>

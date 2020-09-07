@@ -52,7 +52,7 @@ function Datatable({ camposProductos, data, handleDelete, handleEdit }) {
   const ExpandedComponent = (props) => {
 
 
-    var newCols = columns.slice(10).map(ite => ({ ...ite, sortable: false }))
+    var newCols = columns.slice(9).map(ite => ({ ...ite, sortable: false }))
 
 
 
@@ -89,7 +89,7 @@ function Datatable({ camposProductos, data, handleDelete, handleEdit }) {
 
   return (
     <DataTable
-      columns={columns.slice(0, 10)}
+      columns={columns.slice(0, 9)}
       data={data}
       keyField={'id'}
       defaultSortField={'id'}

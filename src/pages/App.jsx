@@ -6,7 +6,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import NavBar from '../components/NavBar/NavBar'
 import LandingPage from './LandingPage';
-import SecureRoute from '../auth/SecureRoute'
+import SecureRoute from './SecureRoute'
 import Dashboard from './Dashboard';
 
 

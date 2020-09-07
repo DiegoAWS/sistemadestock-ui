@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { getRequest, postRequest, deleteRequest } from '../auth/ApiFunctions'
+import { getRequest, postRequest, deleteRequest } from '../API/apiFunctions'
 import FormAddProducto from '../components/Dashboard/FormAddProducto'
 import logo from '../assets/images/logo.png'
-import loadinGif from '../assets/images/loading.gif'
+
 import Datatable from '../components/Dashboard/Datatable';
 
 
@@ -11,6 +11,11 @@ import faker from 'faker/locale/es'
 import Popup from '../components/Dashboard/Popup';
 import { Button } from '@material-ui/core';
 
+
+
+
+
+//#region  Fake Producto ----------------------------------
 
 const createFakeProducto = () => {
   const precioBase = faker.commerce.price(1000, 1000000)
@@ -22,7 +27,7 @@ const createFakeProducto = () => {
     Cantidad: faker.random.number(2000),
     Proveedor: faker.company.companyName(),
     FacturaCompra: faker.finance.bitcoinAddress().slice(0, 16),
-    FechaCompra: faker.date.recent(1000).toISOString().slice(0, 10),
+    FechaCompra: faker.date.recent(3000).toISOString().slice(0, 10),
     CostoUnitario: (precioBase * 0.6).toFixed(0) * 100,
     PrecioVentaContadoMayorista: (precioBase * 0.8).toFixed(0) * 100,
     PrecioVentaContadoMinorista: (precioBase * 1.0).toFixed(0) * 100,
@@ -36,14 +41,19 @@ const createFakeProducto = () => {
 
   return camposProductos
 }
+//#endregion Fake Producto
+
+
 
 const Productos = props => {
 
+
+
   //#region  CONST's ----------------------------------
 
-  const [loading, setLoading] = useState(true)
+
   const [openPopup, setOpenPopup] = useState(false)
-  const [cargaD, setCargaD] = useState(1)
+
 
   const [data, setData] = useState([]) //Data de la tabla
 
@@ -62,7 +72,7 @@ const Productos = props => {
     ['Proveedor', 'Proveedor', 'varchar'],
     ['FacturaCompra', 'Factura', 'varchar'],
 
-    ['FechaCompra', 'Fecha de Compra', 'datetime'],
+    ['FechaCompra', 'Fecha de Compra', 'date'],
 
     ['CostoUnitario', 'Costo Unitario', 'double'],
 
@@ -96,22 +106,21 @@ const Productos = props => {
 
 
 
-    if (item[2] === 'datetime')
+    if (item[2] === 'date')
       init = { ...init, [item[0]]: (new Date()).toISOString().slice(0, 10) }
 
   })
+
   //#endregion Inicializing the Form
   const [formData, SetFormData] = useState(init)
 
 
-  useEffect(() => {
-    cargaData(); console.log('useEffect');
-  }, [cargaD])
+
 
   //#endregion CONST's
 
-  console.log('render')
-
+  // eslint-disable-next-line
+  useEffect(() => { cargaData() }, [])
 
 
   //#region  CRUD API ----------------------------------
@@ -119,24 +128,28 @@ const Productos = props => {
   const saveData = () => {
     setOpenPopup(false);
 
-  
+
     setData(data.concat(formData))
+    var uri = '/productos'
 
+    if (formData.id)
+      uri = uri + '/' + formData.id
 
-    setLoading(true)
-    postRequest('/productos', formData)
+    postRequest(uri, formData)
       .then(() => {
-
-        setCargaD(cargaD * -1)
+        cargaData()
+        clearform()
       })
 
 
   }
   const cargaData = () => {
-    setLoading(true)
+
+    clearform()
+
     getRequest('/productos')
       .then(request => {
-        setLoading(false)
+
         if (request && request.data && request.data[0] && request.data[0].Codigo)
 
           setData(request.data)
@@ -145,21 +158,23 @@ const Productos = props => {
   }
 
   const editData = (item) => {
-    console.log(item)
-
+    SetFormData(item)
     setOpenPopup(true)
+
 
   }
 
   const deleteData = (itemDelete) => {
 
-    setData(data.filter(it => it.id === itemDelete))
-    setLoading(true)
+
+    setData(data.filter(it => it.id !== itemDelete.id))
+
+    clearform()
 
     deleteRequest('/productos/' + itemDelete.id, formData)
-      .then(response => {
+      .then(() => {
+        cargaData()
 
-        setCargaD(cargaD * -1)
       })
   }
 
@@ -167,6 +182,16 @@ const Productos = props => {
 
   //#endregion CRUD API
 
+
+
+  //#region  Others Functions ----------------------------------
+
+  const clearform = () => {
+    SetFormData(init)
+
+  }
+
+  //#endregion Others Functions
 
 
 
@@ -177,17 +202,11 @@ const Productos = props => {
 
   return (
     <>
-      <Button className=" m-2" variant="contained" color="primary"
-        onClick={() => cargaData()} >
 
-        {loading ?
-          <img height='20px' width='20px' src={loadinGif} alt="loading" />
-          : <span>Actualizar</span>}
 
-      </Button>
 
       <Button className=" m-2" variant="contained" color="primary"
-        onClick={() => setOpenPopup(true)} > Añadir Productos</Button>
+        onClick={() => { clearform(); setOpenPopup(true); }} > Añadir Productos</Button>
 
       <Button className=" m-2" variant="contained" color="primary"
         onClick={() => { SetFormData(createFakeProducto()); setOpenPopup(true); }} >Producto Falso</Button>
@@ -198,8 +217,9 @@ const Productos = props => {
 
       <Popup
         openPopup={openPopup}
+        clearform={clearform}
         setOpenPopup={setOpenPopup}
-        title='Añadir Producto'
+        title={(formData.id) ? 'Editar Producto' : 'Añadir Producto'}
         logo={logo}
         saveData={saveData}>
         <FormAddProducto
@@ -214,5 +234,6 @@ const Productos = props => {
   )
 
   //#endregion Return
+
 }
 export default Productos;

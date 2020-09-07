@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom'
 
 import { Route } from 'react-router-dom'
-import { getProfile } from './loginFunctions'
+import { getProfile } from '../API/apiFunctions'
 
 const SecureRoute = ({ path, component: Component, history }) => {
 

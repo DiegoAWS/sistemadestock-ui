@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { makeStyles } from "@material-ui/core/styles";
 
 
-import { register } from '../../auth/loginFunctions'
+import { register } from '../../API/apiFunctions'
 
 import loading from '../../assets/images/loading.gif'
 

@@ -14,7 +14,7 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 
-const Popup = ({ title, children, openPopup, setOpenPopup, logo, saveData }) => {
+const Popup = ({ title, clearform ,children, openPopup, setOpenPopup, logo, saveData }) => {
 
 
 
@@ -41,7 +41,7 @@ const Popup = ({ title, children, openPopup, setOpenPopup, logo, saveData }) => 
 
                     <Button
                         color="secondary"
-                        onClick={() => { setOpenPopup(false) }} >
+                        onClick={() => { clearform(); setOpenPopup(false); }} >
                         <CloseIcon />
 
                     </Button>

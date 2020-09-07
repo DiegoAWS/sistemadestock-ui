@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { withRouter } from 'react-router-dom'
-import { login, getProfile } from '../../auth/loginFunctions'
+import { login, getProfile } from '../../API/apiFunctions'
 
 
 

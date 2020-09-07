@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter, Link } from 'react-router-dom'
 
-import { logout } from '../../auth/loginFunctions'
+import { logout } from '../../API/apiFunctions'
 import { Menu, MenuItem, Button } from '@material-ui/core';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 const ControlLinks = ({ history, loggout }) => {
