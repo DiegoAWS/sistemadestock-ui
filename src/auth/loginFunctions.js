@@ -1,7 +1,7 @@
 import axios from "axios";
-import "dotenv/config";
+
 //localhost??
-var HOST = false ? "" : "https://sistemadestock.herokuapp.com";
+var HOST = true ? "http://localhost:80" : "https://sistemadestock.herokuapp.com";
 
 export const register = (newUser) => {
   return axios

@@ -32,10 +32,11 @@ const Popup = ({ title, children, openPopup, setOpenPopup, logo, saveData }) => 
 
                     <Button
                         color="primary"
+                        variant="contained"
                         onClick={saveData} >
 
                         Guardar
- <SaveAltIcon />
+                    <SaveAltIcon />
                     </Button>
 
                     <Button

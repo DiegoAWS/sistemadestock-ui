@@ -1,9 +1,9 @@
 import axios from "axios";
-import "dotenv/config";
+
 //localhost??
-var HOST = false ? "" : "https://sistemadestock.herokuapp.com";
-
-
+var HOST = true
+  ? "http://localhost:80"
+  : "https://sistemadestock.herokuapp.com";
 
 export const getRequest = (url) => {
   return axios
@@ -19,11 +19,12 @@ export const getRequest = (url) => {
       console.log(err);
     });
 };
-export const postRequest = (url,data) => {
-
-   axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.usertoken}`
+export const postRequest = (url, data) => {
+  axios.defaults.headers.common[
+    "Authorization"
+  ] = `Bearer ${localStorage.usertoken}`;
   return axios
-    .post(HOST + "/api" + url,data)
+    .post(HOST + "/api" + url, data)
     .then((response) => {
       return response;
     })
@@ -34,7 +35,7 @@ export const postRequest = (url,data) => {
 
 export const deleteRequest = (url) => {
   return axios
-    .post(HOST + "/api" + url, {
+    .delete(HOST + "/api" + url, {
       headers: {
         Authorization: `Bearer ${localStorage.usertoken}`,
       },
@@ -46,5 +47,3 @@ export const deleteRequest = (url) => {
       console.log(err);
     });
 };
-
-

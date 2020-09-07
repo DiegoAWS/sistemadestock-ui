@@ -2,11 +2,21 @@ import React from 'react';
 import { TextField } from '@material-ui/core';
 
 
-const FormAddProducto = ({ datos, formData, SetFormData }) => {
+const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
 
 
 
+    const espaciado = (value) => {
 
+        const EstilizaString = (s) => {
+            var re = '\\d(?=(\\d{3})+$)';
+            return s.toString().replace(new RegExp(re, 'g'), '$& ');
+        }
+
+
+
+        return EstilizaString(value)
+    }
 
 
     const varchar = (item) => (
@@ -18,7 +28,7 @@ const FormAddProducto = ({ datos, formData, SetFormData }) => {
     const double = (item) => (
 
         <TextField label={item[1]} variant="outlined" margin='normal' size="small"
-            value={formData[item[0]]} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value }) }} />
+            value={espaciado(formData[item[0]])} onChange={e => { SetFormData({ ...formData, [item[0]]: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
     )
 
     return (
@@ -26,7 +36,7 @@ const FormAddProducto = ({ datos, formData, SetFormData }) => {
 
         <div className="container">
             <div className="row">
-                {datos.map((item, i) => (
+                {camposProductos.map((item, i) => (
 
                     <div className="col-12 col-md-6 col-lg-4" key={i}>
 
