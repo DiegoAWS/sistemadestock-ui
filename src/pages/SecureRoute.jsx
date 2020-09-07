@@ -8,10 +8,8 @@ const SecureRoute = ({ path, component: Component, history }) => {
 
 
 
-    if (!(localStorage.usertoken && localStorage.UserOficialName && localStorage.UserRole)) {
+    if (!(localStorage.usertoken) {
         localStorage.removeItem('usertoken')
-        localStorage.removeItem('UserOficialName')
-        localStorage.removeItem('UserRole')
         history.push('/')
     }
     //Redireccion Inmediata si no existe Token
