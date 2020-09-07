@@ -8,7 +8,7 @@ const SecureRoute = ({ path, component: Component, history }) => {
 
 
 
-    if (!(localStorage.usertoken) {
+    if (!localStorage.usertoken) {
         localStorage.removeItem('usertoken')
         history.push('/')
     }
