@@ -42,15 +42,11 @@ const LandingPage = ({ history }) => {
 
     return (
 
-        <main className="app">
-            <div className="wrapper">
-
                 <div className={classes.mainBackground}>
 
                    
                 </div>
-            </div>
-        </main>
+          
 
     )
 

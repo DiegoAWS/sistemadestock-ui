@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextField } from '@material-ui/core';
+import { TextField, Grid } from '@material-ui/core';
 
 const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
 
@@ -44,22 +44,21 @@ const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
     return (
 
 
-        <div className="container">
-            <div className="row">
-                {camposProductos.map((item, i) => (
 
-                    <div className="col-12 col-md-6 col-lg-4" key={i}>
+        <Grid container spacing={3}>
+            {camposProductos.map((item, i) => (
 
-                        {item[2] === 'varchar' ? varchar(item) : (item[2] === 'date' ? date(item) : double(item))}
+                <Grid item xs={12} sm={6} lg={4} key={i}>
 
 
-                    </div>
-                ))}
-            </div>
+                    {item[2] === 'varchar' ? varchar(item) : (item[2] === 'date' ? date(item) : double(item))}
 
 
 
-        </div>
+                </Grid>
+            ))}
+        </Grid>
+
 
 
 

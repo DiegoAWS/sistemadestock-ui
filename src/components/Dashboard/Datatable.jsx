@@ -3,8 +3,14 @@ import DataTable, { createTheme } from 'react-data-table-component'
 import { Button } from '@material-ui/core';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import EditIcon from '@material-ui/icons/Edit';
-function Datatable({ camposProductos, data, handleDelete, handleEdit }) {
 
+import loading from '../../assets/images/loading.gif'
+
+function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit }) {
+
+  if(!data)
+	  data=[]
+  
   var op = {
     rowsPerPageText: 'Filas por Pagina:',
     rangeSeparatorText: 'de'
@@ -99,9 +105,10 @@ function Datatable({ camposProductos, data, handleDelete, handleEdit }) {
       dense
       noHeader
       expandableRows
+
       expandOnRowDoubleClicked
       expandableRowsComponent={<ExpandedComponent />}
-      noDataComponent={'No hay resultados que mostrar'}
+      noDataComponent={sinDatos?<div><hr /><h3>SIN DATOS</h3><hr /></div>:<img src={loading} width='20px' alt='' />}
       paginationComponentOptions={op}
       paginationRowsPerPageOptions={[10, 50, 100, 200]}
       theme="tableTheme"

@@ -14,7 +14,7 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 
-const Popup = ({ title, clearform ,children, openPopup, setOpenPopup, logo, saveData }) => {
+const Popup = ({ title, clearform ,children, openPopup, setOpenPopup,recolocaEditItem, logo, saveData }) => {
 
 
 
@@ -41,7 +41,12 @@ const Popup = ({ title, clearform ,children, openPopup, setOpenPopup, logo, save
 
                     <Button
                         color="secondary"
-                        onClick={() => { clearform(); setOpenPopup(false); }} >
+                        onClick={() => {
+                            if(title==='Editar Producto')
+                            recolocaEditItem()
+
+                            clearform(); 
+                            setOpenPopup(false); }} >
                         <CloseIcon />
 
                     </Button>

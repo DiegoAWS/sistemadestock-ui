@@ -108,94 +108,84 @@ const Register = ({ history }) => {
     return (
 
 
-        <div className="container mt-5">
-            <div className="row justify-content-center">
-                <div className="col-md-8">
-                    <div className="card">
-                        <div className="card-header">Register</div>
-
-                        <div className="card-body">
-                            <form method="POST" onSubmit={(e) => { SubmitHandler(e) }}>
+        <form method="POST" onSubmit={(e) => { SubmitHandler(e) }}>
 
 
-                                <div className="form-group row">
-                                    <label htmlFor="role" className="col-md-4 col-form-label text-md-right">Responsabilidad</label>
+            <div className="form-group row">
+                <label htmlFor="role" className="col-md-4 col-form-label text-md-right">Responsabilidad</label>
+                <br />
 
-                                    <select id="role" name="role" className="col-md-6" value={role} onChange={e => { setRole(e.target.value) }} >
+                <select id="role" name="role" className="col-md-6" value={role} onChange={e => { setRole(e.target.value) }} >
 
-                                        <option value="admin">Administrador</option>
-                                        <option value="jefe">Jefe Local</option>
-                                        <option value="empleado">Empleado</option>
-                                    </select>
-                                </div>
+                    <option value="admin">Administrador</option>
+                    <option value="jefe">Jefe Local</option>
+                    <option value="empleado">Empleado</option>
+                </select>
+            </div>
 
-                                <div className="form-group row">
-                                    <label htmlFor="name" className="col-md-4 col-form-label text-md-right">Nombre Completo</label>
+            <div className="form-group row">
+                <label htmlFor="name" className="col-md-4 col-form-label text-md-right">Nombre Completo</label>
 
-                                    <div className="col-md-6">
+                <div className="col-md-6">
 
-                                        <input id="name" type="text" className="form-control" name="name"
-                                            required autoComplete="name" autoFocus value={name} onChange={e => { setName(e.target.value) }} />
+                    <input id="name" type="text" className="form-control" name="name"
+                        required autoComplete="name" autoFocus value={name} onChange={e => { setName(e.target.value) }} />
 
-                                    </div>
-                                </div>
-
-                                <div className="form-group row">
-                                    <label htmlFor="username"
-                                        className="col-md-4 col-form-label text-md-right">Nombre de Usuario</label>
-
-                                    <div className="col-md-6">
-
-                                        <input id="username" type="text" className="form-control" name="username"
-                                            required autoComplete="username" value={username} onChange={e => { setUsername(e.target.value) }} />
-
-                                        <small id="passwordHelpBlock" className="form-text text-danger">
-                                        </small>
-
-                                    </div>
-                                </div>
-
-
-
-                                <div className="form-group row">
-                                    <label htmlFor="new-password"
-                                        className="col-md-4 col-form-label text-md-right">Contraseña</label>
-
-                                    <div className="col-md-6">
-                                        <input id="new-password" type="password"
-                                            className="form-control" name="password"
-                                            required autoComplete="new-password" value={password} onChange={e => { setPassword(e.target.value) }} />
-
-
-                                    </div>
-
-                                </div>
-
-                                <div className="form-group row">
-                                    <label htmlFor="password-confirm"
-                                        className="col-md-4 col-form-label text-md-right">Confirmar Contraseña</label>
-
-                                    <div className="col-md-6">
-                                        <input id="password-confirm" type="password" className="form-control"
-                                            name="password_confirmation" required autoComplete="new-password" value={password_confirmation} onChange={e => { setPassword_confirmation(e.target.value) }} />
-                                    </div>
-
-                                </div>
-
-                                <div className="form-group row mb-0">
-                                    <div className="col-md-6 offset-md-4">
-                                        <button id='submitB' type="submit" className="btn btn-primary">
-                                            Registrar
-                                            <img hidden id='loadinggGif' className={classes.loadingGif + ' ml-2'} src={loading} alt="loading" />
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
                 </div>
             </div>
-        </div>
+
+            <div className="form-group row">
+                <label htmlFor="username"
+                    className="col-md-4 col-form-label text-md-right">Nombre de Usuario</label>
+
+                <div className="col-md-6">
+
+                    <input id="username" type="text" className="form-control" name="username"
+                        required autoComplete="username" value={username} onChange={e => { setUsername(e.target.value) }} />
+
+                    <small id="passwordHelpBlock" className="form-text text-danger">
+                    </small>
+
+                </div>
+            </div>
+
+
+
+            <div className="form-group row">
+                <label htmlFor="new-password"
+                    className="col-md-4 col-form-label text-md-right">Contraseña</label>
+
+                <div className="col-md-6">
+                    <input id="new-password" type="password"
+                        className="form-control" name="password"
+                        required autoComplete="new-password" value={password} onChange={e => { setPassword(e.target.value) }} />
+
+
+                </div>
+
+            </div>
+
+            <div className="form-group row">
+                <label htmlFor="password-confirm"
+                    className="col-md-4 col-form-label text-md-right">Confirmar Contraseña</label>
+
+                <div className="col-md-6">
+                    <input id="password-confirm" type="password" className="form-control"
+                        name="password_confirmation" required autoComplete="new-password" value={password_confirmation} onChange={e => { setPassword_confirmation(e.target.value) }} />
+                </div>
+
+            </div>
+
+            <div className="form-group row mb-0">
+                <div className="col-md-6 offset-md-4">
+                    <button id='submitB' type="submit" className="btn btn-primary">
+                        Registrar
+                                            <img hidden id='loadinggGif' className={classes.loadingGif + ' ml-2'} src={loading} alt="loading" />
+                    </button>
+                </div>
+            </div>
+        </form>
+
     )
 
 }

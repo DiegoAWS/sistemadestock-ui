@@ -25,6 +25,7 @@ export const register = (newUser) => {
 };
 
 export const login = (user) => {
+  console.log(process.env.PUBLIC_URL)
   return axios
     .post(HOST + "/api/auth/login", user)
     .then((response) => {

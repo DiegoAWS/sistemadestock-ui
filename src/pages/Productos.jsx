@@ -54,7 +54,7 @@ const Productos = props => {
 
   const [openPopup, setOpenPopup] = useState(false)
 
-
+const[sinDatos,SetSinDatos]=useState(false)
   const [data, setData] = useState([]) //Data de la tabla
 
   //#region  campos Producto ----------------------------------
@@ -129,16 +129,36 @@ const Productos = props => {
     setOpenPopup(false);
 
 
-    setData(data.concat(formData))
+    //CREATE NEW
+    if (!formData.id)
+      setData([formData])
+    else
+      setData(data.concat(formData))
+
+
+
+
     var uri = '/productos'
 
     if (formData.id)
       uri = uri + '/' + formData.id
 
-    postRequest(uri, formData)
+
+    var DataOK = {}
+
+    camposProductos.forEach((item, i) => {
+
+      DataOK[item[0]] = (!formData[item[0]] || formData[item[0]] === "") ? "**null**" : formData[item[0]]
+     
+    })
+
+
+    postRequest(uri, DataOK)
       .then(() => {
+       
         cargaData()
-        clearform()
+       
+        
       })
 
 
@@ -150,16 +170,38 @@ const Productos = props => {
     getRequest('/productos')
       .then(request => {
 
-        if (request && request.data && request.data[0] && request.data[0].Codigo)
+        if (request && request.data && request.data[0] && request.data[0].Codigo) {
 
-          setData(request.data)
+          var newData = request.data.map(dataRequested => {
 
+            let instantData = {}
+
+            camposProductos.forEach(item => {
+              instantData[item[0]] = (dataRequested[item[0]] === "**null**") ? "" : dataRequested[item[0]]
+            })
+
+            return { ...instantData, id: dataRequested.id }
+
+          })
+
+          setData(newData)
+        }
+        if(request&&request.statusText==='OK'&&request.data&&request.data.length===0)
+        SetSinDatos(true)
+      
       })
   }
 
   const editData = (item) => {
+
+    var temp = data.filter(it => it.id !== item.id)
+
+
+    setData(temp)
+
     SetFormData(item)
     setOpenPopup(true)
+
 
 
   }
@@ -187,10 +229,14 @@ const Productos = props => {
   //#region  Others Functions ----------------------------------
 
   const clearform = () => {
+
+
     SetFormData(init)
 
   }
-
+  const recolocaEditItem = () => {
+    setData(data.concat(formData))
+  }
   //#endregion Others Functions
 
 
@@ -206,13 +252,13 @@ const Productos = props => {
 
 
       <Button className=" m-2" variant="contained" color="primary"
-        onClick={() => { clearform(); setOpenPopup(true); }} > Añadir Productos</Button>
+        onClick={() => { setData(data); clearform(); setOpenPopup(true); }} > Añadir Productos</Button>
 
       <Button className=" m-2" variant="contained" color="primary"
         onClick={() => { SetFormData(createFakeProducto()); setOpenPopup(true); }} >Producto Falso</Button>
 
       <div className="card p-2 my-2">
-        <Datatable data={data} camposProductos={camposProductos} handleDelete={deleteData} handleEdit={editData} />
+        <Datatable data={data} sinDatos={sinDatos}camposProductos={camposProductos} handleDelete={deleteData} handleEdit={editData} />
       </div>
 
       <Popup
@@ -221,6 +267,7 @@ const Productos = props => {
         setOpenPopup={setOpenPopup}
         title={(formData.id) ? 'Editar Producto' : 'Añadir Producto'}
         logo={logo}
+        recolocaEditItem={recolocaEditItem}
         saveData={saveData}>
         <FormAddProducto
           camposProductos={camposProductos}
