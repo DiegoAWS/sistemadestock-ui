@@ -80,7 +80,7 @@ export default function Skeleton({ ToolbarContent, SideBar, children, }) {
 
   const accesManager=(state)=>{
 
-    setShow(true)
+    setShow(state)
   }
 
   return (

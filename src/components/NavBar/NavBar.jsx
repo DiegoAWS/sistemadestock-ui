@@ -29,14 +29,10 @@ const NavBar = ({ history, access, accesManager }) => {
     const [state, setState] = useState(init)
 
     const loginHandler = e => {
-    setState({ ...state, accediendo: true })
+        setState({ ...state, accediendo: true })
         if (state.username.length === 0 || state.password.length < 8) {
 
-            setState({ ...state, inputError: true })
-
-            setTimeout(() => {
-                setState(init)
-            }, 2000)
+            errorHandler()
             return
         }
 
@@ -47,11 +43,11 @@ const NavBar = ({ history, access, accesManager }) => {
             password: state.password
         }
         login(user).then((res) => {
-			setState(init)
-			
+            setState(init)
+
             if (res && res.statusText && res.statusText === "OK") {
 
-                
+
                 getProfile().then((response) => {
                     if (response && response.data) {
                         localStorage.setItem("UserOficialName", response.data.name);
@@ -61,8 +57,8 @@ const NavBar = ({ history, access, accesManager }) => {
 
                     }
                 })
-            }
-           
+            } else { errorHandler() }
+
 
         })
 
@@ -72,18 +68,21 @@ const NavBar = ({ history, access, accesManager }) => {
 
     const logoutHandler = e => {
 
- setState(init)
-  accesManager(false)
- 
+
+
+
+
+        accesManager(false)
+
         localStorage.removeItem('UserOficialName')
         localStorage.removeItem('UserRole')
 
-       
+
 
         logout().then(() => {
             localStorage.removeItem('usertoken')
 
-           
+
 
             history.push('/')
 
@@ -91,6 +90,20 @@ const NavBar = ({ history, access, accesManager }) => {
     }
 
 
+    const errorHandler = () => {
+        setState({ ...state, inputError: true })
+
+        setTimeout(() => {
+            setState(init)
+        }, 2000)
+    }
+    const keyHandler = e => {
+        if (e.keyCode === 13) {
+            e.preventDefault()
+            loginHandler(e)
+        }
+
+    }
 
     const formAcces = () => {
 
@@ -100,18 +113,20 @@ const NavBar = ({ history, access, accesManager }) => {
                     <AssignmentIndIcon />
 
                     <TextField label="Usuario" variant="outlined" size='small'
-                        autoComplete="user" error={state.inputError} type='text'
+                        autoComplete="user" error={state.inputError} type='text' onKeyDown={keyHandler}
                         value={state.username} onChange={e => setState({ ...state, username: e.target.value })} style={{ marginRight: '10px' }} />
 
 
                     <VpnKeyIcon />
                     <TextField label="Password" variant="outlined" size='small' type='password' error={state.inputError}
-                        value={state.password} onChange={e => setState({ ...state, password: e.target.value })} />
+                        onKeyDown={keyHandler} value={state.password} onChange={e => setState({ ...state, password: e.target.value })} />
 
-                    <Button hidden={state.accediendo} variant="contained" color="primary" onClick={loginHandler} style={{ marginLeft: '20px' }}>  Acceso</Button>
-
-
-                    <img hidden={!state.accediendo} style={{ width: '10px' }} src={loading} alt="loading" />
+                    <Button variant="contained" color="primary" onClick={loginHandler} style={{ marginLeft: '20px' }}>
+                        {
+                            (state.accediendo) ? <img style={{ width: '20px' }} src={loading} alt="loading" />
+                                : 'Acceso'
+                        }
+                    </Button>
                 </>
             )
         }
