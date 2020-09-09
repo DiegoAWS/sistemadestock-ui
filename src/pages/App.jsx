@@ -9,10 +9,11 @@ import NavBar from '../components/NavBar/NavBar'
 import LandingPage from './LandingPage';
 import SecureRoute from './SecureRoute'
 import Dashboard from './Dashboard';
-
+import Productos from './Productos';
+import Codebars from './Codebars'
 
 import Register from '../components/Register/Register';
-import Productos from './Productos';
+
 import SkeletonSideBar from './SkeletonSideBar'
 import SideBar from '../components/SideBar/SideBar';
 
@@ -24,10 +25,10 @@ export default function App() {
   return (
     <Router>
       <div className='wrapper'>
-      <CssBaseline />
+        <CssBaseline />
         <SkeletonSideBar
           ToolbarContent={NavBar}
-          SideBar={<SideBar/>}
+          SideBar={<SideBar />}
         >
 
 
@@ -38,6 +39,7 @@ export default function App() {
             <Route exact path="/register" component={Register} />
             <SecureRoute path='/dashboard' component={Dashboard} />
             <SecureRoute path='/productos' component={Productos} />
+            <SecureRoute path='/codebars' component={Codebars} />
 
 
 

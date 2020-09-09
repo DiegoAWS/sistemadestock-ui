@@ -39,7 +39,7 @@ const SecureRoute = ({ path, component: Component, history }) => {
 
 
     return (
-        <Route path={path} component={Component} />
+        <Route exact path={path} component={Component} />
     )
 
 }

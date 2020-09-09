@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom'
 
-import { makeStyles } from "@material-ui/core/styles";
+// import { makeStyles } from "@material-ui/core/styles";
 
 
 import { register } from '../../API/apiFunctions'
 
-import loading from '../../assets/images/loading.gif'
+// import loading from '../../assets/images/loading.gif'
 
 
 
-const useStyles = makeStyles({
+// const useStyles = makeStyles({
 
-    loadingGif: {
-        width: '15px',
-        height: '15px',
-        display: 'inline'
-    }
+//     loadingGif: {
+//         width: '15px',
+//         height: '15px',
+//         display: 'inline'
+//     }
 
-});
+// });
 
 const Register = ({ history }) => {
 
-    const classes = useStyles();
+    // const classes = useStyles();
 
 
     const [role, setRole] = useState('empleado')
@@ -180,7 +180,7 @@ const Register = ({ history }) => {
                 <div className="col-md-6 offset-md-4">
                     <button id='submitB' type="submit" className="btn btn-primary">
                         Registrar
-                                            <img hidden id='loadinggGif' className={classes.loadingGif + ' ml-2'} src={loading} alt="loading" />
+                                        
                     </button>
                 </div>
             </div>

@@ -1,9 +1,23 @@
-
-.listH{
+/* .listH{
     width: 100px;
 }
 
 .listH>button{
     background-color: #ababab;
     color:white;
+} */
+
+@media print {
+    header {
+        display: none;
+    }
+
+
+}
+
+@media print {
+
+    header+div {
+        display: none;
+    }
 }

@@ -11,46 +11,73 @@ import ListItemText from '@material-ui/core/ListItemText';
 
 import LocalAtmIcon from '@material-ui/icons/LocalAtm';
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
+import PrintIcon from '@material-ui/icons/Print';
+
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 
 import { withRouter } from 'react-router-dom'
 
 const SideBar = ({ history }) => {
+    console.log()
+    const page = history.location.pathname
 
     const to = (where) => {
         history.push(where)
     }
+    const espaciado = (value) => {
 
+        const EstilizaString = (s) => {
+            var re = '\\d(?=(\\d{3})+$)';
+            return s.toString().replace(new RegExp(re, 'g'), '$& ');
+        }
+
+
+
+        return EstilizaString(value)
+    }
+
+    const lista = [
+        {
+            ruta: '/dashboard',
+            icon: LocalAtmIcon,
+            texto: 'Dashboard'
+        }, {
+            ruta: '/productos',
+            icon: FormatListNumberedIcon,
+            texto: 'Productos'
+        },
+        {
+            ruta: '/codebars',
+            icon: PrintIcon,
+            texto: 'Codigos de Barra'
+        }, {
+            ruta: '/register',
+            icon: AssignmentIndIcon,
+            texto: 'Registrar Usuario'
+        },
+
+
+    ]
     return (
 
         <>
             <Divider />
             <List>
 
-                <ListItem button onClick={e => { to('/dashboard') }}>
+                {
+                    lista.map(item => (
+                        <ListItem button key={item.ruta} onClick={e => { to(item.ruta) }} selected={page === item.ruta}>
 
-                    <ListItemIcon> <LocalAtmIcon />  </ListItemIcon>
+                            <ListItemIcon >  <item.icon color={page === item.ruta ? 'secondary' : 'action'} />  </ListItemIcon>
 
-                    <ListItemText primary='Dashboard' />
+                            <ListItemText primary={espaciado(item.texto)} />
 
-                </ListItem>
+                        </ListItem>
+                    ))
+                }
 
-                <ListItem button onClick={e => { to('/productos') }}>
 
-                    <ListItemIcon> <FormatListNumberedIcon /></ListItemIcon>
 
-                    <ListItemText primary='Productos' />
-
-                </ListItem>
-                <Divider />
-                <ListItem button onClick={e => { to('/register') }}>
-
-                    <ListItemIcon> <AssignmentIndIcon />  </ListItemIcon>
-
-                    <ListItemText primary='Registrar Usuario' />
-
-                </ListItem>
-                <Divider />
             </List>
 
         </>
