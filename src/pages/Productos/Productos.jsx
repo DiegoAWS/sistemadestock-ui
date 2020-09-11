@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { getRequest, postRequest, deleteRequest } from '../API/apiFunctions'
-import FormAddProducto from '../components/Dashboard/FormAddProducto'
-import logo from '../assets/images/logo.png'
+import React, { useState, useEffect, useRef } from 'react';
+import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
+import FormAddProducto from '../../components/Dashboard/FormAddProducto'
+import logo from '../../assets/images/logo.png'
 
-import Datatable from '../components/Dashboard/Datatable';
+import Datatable from '../../components/Dashboard/Datatable';
 
 
 import faker from 'faker/locale/es'
 
-import Popup from '../components/Dashboard/Popup';
+import Popup from '../../components/Dashboard/Popup';
 import { Button } from '@material-ui/core';
 
 
@@ -18,7 +18,7 @@ import { Button } from '@material-ui/core';
 //#region  Fake Producto ----------------------------------
 
 const createFakeProducto = () => {
-  const precioBase = faker.commerce.price(1000, 1000000)
+  const precioBase = faker.commerce.price(80000, 1000000)
   const camposProductos = {
     Codigo: faker.finance.account(),
     CategoriaId: faker.commerce.department(),
@@ -54,7 +54,7 @@ const Productos = props => {
 
   const [openPopup, setOpenPopup] = useState(false)
 
-const[sinDatos,SetSinDatos]=useState(false)
+  const [sinDatos, SetSinDatos] = useState(false)
   const [data, setData] = useState([]) //Data de la tabla
 
   //#region  campos Producto ----------------------------------
@@ -95,27 +95,28 @@ const[sinDatos,SetSinDatos]=useState(false)
 
 
 
-  var init = {}
+  var formInit = {}
 
   camposProductos.forEach(item => {
     if (item[2] === 'integer')
-      init = { ...init, [item[0]]: '' }
+      formInit = { ...formInit, [item[0]]: '' }
 
     if (item[2] === 'double')
-      init = { ...init, [item[0]]: '' }
+      formInit = { ...formInit, [item[0]]: '' }
 
 
 
     if (item[2] === 'date')
-      init = { ...init, [item[0]]: (new Date()).toISOString().slice(0, 10) }
+      formInit = { ...formInit, [item[0]]: (new Date()).toISOString().slice(0, 10) }
 
   })
 
   //#endregion Inicializing the Form
-  const [formData, SetFormData] = useState(init)
+  const [formData, SetFormData] = useState(formInit)
 
 
 
+  const editingValue = useRef({})
 
   //#endregion CONST's
 
@@ -129,19 +130,16 @@ const[sinDatos,SetSinDatos]=useState(false)
     setOpenPopup(false);
 
 
-    //CREATE NEW
-    if (!formData.id)
-      setData([formData])
-    else
-      setData(data.concat(formData))
-
-
 
 
     var uri = '/productos'
 
-    if (formData.id)
+    if (formData.id && editingValue.current) {// Editing....
       uri = uri + '/' + formData.id
+
+
+    }
+
 
 
     var DataOK = {}
@@ -149,16 +147,28 @@ const[sinDatos,SetSinDatos]=useState(false)
     camposProductos.forEach((item, i) => {
 
       DataOK[item[0]] = (!formData[item[0]] || formData[item[0]] === "") ? "**null**" : formData[item[0]]
-     
+
     })
+
+
+
+    //Ningun Dato
+    if (data.length === 0)
+      setData([formData])
+    else//Ya hay datos
+      setData(data.concat(formData))
+
+
+
+
 
 
     postRequest(uri, DataOK)
       .then(() => {
-       
+
         cargaData()
-       
-        
+
+
       })
 
 
@@ -186,13 +196,15 @@ const[sinDatos,SetSinDatos]=useState(false)
 
           setData(newData)
         }
-        if(request&&request.statusText==='OK'&&request.data&&request.data.length===0)
-        SetSinDatos(true)
-      
+        if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
+          SetSinDatos(true)
+
       })
   }
 
   const editData = (item) => {
+
+    editingValue.current = item
 
     var temp = data.filter(it => it.id !== item.id)
 
@@ -230,12 +242,12 @@ const[sinDatos,SetSinDatos]=useState(false)
 
   const clearform = () => {
 
-
-    SetFormData(init)
+    editingValue.current = {}
+    SetFormData(formInit)
 
   }
   const recolocaEditItem = () => {
-    setData(data.concat(formData))
+    setData(data.concat(editingValue.current))
   }
   //#endregion Others Functions
 
@@ -258,7 +270,7 @@ const[sinDatos,SetSinDatos]=useState(false)
         onClick={() => { SetFormData(createFakeProducto()); setOpenPopup(true); }} >Producto Falso</Button>
 
       <div className="card p-2 my-2">
-        <Datatable data={data} sinDatos={sinDatos}camposProductos={camposProductos} handleDelete={deleteData} handleEdit={editData} />
+        <Datatable data={data} sinDatos={sinDatos} camposProductos={camposProductos} handleDelete={deleteData} handleEdit={editData} />
       </div>
 
       <Popup

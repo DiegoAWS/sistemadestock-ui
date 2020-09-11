@@ -151,10 +151,11 @@ const NavBar = ({ history, access, accesManager }) => {
     return (
         <>
 
-            <Hidden mdDown >
+            <Hidden xsDown >
 
                 <img src={logo} height="65px" alt="" />
-
+            </Hidden>
+            <Hidden mdDown >
 
                 <h3 style={{ flex: 1, marginLeft: '10px' }}> Sistema de Stock</h3>
 

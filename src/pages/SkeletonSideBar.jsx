@@ -5,7 +5,7 @@ import Drawer from "@material-ui/core/Drawer";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 
-const drawerWidth = 220;
+const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,22 +22,28 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerOpen: {
     width: drawerWidth,
-    backgroundColor: 'transparent',
+    color: 'white',
+
+    background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 100%)',
+
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
     }),
   },
   drawerClose: {
-    backgroundColor: 'transparent',
+    color: 'white',
+
+    background: 'linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 100%)',
+
     transition: theme.transitions.create("width", {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
     overflowX: "hidden",
-    width: theme.spacing(6) + 1,
+    width: theme.spacing(7) + 1,
     [theme.breakpoints.up("sm")]: {
-      width: theme.spacing(6) + 1,
+      width: theme.spacing(7) + 1,
     },
   },
   toolbar: {
@@ -78,7 +84,7 @@ export default function Skeleton({ ToolbarContent, SideBar, children, }) {
     setOpen(false);
   };
 
-  const accesManager=(state)=>{
+  const accesManager = (state) => {
 
     setShow(state)
   }
@@ -89,7 +95,7 @@ export default function Skeleton({ ToolbarContent, SideBar, children, }) {
 
       <AppBar position="fixed" className={classes.appBar} color={show ? 'default' : 'transparent'}>
         <Toolbar>
-          <ToolbarContent accesManager={accesManager} access={show}/>
+          <ToolbarContent accesManager={accesManager} access={show} />
         </Toolbar>
       </AppBar>
       <Drawer

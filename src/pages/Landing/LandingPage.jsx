@@ -3,7 +3,7 @@ import { withRouter } from 'react-router-dom'
 
 import { makeStyles } from "@material-ui/core/styles"
 
-import background from "../assets/images/background.jpg";
+import background from "../../assets/images/background.jpg";
 
 
 

@@ -9,16 +9,26 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
-import LocalAtmIcon from '@material-ui/icons/LocalAtm';
+
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered';
 import PrintIcon from '@material-ui/icons/Print';
 
-import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 
+
+
+import TvIcon from '@material-ui/icons/Tv';
+import LocalShippingIcon from '@material-ui/icons/LocalShipping';
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
+
+import RecentActorsIcon from '@material-ui/icons/RecentActors';
+
+
+import PeopleIcon from '@material-ui/icons/People';
 import { withRouter } from 'react-router-dom'
 
 const SideBar = ({ history }) => {
-   
+
     const page = history.location.pathname
 
     const to = (where) => {
@@ -39,21 +49,42 @@ const SideBar = ({ history }) => {
     const lista = [
         {
             ruta: '/dashboard',
-            icon: LocalAtmIcon,
+            icon: AssessmentIcon,
             texto: 'Dashboard'
         }, {
-            ruta: '/productos',
+            ruta: '/ventas',
+            icon: MonetizationOnIcon,
+            texto: 'Ventas'
+        },
+        {
+            ruta: '/stock',
             icon: FormatListNumberedIcon,
+            texto: 'Stock'
+        },
+        {
+            ruta: '/productos',
+            icon: TvIcon,
             texto: 'Productos'
+        },
+
+        {
+            ruta: '/clientes',
+            icon: RecentActorsIcon,
+            texto: 'Clientes'
+        },
+        {
+            ruta: '/proveedores',
+            icon: LocalShippingIcon,
+            texto: 'Proveedores'
         },
         {
             ruta: '/codebars',
             icon: PrintIcon,
             texto: 'Codigos de Barra'
         }, {
-            ruta: '/register',
-            icon: AssignmentIndIcon,
-            texto: 'Registrar Usuario'
+            ruta: '/users',
+            icon: PeopleIcon,
+            texto: 'Control de Usuarios'
         },
 
 
@@ -61,18 +92,19 @@ const SideBar = ({ history }) => {
     return (
 
         <>
-            <Divider />
+
             <List>
 
                 {
                     lista.map(item => (
                         <ListItem button key={item.ruta} onClick={e => { to(item.ruta) }} selected={page === item.ruta}>
 
-                            <ListItemIcon >  <item.icon color={page === item.ruta ? 'secondary' : 'action'} />  </ListItemIcon>
+                            <ListItemIcon >  <item.icon color={page === item.ruta ? 'secondary' : 'primary'} />  </ListItemIcon>
 
                             <ListItemText primary={espaciado(item.texto)} />
-
+                            <Divider light variant={'middle'} />
                         </ListItem>
+
                     ))
                 }
 

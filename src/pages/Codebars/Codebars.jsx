@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { getRequest } from '../API/apiFunctions'
+import { getRequest } from '../../API/apiFunctions'
 import { Grid } from '@material-ui/core';
 import Barcode from 'react-barcode'
 
-import loadingIcon from '../assets/images/loading.gif'
+import loadingIcon from '../../assets/images/loading.gif'
 const Codebars = props => {
 
     const [productos, setProductos] = useState([]);

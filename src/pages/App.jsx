@@ -6,16 +6,40 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import CssBaseline from "@material-ui/core/CssBaseline";
 
 import NavBar from '../components/NavBar/NavBar'
-import LandingPage from './LandingPage';
+import LandingPage from './Landing/LandingPage';
 import SecureRoute from './SecureRoute'
-import Dashboard from './Dashboard';
-import Productos from './Productos';
-import Codebars from './Codebars'
 
-import Register from '../components/Register/Register';
+
+
+
+import Users from './Users/Users'
 
 import SkeletonSideBar from './SkeletonSideBar'
 import SideBar from '../components/SideBar/SideBar';
+
+import Dashboar from '../components/Dashboard/Dashboar/Dashboard'
+
+
+
+
+import Dashboard from './Dashboard/Dashboard';
+
+
+
+import Ventas from './Ventas/Ventas'
+
+import Stock from './Stock/Stock'
+
+import Productos from './Productos/Productos';
+
+import Clientes from './Clientes/Clientes'
+
+import Proveedores from './Proveedores/Proveedores'
+
+import Codebars from './Codebars/Codebars'
+
+
+
 
 
 export default function App() {
@@ -25,7 +49,9 @@ export default function App() {
   return (
     <Router>
       <div className='wrapper'>
+        <Route exact path="/test" component={Dashboar} />
         <CssBaseline />
+
         <SkeletonSideBar
           ToolbarContent={NavBar}
           SideBar={<SideBar />}
@@ -36,10 +62,23 @@ export default function App() {
 
           <Switch>
             <Route exact path="/" component={LandingPage} />
-            <Route exact path="/register" component={Register} />
+
             <SecureRoute path='/dashboard' component={Dashboard} />
+
+            <SecureRoute path='/ventas' component={Ventas} />
+            <SecureRoute path='/stock' component={Stock} />
+
             <SecureRoute path='/productos' component={Productos} />
+            <SecureRoute path='/clientes' component={Clientes} />
+
+            <SecureRoute path='/proveedores' component={Proveedores} />
+
             <SecureRoute path='/codebars' component={Codebars} />
+
+            <Route exact path="/users" component={Users} />
+
+
+
 
 
 
