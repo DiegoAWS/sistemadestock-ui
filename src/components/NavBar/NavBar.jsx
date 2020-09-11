@@ -115,7 +115,7 @@ const NavBar = ({ history, access, accesManager }) => {
                     <Hidden xsDown >
                         <AssignmentIndIcon /></Hidden>
 
-                    <TextField label="Usuario" variant="outlined" size='small'
+                    <TextField label="Usuario" variant="outlined" size='small' autoFocus
                         autoComplete="user" error={state.inputError} type='text' onKeyDown={keyHandler}
                         value={state.username} onChange={e => setState({ ...state, username: e.target.value })} style={{ marginRight: '10px' }} />
 

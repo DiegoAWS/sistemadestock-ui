@@ -17,7 +17,7 @@ import Users from './Users/Users'
 import SkeletonSideBar from './SkeletonSideBar'
 import SideBar from '../components/SideBar/SideBar';
 
-import Dashboar from '../components/Dashboard/Dashboar/Dashboard'
+
 
 
 
@@ -49,7 +49,7 @@ export default function App() {
   return (
     <Router>
       <div className='wrapper'>
-        <Route exact path="/test" component={Dashboar} />
+       
         <CssBaseline />
 
         <SkeletonSideBar
