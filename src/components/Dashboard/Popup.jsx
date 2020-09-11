@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button } from '@material-ui/core';
+import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button, Hidden } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import SaveAltIcon from '@material-ui/icons/SaveAlt';
 
@@ -14,7 +14,7 @@ const useStyle = makeStyles((theme) => ({
 }))
 
 
-const Popup = ({ title, clearform ,children, openPopup, setOpenPopup,recolocaEditItem, logo, saveData }) => {
+const Popup = ({ title, clearform, children, openPopup, setOpenPopup, recolocaEditItem, logo, saveData }) => {
 
 
 
@@ -22,11 +22,23 @@ const Popup = ({ title, clearform ,children, openPopup, setOpenPopup,recolocaEdi
 
     return (
 
-        <Dialog open={openPopup} maxWidth='md' classes={{ paper: classes.dialogWrapper }}>
+        <Dialog
+            disableBackdropClick
+            disableEscapeKeyDown
+
+
+            open={openPopup}
+
+            maxWidth='md'
+
+            classes={{ paper: classes.dialogWrapper }}>
+
+
             <DialogTitle>
                 <div style={{ display: 'flex' }}>
 
-                    <img src={logo} height="60px" alt="" />
+                    <Hidden xsDown >
+                        <img src={logo} height="60px" alt="" /></Hidden>
                     <Typography variant="h6" component="div" style={{ flexGrow: 1, textAlign: 'center' }}>{title}</Typography>
 
 
@@ -34,19 +46,20 @@ const Popup = ({ title, clearform ,children, openPopup, setOpenPopup,recolocaEdi
                         color="primary"
                         variant="contained"
                         onClick={saveData} >
-
-                        Guardar
-                    <SaveAltIcon />
+                        <Hidden xsDown >
+                            Guardar</Hidden>
+                        <SaveAltIcon />
                     </Button>
 
                     <Button
                         color="secondary"
                         onClick={() => {
-                            if(title==='Editar Producto')
-                            recolocaEditItem()
+                            if (title === 'Editar Producto')
+                                recolocaEditItem()
 
-                            clearform(); 
-                            setOpenPopup(false); }} >
+                            clearform();
+                            setOpenPopup(false);
+                        }} >
                         <CloseIcon />
 
                     </Button>

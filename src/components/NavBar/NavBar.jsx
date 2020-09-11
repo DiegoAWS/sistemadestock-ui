@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 
-import { TextField, Button } from '@material-ui/core'
+import { TextField, Button, Hidden } from '@material-ui/core'
 
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import VpnKeyIcon from '@material-ui/icons/VpnKey';
-
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import CancelPresentationIcon from '@material-ui/icons/CancelPresentation';
 
 
-import { Link } from 'react-router-dom'
+
 import logo from '../../assets/images/logo.png'
 
 
@@ -29,6 +29,8 @@ const NavBar = ({ history, access, accesManager }) => {
     const [state, setState] = useState(init)
 
     const loginHandler = e => {
+
+
         setState({ ...state, accediendo: true })
         if (state.username.length === 0 || state.password.length < 8) {
 
@@ -43,7 +45,7 @@ const NavBar = ({ history, access, accesManager }) => {
             password: state.password
         }
         login(user).then((res) => {
-            setState(init)
+
 
             if (res && res.statusText && res.statusText === "OK") {
 
@@ -52,9 +54,9 @@ const NavBar = ({ history, access, accesManager }) => {
                     if (response && response.data) {
                         localStorage.setItem("UserOficialName", response.data.name);
                         localStorage.setItem("UserRole", response.data.role);
-                        accesManager(true)
-                        history.push('/dashboard')
 
+                        history.push('/dashboard')
+                        accesManager(true)
                     }
                 })
             } else { errorHandler() }
@@ -69,7 +71,7 @@ const NavBar = ({ history, access, accesManager }) => {
     const logoutHandler = e => {
 
 
-
+        setState(init)
 
 
         accesManager(false)
@@ -110,21 +112,22 @@ const NavBar = ({ history, access, accesManager }) => {
         if (!access) {
             return (
                 <>
-                    <AssignmentIndIcon />
+                    <Hidden xsDown >
+                        <AssignmentIndIcon /></Hidden>
 
                     <TextField label="Usuario" variant="outlined" size='small'
                         autoComplete="user" error={state.inputError} type='text' onKeyDown={keyHandler}
                         value={state.username} onChange={e => setState({ ...state, username: e.target.value })} style={{ marginRight: '10px' }} />
 
-
-                    <VpnKeyIcon />
-                    <TextField label="Password" variant="outlined" size='small' type='password' error={state.inputError}
+                    <Hidden xsDown >
+                        <VpnKeyIcon /></Hidden>
+                    <TextField label="Contraseña" variant="outlined" size='small' type='password' error={state.inputError}
                         onKeyDown={keyHandler} value={state.password} onChange={e => setState({ ...state, password: e.target.value })} />
 
-                    <Button variant="contained" color="primary" onClick={loginHandler} style={{ marginLeft: '20px' }}>
+                    <Button variant="contained" color="primary" onClick={!state.accediendo && loginHandler} style={{ marginLeft: '20px' }}>
                         {
                             (state.accediendo) ? <img style={{ width: '20px' }} src={loading} alt="loading" />
-                                : 'Acceso'
+                                : <ExitToAppIcon />
                         }
                     </Button>
                 </>
@@ -147,14 +150,15 @@ const NavBar = ({ history, access, accesManager }) => {
 
     return (
         <>
-            <Link to='/register'>
+
+            <Hidden mdDown >
 
                 <img src={logo} height="65px" alt="" />
 
-            </Link>
-            <h3 style={{ flex: 1, marginLeft: '10px' }}> Sistema de Stock</h3>
 
+                <h3 style={{ flex: 1, marginLeft: '10px' }}> Sistema de Stock</h3>
 
+            </Hidden>
 
             {formAcces()}
 

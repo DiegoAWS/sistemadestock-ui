@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
+
 import { withRouter } from 'react-router-dom'
 
+import { FormControl, InputLabel, Select, Grid, Button, TextField } from '@material-ui/core'
+
+import logo from '../../assets/images/logo.png'
+import Popup from '../Dashboard/Popup';
 // import { makeStyles } from "@material-ui/core/styles";
 
 
 import { register } from '../../API/apiFunctions'
 
-// import loading from '../../assets/images/loading.gif'
+import loading from '../../assets/images/loading.gif'
 
 
 
@@ -24,62 +29,53 @@ const Register = ({ history }) => {
 
     // const classes = useStyles();
 
+    const init = {
+        role: 'empleado',
+        name: '',
+        username: '',
+        password: '',
+        password_confirmation: '',
+        loading: false,
+        error: false,
+        openPopup: false,
+        errorMensaje: "Más de 8 caracteres"
+    }
 
-    const [role, setRole] = useState('empleado')
-    const [name, setName] = useState('')
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [password_confirmation, setPassword_confirmation] = useState('');
 
+    const [state, setState] = useState(init);
 
-
-    const SubmitHandler = (e) => {
+    const saveData = e => {
 
         e.preventDefault()
 
-        var LoadingGif = document.getElementById('loadinggGif')
-        var helper = document.getElementById('passwordHelpBlock')
+        setState({ ...state, loading: true })
 
-        LoadingGif.hidden = false
+        if (state.password !== state.password_confirmation || state.password.length < 8) {
+            if (state.password !== state.password_confirmation)
 
-        if (password !== password_confirmation || (password.length < 8)) {
+                setState({ ...state, error: true })
 
-
-
-
-            var newPassword = document.getElementById('new-password')
-            var passwordConfirm = document.getElementById('password-confirm')
-            if (password.length < 8)
-                helper.innerText = 'Contraseña de 8 o más letras'
-            else
-                helper.innerText = 'Contraseñas no coinciden'
-            newPassword.style.border = '3px solid red'
-            passwordConfirm.style.border = '3px solid red'
+            if (state.password.length < 8)
+                setState({ ...state, error: true, errorMensaje: "Contraseña muy corta" })
 
 
             setTimeout(() => {
 
-                passwordConfirm.style.border = ''
+                setState({ ...state, error: false, password: '', password_confirmation: '', errorMensaje: "Más de 8 caracteres" })
 
-            }, 800)
-
-
-
-            setTimeout(() => {
-                helper.innerText = ''
-                newPassword.style.border = ''
-            }, 2000)
-
-            LoadingGif.hidden = true
+            }, 3800)
             return
-        } //// FALTA VALIDAR LONGITUDES MAXIMAS E INYECCION SQL
+        }
+
+
+
 
         const user = {
-            role,
-            name,
-            username,
-            password,
-            password_confirmation
+            role: state.role,
+            name: state.name,
+            username: state.username,
+            password: state.password,
+            password_confirmation: state.password_confirmation
         }
         register(user).then((res) => {
 
@@ -91,100 +87,111 @@ const Register = ({ history }) => {
 
             }
             else {
-                helper.innerText = 'Error en el Nombre de Usuario '
+                // helper.innerText = 'Error en el Nombre de Usuario '
 
                 setTimeout(() => {
-                    helper.innerText = ''
+                    // helper.innerText = ''
 
                 }, 2000)
             }
-
-            LoadingGif.hidden = true
+            //mostrar mensaje de Error
+            setState(init)
         })
 
     }
 
+    const handlerOpenPopup = (value) => {
+        setState({ ...state, openPopup: value })
+    }
+
+
 
     return (
 
+        <>
+            <Button variant="contained" color="secondary" onClick={e => handlerOpenPopup(true)}>
+                {state.loading ?
+                    <img style={{ width: '20px' }} src={loading} alt="loading" />
+                    : 'Añadir Usuario'
+                }
+            </Button>
 
-        <form method="POST" onSubmit={(e) => { SubmitHandler(e) }}>
+            <Popup
+                openPopup={state.openPopup}
+                clearform={() => { setState(init) }}
+                setOpenPopup={value => handlerOpenPopup(value)}
+                title={'Añadir Usuario'}
+                logo={logo}
+                saveData={saveData}>
 
+                <Grid justify={'space-around'} container spacing={4}>
+                    <Grid item xs={12} lg={4}>
 
-            <div className="form-group row">
-                <label htmlFor="role" className="col-md-4 col-form-label text-md-right">Responsabilidad</label>
-                <br />
+                        <TextField
 
-                <select id="role" name="role" className="col-md-6" value={role} onChange={e => { setRole(e.target.value) }} >
+                            select
+                            label="Perfil"
+                            value={state.role}
+                            onChange={e => setState({ ...state, role: e.target.value })}
+                            SelectProps={{
+                                native: true,
+                            }}
+                            helperText="Nivel de acceso al sistema"
+                            variant="outlined" >
 
-                    <option value="admin">Administrador</option>
-                    <option value="jefe">Jefe Local</option>
-                    <option value="empleado">Empleado</option>
-                </select>
-            </div>
+                            <option value={"empleado"}>Empleado</option>
+                            <option value={"jefe"}>Jefe Local</option>
+                            <option value={"admin"}>Administrador</option>
 
-            <div className="form-group row">
-                <label htmlFor="name" className="col-md-4 col-form-label text-md-right">Nombre Completo</label>
-
-                <div className="col-md-6">
-
-                    <input id="name" type="text" className="form-control" name="name"
-                        required autoComplete="name" autoFocus value={name} onChange={e => { setName(e.target.value) }} />
-
-                </div>
-            </div>
-
-            <div className="form-group row">
-                <label htmlFor="username"
-                    className="col-md-4 col-form-label text-md-right">Nombre de Usuario</label>
-
-                <div className="col-md-6">
-
-                    <input id="username" type="text" className="form-control" name="username"
-                        required autoComplete="username" value={username} onChange={e => { setUsername(e.target.value) }} />
-
-                    <small id="passwordHelpBlock" className="form-text text-danger">
-                    </small>
-
-                </div>
-            </div>
+                        </TextField>
 
 
 
-            <div className="form-group row">
-                <label htmlFor="new-password"
-                    className="col-md-4 col-form-label text-md-right">Contraseña</label>
+                    </Grid>
 
-                <div className="col-md-6">
-                    <input id="new-password" type="password"
-                        className="form-control" name="password"
-                        required autoComplete="new-password" value={password} onChange={e => { setPassword(e.target.value) }} />
+                    <Grid item xs={12} lg={8}>
+
+                        <TextField fullWidth
+                            value={state.name} onChange={e => setState({ ...state, name: e.target.value })}
+                            label="Nombre completo" variant="outlined" />
+
+                    </Grid>
+
+                    <Grid item xs={12} lg={4}>
+
+                        <TextField
+                            value={state.username}
+                            helperText="Identificador Único"
+                            onChange={e => setState({ ...state, username: e.target.value })}
+                            fullWidth label="Usuario" variant="outlined" />
+
+                    </Grid>
+
+                    <Grid item xs={12} lg={4}>
+
+                        <TextField
+                            value={state.password} onChange={e => setState({ ...state, password: e.target.value })}
+                            error={state.error}
+
+                            fullWidth label="Contraseña" variant="outlined" />
+
+                    </Grid>
+
+                    <Grid item xs={12} lg={4}>
+
+                        <TextField dsdsvalue={state.password_confirmation}
+                            onChange={e => setState({ ...state, password_confirmation: e.target.value })}
+                            fullWidth error={state.error}
+                            helperText={state.errorMensaje}
+                            label="Repetir Contraseña" variant="outlined" />
+
+                    </Grid>
+
+                </Grid>
+            </Popup>
 
 
-                </div>
-
-            </div>
-
-            <div className="form-group row">
-                <label htmlFor="password-confirm"
-                    className="col-md-4 col-form-label text-md-right">Confirmar Contraseña</label>
-
-                <div className="col-md-6">
-                    <input id="password-confirm" type="password" className="form-control"
-                        name="password_confirmation" required autoComplete="new-password" value={password_confirmation} onChange={e => { setPassword_confirmation(e.target.value) }} />
-                </div>
-
-            </div>
-
-            <div className="form-group row mb-0">
-                <div className="col-md-6 offset-md-4">
-                    <button id='submitB' type="submit" className="btn btn-primary">
-                        Registrar
-                                        
-                    </button>
-                </div>
-            </div>
-        </form>
+        </>
 
     )
 

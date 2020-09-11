@@ -18,7 +18,7 @@ import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import { withRouter } from 'react-router-dom'
 
 const SideBar = ({ history }) => {
-    console.log()
+   
     const page = history.location.pathname
 
     const to = (where) => {
