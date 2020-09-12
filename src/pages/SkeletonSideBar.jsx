@@ -56,8 +56,14 @@ const useStyles = makeStyles((theme) => ({
     width: '100%'
   },
   content: {
-    flexGrow: 1,
-    padding: theme.spacing(3),
+
+    position: 'absolute',
+    paddingLeft: '100px',
+    paddingTop: '30px',
+    top: 0,
+    right: 0,
+    left: 0,
+    bottom: 0
   },
 }));
 

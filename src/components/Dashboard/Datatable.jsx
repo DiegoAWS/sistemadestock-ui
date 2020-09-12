@@ -6,11 +6,16 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import loading from '../../assets/images/loading.gif'
 
-function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit }) {
+function Datatable({ campos, sinDatos, data, handleDelete, handleEdit }) {
 
-  if(!data)
-	  data=[]
-  
+
+  let capacidad = Math.floor((window.innerWidth - 100) / 100)
+  const cantidadColumnas = (campos.length > capacidad) ? capacidad : campos.length
+
+
+  if (!data)
+    data = []
+
   var op = {
     rowsPerPageText: 'Filas por Pagina:',
     rangeSeparatorText: 'de'
@@ -23,6 +28,7 @@ function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit })
       background: {
         default: 'white',
       },*/
+
     context: {
       background: '#cb4b16',
       text: '#FFFFFF',
@@ -46,11 +52,12 @@ function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit })
   });
 
 
-  const columns = camposProductos.map(item => ({
+  const columns = campos.map(item => ({
     name: item[1],
     selector: item[0],
-    sortable: true
-
+    sortable: true,
+    compact: true,
+    width: '100px'
   }))
 
 
@@ -58,7 +65,7 @@ function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit })
   const ExpandedComponent = (props) => {
 
 
-    var newCols = columns.slice(9).map(ite => ({ ...ite, sortable: false }))
+    var newCols = columns.slice(cantidadColumnas).map(ite => ({ ...ite, sortable: false }))
 
 
 
@@ -78,14 +85,15 @@ function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit })
 
         </Button>
 
-
-        <DataTable
+        {(newCols.length > 0) && <DataTable
           style={{ flexGrow: '1' }}
           columns={newCols}
           data={[props.data]}
-          dense
+
+          striped
           noHeader
-        />
+        />}
+
 
       </div >
 
@@ -93,26 +101,33 @@ function Datatable({ camposProductos,sinDatos, data, handleDelete, handleEdit })
 
   }
 
-  return (
-    <DataTable
-      columns={columns.slice(0, 9)}
-      data={data}
-      keyField={'id'}
-      defaultSortField={'id'}
-      defaultSortAsc={false}
-      pagination
-      highlightOnHover
-      dense
-      noHeader
-      expandableRows
 
-      expandOnRowDoubleClicked
-      expandableRowsComponent={<ExpandedComponent />}
-      noDataComponent={sinDatos?<div><hr /><h3>SIN DATOS</h3><hr /></div>:<img src={loading} width='20px' alt='' />}
-      paginationComponentOptions={op}
-      paginationRowsPerPageOptions={[10, 50, 100, 200]}
-      theme="tableTheme"
-    />
+
+  return (
+    <div style={{ width: 50 + cantidadColumnas * 100, borderRadius: '10px' }}>
+      <DataTable
+        columns={columns.slice(0, cantidadColumnas)}
+        data={data}
+        keyField={'id'}
+        defaultSortField={'id'}
+        defaultSortAsc={false}
+        pagination
+        highlightOnHover
+        dense
+        noHeader
+        expandableRows
+
+        expandOnRowDoubleClicked
+        expandableRowsComponent={<ExpandedComponent />}
+        noDataComponent={sinDatos ? <div><hr /><h3>SIN DATOS</h3><hr /></div> : <img src={loading} width='20px' alt='' />}
+        paginationComponentOptions={op}
+        paginationRowsPerPageOptions={[10, 50, 100, 200]}
+        theme="tableTheme"
+      />
+
+
+    </div>
+
   )
 }
 

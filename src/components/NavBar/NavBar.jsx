@@ -31,6 +31,12 @@ const NavBar = ({ history, access, accesManager }) => {
     const loginHandler = e => {
 
 
+
+
+        if (state.accediendo)
+            return
+
+
         setState({ ...state, accediendo: true })
         if (state.username.length === 0 || state.password.length < 8) {
 
@@ -115,7 +121,7 @@ const NavBar = ({ history, access, accesManager }) => {
                     <Hidden xsDown >
                         <AssignmentIndIcon /></Hidden>
 
-                    <TextField label="Usuario" variant="outlined" size='small' autoFocus
+                    <TextField label="Usuario" variant="outlined" size='small'
                         autoComplete="user" error={state.inputError} type='text' onKeyDown={keyHandler}
                         value={state.username} onChange={e => setState({ ...state, username: e.target.value })} style={{ marginRight: '10px' }} />
 
@@ -124,7 +130,7 @@ const NavBar = ({ history, access, accesManager }) => {
                     <TextField label="Contraseña" variant="outlined" size='small' type='password' error={state.inputError}
                         onKeyDown={keyHandler} value={state.password} onChange={e => setState({ ...state, password: e.target.value })} />
 
-                    <Button variant="contained" color="primary" onClick={!state.accediendo && loginHandler} style={{ marginLeft: '20px' }}>
+                    <Button variant="contained" color="primary" onClick={loginHandler} style={{ marginLeft: '20px' }}>
                         {
                             (state.accediendo) ? <img style={{ width: '20px' }} src={loading} alt="loading" />
                                 : <ExitToAppIcon />
@@ -157,10 +163,10 @@ const NavBar = ({ history, access, accesManager }) => {
             </Hidden>
             <Hidden mdDown >
 
-                <h3 style={{ flex: 1, marginLeft: '10px' }}> Sistema de Stock</h3>
+                <h3 style={{ marginLeft: '10px' }}> Sistema de Stock</h3>
 
             </Hidden>
-
+            <div style={{ height: '100%', backgroundColor: 'transparent', flexGrow: 1 }}></div>
             {formAcces()}
 
         </>

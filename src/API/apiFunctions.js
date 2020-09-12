@@ -1,17 +1,12 @@
 import axios from "axios";
 
-
-var localhost=false
-
+var localhost = false;
 
 var HOST = localhost
   ? "http://192.168.137.1:80"
   : "https://sistemadestock.herokuapp.com";
 
-
-
 //#region  SECURITY ----------------------------------
-
 
 export const register = (newUser) => {
   return axios
@@ -25,7 +20,6 @@ export const register = (newUser) => {
 };
 
 export const login = (user) => {
-  
   return axios
     .post(HOST + "/api/auth/login", user)
     .then((response) => {
@@ -67,10 +61,7 @@ export const logout = () => {
     });
 };
 
-
 //#endregion SECURITY
-
-
 
 export const getRequest = (url) => {
   return axios

@@ -8,6 +8,7 @@ import { register, getRequest } from '../../API/apiFunctions'
 
 import logo from '../../assets/images/logo.png'
 import loading from '../../assets/images/loading.gif'
+import Datatable from '../../components/Dashboard/Datatable';
 
 
 
@@ -22,19 +23,26 @@ import loading from '../../assets/images/loading.gif'
 // });
 const Users = ({ history }) => {
 
-    //#region  const ----------------------------------
+    //#region  CONST's ----------------------------------
+
+
+
+    //#region  State ----------------------------------
 
 
 
 
     // const classes = useStyles();
-
-    const init = {
+    const formInit = {
         role: 'empleado',
         name: '',
         username: '',
         password: '',
-        password_confirmation: '',
+        password_confirmation: ''
+    }
+
+    const init = {
+        formData: formInit,
         loading: false,
         error: false,
         openPopup: false,
@@ -46,6 +54,17 @@ const Users = ({ history }) => {
 
     const [state, setState] = useState(init);
 
+    //#endregion State
+
+
+    const campos = [
+
+
+        ['role', 'Rol', 'varchar'],
+        ['name', 'Nombre Completo', 'varchar'],
+        ['username', 'Nombe de Usuario', 'varchar']
+
+    ]
 
     //#endregion const
 
@@ -55,9 +74,11 @@ const Users = ({ history }) => {
 
     //#region  CRUD functions ----------------------------------
 
-    const saveData = e => {
+    //#region  SAVE  ----------------------------------
 
-        e.preventDefault()
+    const saveData = () => {
+
+
 
         setState({ ...state, loading: true })
 
@@ -112,35 +133,64 @@ const Users = ({ history }) => {
 
     }
 
+    //#endregion SAVE 
+
+    //#region  CARGA  ----------------------------------
+
+
+
 
     const cargaData = () => {
 
         clearform()
 
-        getRequest('/productos')
+        getRequest('/users')
             .then(request => {
 
-                if (request && request.data && request.data[0] && request.data[0].Codigo) {
+                if (request && request.data && request.data[0] && request.data[0].username) {
 
                     var newData = request.data.map(dataRequested => {
 
                         let instantData = {}
 
-                        // camposProductos.forEach(item => {
-                        //     instantData[item[0]] = (dataRequested[item[0]] === "**null**") ? "" : dataRequested[item[0]]
-                        // })
+                        campos.forEach(item => {
+                            instantData[item[0]] = dataRequested[item[0]]
+                        })
 
                         return { ...instantData, id: dataRequested.id }
 
                     })
-                    console.log(newData)
-                    // setData(newData)
+
+                    setState({ ...state, data: newData })
+
                 }
-                // if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
-                // SetSinDatos(true)
+                if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
+                    setState({ ...state, sinDatos: true })
+
 
             })
     }
+    //#endregion CARGA 
+
+    //#region  EDIT  ----------------------------------
+
+    const editData = e => {
+
+    }
+
+    //#endregion EDIT 
+
+    //#region  DELETE  ----------------------------------
+
+    const deleteData = e => {
+
+    }
+
+    //#endregion DELETE 
+    //#endregion CRUD functions
+
+
+    //#region  Other Funtions   ----------------------------------
 
     const handlerOpenPopup = (value) => {
         setState({ ...state, openPopup: value })
@@ -148,10 +198,10 @@ const Users = ({ history }) => {
 
 
     const clearform = () => {
-        setState(init)
+        setState({ ...state, formData: formInit })
     }
-    //#endregion CRUD functions
 
+    //#endregion Other Funtions
 
 
     //#region  return ----------------------------------
@@ -166,6 +216,8 @@ const Users = ({ history }) => {
                     : 'Añadir Usuario'
                 }
             </Button>
+
+            <Datatable data={state.data} sinDatos={state.sinDatos} campos={campos} handleDelete={deleteData} handleEdit={editData} />
 
             <Popup
                 openPopup={state.openPopup}
@@ -182,8 +234,8 @@ const Users = ({ history }) => {
 
                             select
                             label="Perfil"
-                            value={state.role}
-                            onChange={e => setState({ ...state, role: e.target.value })}
+                            value={state.formData.role}
+                            onChange={e => setState({ ...state, formData: { ...state.formData, role: e.target.value } })}
                             SelectProps={{
                                 native: true,
                             }}
@@ -204,7 +256,8 @@ const Users = ({ history }) => {
                     <Grid item xs={12} lg={8}>
 
                         <TextField fullWidth
-                            value={state.name} onChange={e => setState({ ...state, name: e.target.value })}
+                            value={state.formData.name}
+                            onChange={e => setState({ ...state, formData: { ...state.formData, name: e.target.value } })}
                             label="Nombre completo" variant="outlined" />
 
                     </Grid>
@@ -212,9 +265,9 @@ const Users = ({ history }) => {
                     <Grid item xs={12} lg={4}>
 
                         <TextField
-                            value={state.username}
+                            value={state.formData.username}
                             helperText="Identificador Único"
-                            onChange={e => setState({ ...state, username: e.target.value })}
+                            onChange={e => setState({ ...state, formData: { ...state.formData, username: e.target.value } })}
                             fullWidth label="Usuario" variant="outlined" />
 
                     </Grid>
@@ -222,18 +275,22 @@ const Users = ({ history }) => {
                     <Grid item xs={12} lg={4}>
 
                         <TextField
-                            value={state.password} onChange={e => setState({ ...state, password: e.target.value })}
+                            value={state.formData.password}
+                            onChange={e => setState({ ...state, formData: { ...state.formData, password: e.target.value } })}
+                            fullWidth
                             error={state.error}
                             helperText={state.errorMensaje}
-                            fullWidth label="Contraseña" variant="outlined" />
+                            label="Contraseña" variant="outlined" />
 
                     </Grid>
 
                     <Grid item xs={12} lg={4}>
 
-                        <TextField dsdsvalue={state.password_confirmation}
-                            onChange={e => setState({ ...state, password_confirmation: e.target.value })}
-                            fullWidth error={state.error}
+                        <TextField
+                            value={state.formData.password_confirmation}
+                            onChange={e => setState({ ...state, formData: { ...state.formData, password_confirmation: e.target.value } })}
+                            fullWidth
+                            error={state.error}
                             helperText={state.errorMensaje}
                             label="Repetir Contraseña" variant="outlined" />
 
@@ -248,4 +305,5 @@ const Users = ({ history }) => {
     )
     //#endregion return
 }
+
 export default withRouter(Users);

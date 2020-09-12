@@ -19,7 +19,7 @@ import { Button } from '@material-ui/core';
 
 const createFakeProducto = () => {
   const precioBase = faker.commerce.price(80000, 1000000)
-  const camposProductos = {
+  const campos = {
     Codigo: faker.finance.account(),
     CategoriaId: faker.commerce.department(),
     Producto: faker.commerce.product(),
@@ -33,13 +33,12 @@ const createFakeProducto = () => {
     PrecioVentaContadoMinorista: (precioBase * 1.0).toFixed(0) * 100,
     PrecioVenta3Cuotas: (precioBase * 1.2).toFixed(0) * 100,
     PrecioVenta6Cuotas: (precioBase * 1.4).toFixed(0) * 100,
-    PrecioVenta9Cuotas: (precioBase * 1.6).toFixed(0) * 100,
     PrecioVenta12Cuotas: (precioBase * 1.8).toFixed(0) * 100,
     PrecioVenta18Cuotas: (precioBase * 2).toFixed(0) * 100,
     PrecioVenta24Cuotas: (precioBase * 2.2).toFixed(0) * 100
   }
 
-  return camposProductos
+  return campos
 }
 //#endregion Fake Producto
 
@@ -59,7 +58,7 @@ const Productos = props => {
 
   //#region  campos Producto ----------------------------------
 
-  const camposProductos = [
+  const campos = [
 
 
     ['Codigo', 'Código', 'varchar'],
@@ -82,7 +81,6 @@ const Productos = props => {
 
     ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
     ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
-    ['PrecioVenta9Cuotas', 'Precio Venta 9 Cuotas', 'double'],
     ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
     ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double'],
     ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
@@ -97,7 +95,7 @@ const Productos = props => {
 
   var formInit = {}
 
-  camposProductos.forEach(item => {
+  campos.forEach(item => {
     if (item[2] === 'integer')
       formInit = { ...formInit, [item[0]]: '' }
 
@@ -144,7 +142,7 @@ const Productos = props => {
 
     var DataOK = {}
 
-    camposProductos.forEach((item, i) => {
+    campos.forEach((item, i) => {
 
       DataOK[item[0]] = (!formData[item[0]] || formData[item[0]] === "") ? "**null**" : formData[item[0]]
 
@@ -186,7 +184,7 @@ const Productos = props => {
 
             let instantData = {}
 
-            camposProductos.forEach(item => {
+            campos.forEach(item => {
               instantData[item[0]] = (dataRequested[item[0]] === "**null**") ? "" : dataRequested[item[0]]
             })
 
@@ -253,6 +251,7 @@ const Productos = props => {
 
 
 
+
   //#region  Return ----------------------------------
 
 
@@ -263,15 +262,20 @@ const Productos = props => {
 
 
 
-      <Button className=" m-2" variant="contained" color="primary"
+      <Button style={{ margin: '10px' }} variant="contained" color="primary"
         onClick={() => { setData(data); clearform(); setOpenPopup(true); }} > Añadir Productos</Button>
 
-      <Button className=" m-2" variant="contained" color="primary"
+      <Button style={{ margin: '10px' }} variant="contained" color="primary"
         onClick={() => { SetFormData(createFakeProducto()); setOpenPopup(true); }} >Producto Falso</Button>
 
-      <div className="card p-2 my-2">
-        <Datatable data={data} sinDatos={sinDatos} camposProductos={camposProductos} handleDelete={deleteData} handleEdit={editData} />
-      </div>
+
+      <Datatable data={data}
+
+        sinDatos={sinDatos}
+        campos={campos}
+        responsive
+        handleDelete={deleteData}
+        handleEdit={editData} />
 
       <Popup
         openPopup={openPopup}
@@ -282,7 +286,7 @@ const Productos = props => {
         recolocaEditItem={recolocaEditItem}
         saveData={saveData}>
         <FormAddProducto
-          camposProductos={camposProductos}
+          campos={campos}
           formData={formData}
           SetFormData={SetFormData}
         />

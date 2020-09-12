@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField, Grid } from '@material-ui/core';
 
-const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
+const FormAddProducto = ({ campos, formData, SetFormData }) => {
 
 
 
@@ -46,7 +46,7 @@ const FormAddProducto = ({ camposProductos, formData, SetFormData }) => {
 
 
         <Grid container spacing={3}>
-            {camposProductos.map((item, i) => (
+            {campos.map((item, i) => (
 
                 <Grid item xs={12} sm={6} lg={4} key={i}>
 
