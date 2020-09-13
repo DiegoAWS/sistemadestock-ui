@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { Button } from '@material-ui/core'
+import { IconButton } from '@material-ui/core'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 
@@ -87,7 +87,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   var columns = !state.allInLine ? [] : [ {
     width: '140px',
     compact: true,
-    cell: row => actionsButtons( row )
+    cell: row => <ActionsButtons data={ row } />
   }
   ]
 
@@ -100,39 +100,52 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   } ) ) )
 
 
-  const actionsButtons = data => (
-    <>
-      <Button onClick={ e => handleDelete( data ) }
-        style={ { margin: '5px 10px 5px 0' } }
-        title='Borrar Producto' color="secondary"
+  const ActionsButtons = ( { data } ) => (
+    <div style={ { flexBasis: '120x', flexGrow: 1, display: 'flex' } }>
+      <IconButton onClick={ e => handleDelete( data ) }
+        style={ { margin: '0 12px' } }
+        size="medium"
+        title='Borrar datos' color="secondary"
         variant="contained">
 
         <DeleteForeverIcon />
 
-      </Button>
+      </IconButton>
 
-      <Button onClick={ ( e ) => handleEdit( data ) }
-        title='Borrar Producto' color="primary"
+      <IconButton onClick={ ( e ) => handleEdit( data ) }
+        title='Editar datos' color="primary"
+        size="medium"
+        disabled
+        style={ { margin: '0 12px' } }
         variant="contained">
 
         <EditIcon />
 
-      </Button>
-    </>
+      </IconButton>
+    </div>
   )
 
   const NoFitItems = ( { newCols, data } ) => (
 
-    <div style={ { display: 'flex' } }>
-
+    <>
       { newCols.map( ( item, i ) => (
-        <div key={ i } style={ { border: '1px solid black', borderRadius: '10px', margin: '10px' } }>
-          <h5>  { item.name }</h5>
-          <span>  { data[ item.selector ] }</span>
+
+        <div key={ i } style={ {
+          border: '1px solid black', flexBasis: '120px',
+          flexGrow: 1,
+          display: 'flex', flexDirection: 'column',
+          backgroundColor: 'gray',
+          borderRadius: '10px', margin: '10px'
+        } }>
+
+          <div style={ { backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' } }>  { item.name }</div>
+
+          <div style={ { color: 'white', textAlign: 'center' } }> { data[ item.selector ] }</div>
         </div>
       ) ) }
-    </div>
+    </>
   )
+
 
   const ExpandedComponent = ( { data } ) =>
   {
@@ -145,10 +158,15 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
     return (
 
 
-      <div style={ { display: 'flex', border: '4px solid black', borderRadius: '5px', borderTop: '', alignItems: 'center' } }>
+      <div style={ {
+        width: 250 + state.cantidadColumnas * 100,
+        display: 'flex', flexWrap: 'wrap',
+        border: '4px solid black',
+        borderRadius: '5px', borderTop: ''
+      } }>
 
 
-        { actionsButtons( data ) }
+        <ActionsButtons data={ data } />
 
         { ( newCols.length > 0 ) && <NoFitItems
           newCols={ newCols }
@@ -182,7 +200,8 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
         expandableRowsComponent={ <ExpandedComponent /> }
         noDataComponent={ sinDatos ? <div><hr /><h3>SIN DATOS</h3><hr /></div> : <img src={ loading } width='20px' alt='' /> }
         paginationComponentOptions={ op }
-        paginationRowsPerPageOptions={ [ 10, 25, 50, 100, 200 ] }
+        paginationPerPage={ 10 }
+        paginationRowsPerPageOptions={ [ 5, 10, 25, 50, 100, 200 ] }
         theme="tableTheme"
       />
 

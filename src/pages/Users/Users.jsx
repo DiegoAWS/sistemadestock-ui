@@ -1,39 +1,19 @@
 import React, { useState, useEffect } from 'react'
-import { withRouter } from 'react-router-dom'
 import { Grid, Button, TextField } from '@material-ui/core'
-// import { makeStyles } from "@material-ui/core/styles";
 
 import Popup from '../../components/Dashboard/Popup'
-import { register, getRequest } from '../../API/apiFunctions'
+import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
 
 import logo from '../../assets/images/logo.png'
-import loading from '../../assets/images/loading.gif'
 import Datatable from '../../components/Dashboard/Datatable'
 
-
-
-// const useStyles = makeStyles({
-
-//     loadingGif: {
-//         width: '15px',
-//         height: '15px',
-//         display: 'inline'
-//     }
-
-// });
-const Users = ( { history } ) =>
+const Users = () =>
 {
-
-    //#region  CONST's ----------------------------------
-
-
 
     //#region  State ----------------------------------
 
 
 
-
-    // const classes = useStyles();
     const formInit = {
         role: 'empleado',
         name: '',
@@ -42,31 +22,30 @@ const Users = ( { history } ) =>
         password_confirmation: ''
     }
 
-    const init = {
-        formData: formInit,
-        loading: false,
-        error: false,
-        openPopup: false,
-        errorMensaje: "Más de 8 caracteres",
-        sinDatos: false,
-        data: []
-    }
 
 
-    const [ state, setState ] = useState( init )
+
+    const [ errorName, setErrorName ] = useState( false )
+    const [ errorNameMensaje, setErrorNameMensaje ] = useState( '' )
+    const [ errorUserName, setErrorUserName ] = useState( false )
+    const [ errorUserNameMensaje, setErrorUserNameMensaje ] = useState( 'Identificador único' )
+    const [ errorPassword, setErrorPassword ] = useState( false )
+    const [ errorPasswordMensaje, setErrorPasswordMensaje ] = useState( 'Más de 8 caracteres' )
+
+    const [ openPopup, setOpenPopup ] = useState( false )
+
+    const [ data, setData ] = useState( [] ) //Data de la tabla
+    const [ formData, SetFormData ] = useState( formInit )
 
     //#endregion State
 
-
     const campos = [
-
-
         [ 'role', 'Rol', 'varchar' ],
         [ 'username', 'Nombe de Usuario', 'varchar' ],
         [ 'name', 'Nombre Completo', 'varchar' ]
     ]
 
-    //#endregion const
+
 
     // eslint-disable-next-line
     useEffect( () => { cargaData() }, [] )
@@ -76,43 +55,79 @@ const Users = ( { history } ) =>
 
     //#region  SAVE  ----------------------------------
 
+
     const saveData = () =>
     {
 
 
-        setState( { ...state, loading: true } )
 
-        if ( state.password !== state.password_confirmation || state.password.length < 8 )
+        //#region  Validaciones ----------------------------------
+
+        if ( data.filter( item => ( item.username === formData.username ) ).length > 0 ||
+
+            formData.name.length === 0 ||
+            formData.username.length === 0 ||
+            formData.password < 8 ||
+            formData.password !== formData.password_confirmation )
         {
-            if ( state.password !== state.password_confirmation )
 
-                setState( { ...state, error: true, errorMensaje: "Contraseñas no coinciden" } )
 
-            if ( state.password.length < 8 || state.password_confirmation.length < 8 )
-                setState( { ...state, error: true, errorMensaje: "Contraseñas muy cortas" } )
+            if ( data.filter( item => ( item.username === formData.username ) ).length > 0 )
+            {
+                setErrorUserName( true )
+                setErrorUserNameMensaje( 'Username ya en uso' )
+            }
+            if ( formData.name.length === 0 )
+            {
+                setErrorName( true )
+                setErrorNameMensaje( 'Nombre Completo Requerido' )
+            }
+            if ( formData.username.length === 0 )
+            {
 
+            }
+
+            if ( formData.password.length > 8 )
+                setErrorPassword( true )
+
+            if ( formData.password !== formData.password_confirmation )
+            {
+                setErrorPassword( true )
+                setErrorPasswordMensaje( 'Contraseñas NO coinciden' )
+            }
 
             setTimeout( () =>
             {
+                SetFormData( formInit )
+                setErrorName( false )
+                setErrorNameMensaje( '' )
+                setErrorUserName( false )
+                setErrorUserNameMensaje( '' )
+                setErrorPassword( false )
+                setErrorPasswordMensaje( 'Identificador único' )
 
-                setState( { ...state, error: false, password: '', password_confirmation: '', errorMensaje: "Más de 8 caracteres" } )
 
-            }, 1000 )
+            }, 2000 )
             return
         }
+
+        //#endregion Validaciones
+
+        setOpenPopup( false )
+        setData( data.concat( formData ) )
 
 
 
 
         const user = {
-            role: state.role,
-            name: state.name,
-            username: state.username,
-            password: state.password,
-            password_confirmation: state.password_confirmation
+            role: formData.role,
+            name: formData.name,
+            username: formData.username,
+            password: formData.password,
+            password_confirmation: formData.password_confirmation
         }
 
-        register( user ).then( ( res ) =>
+        postRequest( '/users', user ).then( ( res ) =>
         {
 
 
@@ -120,28 +135,15 @@ const Users = ( { history } ) =>
             if ( res && res.statusText && res.statusText === "Created" )
             {
 
-
+                cargaData()
 
             }
-            else
-            {
-                // helper.innerText = 'Error en el Nombre de Usuario '
 
-                setTimeout( () =>
-                {
-                    // helper.innerText = ''
-
-                }, 2000 )
-            }
-            //mostrar mensaje de Error
-            setState( { ...state, username: '' } )
         } )
 
     }
 
     //#endregion SAVE 
-
-
 
     //#region  CARGA  ----------------------------------
 
@@ -149,7 +151,7 @@ const Users = ( { history } ) =>
     const cargaData = () =>
     {
 
-        clearform()
+        SetFormData( formInit )
 
         getRequest( '/users' )
             .then( request =>
@@ -172,11 +174,9 @@ const Users = ( { history } ) =>
 
                     } )
 
-                    setState( { ...state, data: newData } )
+                    setData( newData )
 
                 }
-                if ( request && request.statusText === 'OK' && request.data && request.data.length === 0 )
-                    setState( { ...state, sinDatos: true } )
 
 
             } )
@@ -194,9 +194,18 @@ const Users = ( { history } ) =>
 
     //#region  DELETE  ----------------------------------
 
-    const deleteData = e =>
+    const deleteData = itemDelete =>
     {
+        setData( data.filter( it => it.id !== itemDelete.id ) )
 
+        clearform()
+
+        deleteRequest( '/users/' + itemDelete.id, formData )
+            .then( () =>
+            {
+                cargaData()
+
+            } )
     }
 
     //#endregion DELETE 
@@ -207,14 +216,14 @@ const Users = ( { history } ) =>
 
     const handlerOpenPopup = ( value ) =>
     {
-        if ( !state.loading )
-            setState( { ...state, openPopup: value } )
+
+        setOpenPopup( value )
     }
 
 
     const clearform = () =>
     {
-        setState( { ...state, formData: formInit } )
+        SetFormData( formInit )
     }
 
     //#endregion Other Funtions
@@ -226,17 +235,12 @@ const Users = ( { history } ) =>
     return (
 
         <>
-            <Button variant="contained" color="secondary" onClick={ e => handlerOpenPopup( true ) }>
-                { state.loading ?
-                    <img style={ { width: '20px' } } src={ loading } alt="loading" />
-                    : 'Añadir Usuario'
-                }
-            </Button>
+            <Button variant="contained" color="secondary" onClick={ e => handlerOpenPopup( true ) }>'Añadir Usuario' </Button>
 
-            <Datatable data={ state.data } sinDatos={ state.sinDatos } campos={ campos } handleDelete={ deleteData } handleEdit={ editData } />
+            <Datatable data={ data } sinDatos={ false } campos={ campos } handleDelete={ deleteData } handleEdit={ editData } />
 
             <Popup
-                openPopup={ state.openPopup }
+                openPopup={ openPopup }
                 clearform={ clearform }
                 setOpenPopup={ value => handlerOpenPopup( value ) }
                 title={ 'Añadir Usuario' }
@@ -250,8 +254,8 @@ const Users = ( { history } ) =>
 
                             select
                             label="Perfil"
-                            value={ state.formData.role }
-                            onChange={ e => setState( { ...state, formData: { ...state.formData, role: e.target.value } } ) }
+                            value={ formData.role }
+                            onChange={ e => SetFormData( { ...formData, role: e.target.value } ) }
                             SelectProps={ {
                                 native: true,
                             } }
@@ -272,8 +276,10 @@ const Users = ( { history } ) =>
                     <Grid item xs={ 12 } lg={ 8 }>
 
                         <TextField fullWidth
-                            value={ state.formData.name }
-                            onChange={ e => setState( { ...state, formData: { ...state.formData, name: e.target.value } } ) }
+                            value={ formData.name }
+                            error={ errorName }
+                            helperText={ errorNameMensaje }
+                            onChange={ e => SetFormData( { ...formData, name: e.target.value } ) }
                             label="Nombre completo" variant="outlined" />
 
                     </Grid>
@@ -281,21 +287,23 @@ const Users = ( { history } ) =>
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ state.formData.username }
-                            helperText="Identificador Único"
-                            onChange={ e => setState( { ...state, formData: { ...state.formData, username: e.target.value } } ) }
-                            fullWidth label="Usuario" variant="outlined" />
+                            value={ formData.username }
+                            error={ errorUserName }
+                            helperText={ errorUserNameMensaje }
+                            onChange={ e => SetFormData( { ...formData, username: e.target.value } ) }
+                            fullWidth label="Username" variant="outlined" />
 
                     </Grid>
 
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ state.formData.password }
-                            onChange={ e => setState( { ...state, formData: { ...state.formData, password: e.target.value } } ) }
+                            value={ formData.password }
+                            onChange={ e => SetFormData( { ...formData, password: e.target.value } ) }
                             fullWidth
-                            error={ state.error }
-                            helperText={ state.errorMensaje }
+                            type='password'
+                            error={ errorPassword }
+                            helperText={ errorPasswordMensaje }
                             label="Contraseña" variant="outlined" />
 
                     </Grid>
@@ -303,11 +311,12 @@ const Users = ( { history } ) =>
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ state.formData.password_confirmation }
-                            onChange={ e => setState( { ...state, formData: { ...state.formData, password_confirmation: e.target.value } } ) }
+                            value={ formData.password_confirmation }
+                            onChange={ e => SetFormData( { ...formData, password_confirmation: e.target.value } ) }
                             fullWidth
-                            error={ state.error }
-                            helperText={ state.errorMensaje }
+                            type='password'
+                            error={ errorPassword }
+                            helperText={ errorPasswordMensaje }
                             label="Repetir Contraseña" variant="outlined" />
 
                     </Grid>
@@ -322,4 +331,4 @@ const Users = ( { history } ) =>
     //#endregion return
 }
 
-export default withRouter( Users )
+export default Users
