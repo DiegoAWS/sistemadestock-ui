@@ -1,20 +1,22 @@
-import React from 'react';
-import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button, Hidden } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
-import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import React from 'react'
+import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button, Hidden } from '@material-ui/core'
+import CloseIcon from '@material-ui/icons/Close'
+import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
 
-const useStyle = makeStyles((theme) => ({
+const useStyle = makeStyles( ( theme ) => ( {
 
     dialogWrapper: {
-        padding: theme.spacing(2),
+        padding: theme.spacing( 2 ),
         backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);',
 
     }
-}))
+} ) )
 
 
-const Popup = ({ title, clearform, children, openPopup, setOpenPopup, recolocaEditItem, logo, saveData }) => {
+const Popup = ( { title, clearform, children, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
+{
+
 
 
 
@@ -27,25 +29,26 @@ const Popup = ({ title, clearform, children, openPopup, setOpenPopup, recolocaEd
             disableEscapeKeyDown
 
 
-            open={openPopup}
+            open={ openPopup }
 
             maxWidth='md'
 
-            classes={{ paper: classes.dialogWrapper }}>
+            classes={ { paper: classes.dialogWrapper } }>
 
 
             <DialogTitle>
-                <div style={{ display: 'flex' }}>
+                <div style={ { display: 'flex' } }>
 
                     <Hidden xsDown >
-                        <img src={logo} height="60px" alt="" /></Hidden>
-                    <Typography variant="h6" component="div" style={{ flexGrow: 1, textAlign: 'center' }}>{title}</Typography>
+                        <img src={ logo } height="60px" alt="" /></Hidden>
+                    <Typography variant="h6" component="div" style={ { flexGrow: 1, textAlign: 'center' } }>{ title }</Typography>
 
 
                     <Button
                         color="primary"
                         variant="contained"
-                        onClick={saveData} >
+                        style={ { margin: '10px' } }
+                        onClick={ () => { saveData() } } >
                         <Hidden xsDown >
                             Guardar</Hidden>
                         <SaveAltIcon />
@@ -53,13 +56,15 @@ const Popup = ({ title, clearform, children, openPopup, setOpenPopup, recolocaEd
 
                     <Button
                         color="secondary"
-                        onClick={() => {
-                            if (title === 'Editar Producto')
+                        style={ { margin: '10px' } }
+                        onClick={ () =>
+                        {
+                            if ( title.includes( 'Editar' ) )
                                 recolocaEditItem()
 
-                            clearform();
-                            setOpenPopup(false);
-                        }} >
+
+                            setOpenPopup( false )
+                        } } >
                         <CloseIcon />
 
                     </Button>
@@ -67,10 +72,10 @@ const Popup = ({ title, clearform, children, openPopup, setOpenPopup, recolocaEd
                 </div>
             </DialogTitle>
             <DialogContent dividers>
-                {children}
+                { children }
             </DialogContent>
         </Dialog>
     )
 
 }
-export default Popup;
+export default Popup

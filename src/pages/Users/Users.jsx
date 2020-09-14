@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Grid, Button, TextField } from '@material-ui/core'
 
 import Popup from '../../components/Dashboard/Popup'
@@ -7,6 +7,8 @@ import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
 import logo from '../../assets/images/logo.png'
 import Datatable from '../../components/Dashboard/Datatable'
 
+import GroupAddIcon from '@material-ui/icons/GroupAdd'
+import AddIcon from '@material-ui/icons/Add'
 const Users = () =>
 {
 
@@ -45,7 +47,7 @@ const Users = () =>
         [ 'name', 'Nombre Completo', 'varchar' ]
     ]
 
-
+    const editingValue = useRef( {} )
 
     // eslint-disable-next-line
     useEffect( () => { cargaData() }, [] )
@@ -84,7 +86,8 @@ const Users = () =>
             }
             if ( formData.username.length === 0 )
             {
-
+                setErrorUserName( true )
+                setErrorNameMensaje( 'Usuario Requerido' )
             }
 
             if ( formData.password.length > 8 )
@@ -117,7 +120,14 @@ const Users = () =>
         setData( data.concat( formData ) )
 
 
+        var uri = '/users'
 
+        if ( formData.id && editingValue.current )
+        {// Editing....
+            uri = uri + '/' + formData.id
+
+
+        }
 
         const user = {
             role: formData.role,
@@ -127,7 +137,7 @@ const Users = () =>
             password_confirmation: formData.password_confirmation
         }
 
-        postRequest( '/users', user ).then( ( res ) =>
+        postRequest( uri, user ).then( ( res ) =>
         {
 
 
@@ -185,9 +195,17 @@ const Users = () =>
 
     //#region  EDIT  ----------------------------------
 
-    const editData = e =>
+    const editData = item =>
     {
+        editingValue.current = item
+        console.log( item )
+        var temp = data.filter( it => it.id !== item.id )
 
+
+        setData( temp )
+
+        SetFormData( item )
+        setOpenPopup( true )
     }
 
     //#endregion EDIT 
@@ -226,6 +244,10 @@ const Users = () =>
         SetFormData( formInit )
     }
 
+    const recolocaEditItem = () =>
+    {
+        setData( data.concat( editingValue.current ) )
+    }
     //#endregion Other Funtions
 
 
@@ -235,7 +257,13 @@ const Users = () =>
     return (
 
         <>
-            <Button variant="contained" color="secondary" onClick={ e => handlerOpenPopup( true ) }>'Añadir Usuario' </Button>
+            <Button variant="contained" color="primary"
+                startIcon={ <AddIcon /> }
+                endIcon={ <GroupAddIcon /> } onClick={ e =>
+                {
+                    clearform()
+                    handlerOpenPopup( true )
+                } }>Añadir Usuario </Button>
 
             <Datatable data={ data } sinDatos={ false } campos={ campos } handleDelete={ deleteData } handleEdit={ editData } />
 
@@ -243,9 +271,12 @@ const Users = () =>
                 openPopup={ openPopup }
                 clearform={ clearform }
                 setOpenPopup={ value => handlerOpenPopup( value ) }
-                title={ 'Añadir Usuario' }
+                title={ ( formData.id ) ? 'Editar Usuario' : 'Añadir Usuario' }
                 logo={ logo }
-                saveData={ saveData }>
+                saveData={ saveData }
+                recolocaEditItem={ recolocaEditItem }
+            >
+
 
                 <Grid justify={ 'space-around' } container spacing={ 4 }>
                     <Grid item xs={ 12 } lg={ 4 }>
@@ -255,7 +286,7 @@ const Users = () =>
                             select
                             label="Perfil"
                             value={ formData.role }
-                            onChange={ e => SetFormData( { ...formData, role: e.target.value } ) }
+                            onChange={ e => { SetFormData( { ...formData, role: e.target.value } ) } }
                             SelectProps={ {
                                 native: true,
                             } }
@@ -276,10 +307,10 @@ const Users = () =>
                     <Grid item xs={ 12 } lg={ 8 }>
 
                         <TextField fullWidth
-                            value={ formData.name }
+                            value={ formData.name || '' }
                             error={ errorName }
                             helperText={ errorNameMensaje }
-                            onChange={ e => SetFormData( { ...formData, name: e.target.value } ) }
+                            onChange={ e => { SetFormData( { ...formData, name: e.target.value } ) } }
                             label="Nombre completo" variant="outlined" />
 
                     </Grid>
@@ -287,19 +318,19 @@ const Users = () =>
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ formData.username }
+                            value={ formData.username || '' }
                             error={ errorUserName }
                             helperText={ errorUserNameMensaje }
-                            onChange={ e => SetFormData( { ...formData, username: e.target.value } ) }
-                            fullWidth label="Username" variant="outlined" />
+                            onChange={ e => { SetFormData( { ...formData, username: e.target.value } ) } }
+                            fullWidth label="Usuario" variant="outlined" />
 
                     </Grid>
 
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ formData.password }
-                            onChange={ e => SetFormData( { ...formData, password: e.target.value } ) }
+                            value={ formData.password || '' }
+                            onChange={ e => { SetFormData( { ...formData, password: e.target.value } ) } }
                             fullWidth
                             type='password'
                             error={ errorPassword }
@@ -311,8 +342,8 @@ const Users = () =>
                     <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={ formData.password_confirmation }
-                            onChange={ e => SetFormData( { ...formData, password_confirmation: e.target.value } ) }
+                            value={ formData.password_confirmation || '' }
+                            onChange={ e => { SetFormData( { ...formData, password_confirmation: e.target.value } ) } }
                             fullWidth
                             type='password'
                             error={ errorPassword }
