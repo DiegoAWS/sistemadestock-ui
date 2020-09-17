@@ -88,7 +88,7 @@ export default function Dashboard ()
 
             <Grid container spacing={ 3 } style={ { backgroundColor: 'black' } }>
 
-                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+                <Grid item xs={ 12 } style={ { backgroundColor: 'black' } }>
                     <CategoriasAnalisis />
                 </Grid>
                 <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>

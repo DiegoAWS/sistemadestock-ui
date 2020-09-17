@@ -6,19 +6,19 @@ import
 
 const data = [
     {
-        name: 'Lunes', uv: 4000, pv: 2400, amt: 2400,
+        name: 'Lunes', Ventas: 400000000, Compras: 240000000, amt: 240000000,
     },
     {
-        name: 'Martes', uv: -3000, pv: 1398, amt: 2210,
+        name: 'Martes', Ventas: -300000000, Compras: 139000000, amt: 221000000,
     },
     {
-        name: 'Miercoles', uv: -2000, pv: -9800, amt: 2290,
+        name: 'Miercoles', Ventas: -200000000, Compras: -980000000, amt: 229000000,
     },
     {
-        name: 'Jueves', uv: 2780, pv: 3908, amt: 2000,
+        name: 'Jueves', Ventas: 278000000, Compras: 390000000, amt: 200000000,
     },
     {
-        name: 'Viernes', uv: -1890, pv: 4800, amt: 2181,
+        name: 'Viernes', Ventas: -189000000, Compras: 480000000, amt: 218000000,
     }
 
 ]
@@ -37,14 +37,14 @@ export default class Barras extends PureComponent
                     top: 5, right: 30, left: 20, bottom: 5,
                 } }
             >
-                <CartesianGrid strokeDasharray="3 3" />
+
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Legend />
+                <Legend style={ { color: 'white' } } />
                 <ReferenceLine y={ 0 } stroke="#000" />
-                <Bar dataKey="pv" fill="#8884d8" />
-                <Bar dataKey="uv" fill="#82ca9d" />
+                <Bar dataKey="Compras" fill="red" />
+                <Bar dataKey="Ventas" fill="violet" />
             </BarChart>
         )
     }
