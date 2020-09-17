@@ -23,14 +23,12 @@ const createFakeProducto = () =>
   const precioBase = faker.commerce.price( 80000, 1000000 )
   const campos = {
     Codigo: faker.finance.account(),
-    CategoriaId: faker.commerce.department(),
+    Categoria: faker.commerce.department(),
+    Categoria_id: 1,
     Producto: faker.commerce.product(),
-    Descripcion: faker.commerce.productAdjective(),
-    Cantidad: faker.random.number( 2000 ),
-    Proveedor: faker.company.companyName(),
-    FacturaCompra: faker.finance.bitcoinAddress().slice( 0, 16 ),
-    FechaCompra: faker.date.recent( 3000 ).toISOString().slice( 0, 10 ),
-    CostoUnitario: ( precioBase * 0.6 ).toFixed( 0 ) * 100,
+    Marca: "SAMSUNG",
+    Color: faker.commerce.color(),
+    CostoUnitario: precioBase,
     PrecioVentaContadoMayorista: ( precioBase * 0.8 ).toFixed( 0 ) * 100,
     PrecioVentaContadoMinorista: ( precioBase * 1.0 ).toFixed( 0 ) * 100,
     PrecioVenta3Cuotas: ( precioBase * 1.2 ).toFixed( 0 ) * 100,
@@ -50,37 +48,21 @@ const Productos = props =>
 {
 
 
-
-  //#region  CONST's ----------------------------------
-
-
-  const [ openPopup, setOpenPopup ] = useState( false )
-
-  const [ sinDatos, SetSinDatos ] = useState( false )
-  const [ data, setData ] = useState( [] ) //Data de la tabla
-
-  const [ search, setSearch ] = useState( '' )
-  const [ filterData, setFilterData ] = useState( [] )
-
-
   //#region  campos Producto ----------------------------------
 
   const campos = [
 
+    [ 'Categoria', 'Categoría', 'categSelector' ],
 
     [ 'Codigo', 'Código', 'varchar' ],
-    [ 'CategoriaId', 'Categoría', 'varchar' ],
+
     [ 'Producto', 'Producto', 'varchar' ],
-    [ 'Descripcion', 'Descripción', 'varchar' ],
+    [ 'Marca', 'Marca', 'varchar' ],
 
-    [ 'Cantidad', 'Cantidad', 'integer' ],
+    [ 'Color', 'Color', 'varchar' ],
 
-    [ 'Proveedor', 'Proveedor', 'varchar' ],
-    [ 'FacturaCompra', 'Factura', 'varchar' ],
 
-    [ 'FechaCompra', 'Fecha de Compra', 'date' ],
-
-    [ 'CostoUnitario', 'Costo Unitario', 'double' ],
+    [ 'CostoUnitario', 'Costo Unitario de Compra', 'double' ],
 
     [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'double' ],
 
@@ -95,27 +77,43 @@ const Productos = props =>
   //#endregion campos Producto
 
 
+
+  //#region  CONST's STATE ----------------------------------
+
+
+  const [ openPopup, setOpenPopup ] = useState( false )
+
+  const [ sinDatos, SetSinDatos ] = useState( false )
+  const [ data, setData ] = useState( [] ) //Data de la tabla
+  const [ categorias, setCategorias ] = useState( [] ) // Categorias
+
+
+  const [ search, setSearch ] = useState( '' )
+  const [ filterData, setFilterData ] = useState( [] )
+
   //#region  Inicializing the Form ----------------------------------
 
 
 
 
-  var formInit = {}
+  var formInit = {
+    Codigo: "",
+    Categoria: null,
+    Categoria_id: -1,
+    Producto: "",
+    Marca: "",
+    Color: "",
 
-  campos.forEach( item =>
-  {
-    if ( item[ 2 ] === 'integer' )
-      formInit = { ...formInit, [ item[ 0 ] ]: '' }
+    PrecioVentaContadoMayorista: "",
+    PrecioVentaContadoMinorista: "",
+    PrecioVenta3Cuotas: "",
+    PrecioVenta6Cuotas: "",
+    PrecioVenta12Cuotas: "",
+    PrecioVenta18Cuotas: "",
+    PrecioVenta24Cuotas: ""
+  }
 
-    if ( item[ 2 ] === 'double' )
-      formInit = { ...formInit, [ item[ 0 ] ]: '' }
 
-
-
-    if ( item[ 2 ] === 'date' )
-      formInit = { ...formInit, [ item[ 0 ] ]: ( new Date() ).toISOString().slice( 0, 10 ) }
-
-  } )
 
   //#endregion Inicializing the Form
   const [ formData, SetFormData ] = useState( formInit )
@@ -135,6 +133,51 @@ const Productos = props =>
 
   //#region  CRUD API ----------------------------------
 
+  const cargaData = () =>
+  {
+
+
+    getRequest( '/productos' )
+      .then( request =>
+      {
+
+        if ( request && request.data && request.data.Productos && request.data.Categorias )
+        {
+
+          var newData = request.data.Productos.map( dataRequested =>
+          {
+
+            let instantData = {}
+
+            campos.forEach( item =>
+            {
+
+              instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? "" : dataRequested[ item[ 0 ] ]
+            } )
+
+            return { ...instantData, id: dataRequested.id }
+
+          } )
+
+          setData( newData )
+
+
+
+
+          var newCategorias = request.data.Categorias.map( dataRequested => ( {
+            Nombre: dataRequested.Nombre,
+            id: dataRequested.id
+          } ) )
+
+
+          setCategorias( newCategorias )
+        }
+        if ( request && request.statusText === 'OK' && request.data && request.data.Productos.length === 0 )
+          SetSinDatos( true )
+
+      } )
+  }
+
   const saveData = () =>
   {
     setOpenPopup( false )
@@ -153,18 +196,8 @@ const Productos = props =>
 
 
 
-    var DataOK = {}
 
-    campos.forEach( ( item, i ) =>
-    {
-
-      DataOK[ item[ 0 ] ] = ( !formData[ item[ 0 ] ] || formData[ item[ 0 ] ] === "" ) ? "**null**" : formData[ item[ 0 ] ]
-
-    } )
-
-
-
-    //Ningun Dato
+    //Ningun Datoform
     if ( data.length === 0 )
       setData( [ formData ] )
     else//Ya hay datos
@@ -175,7 +208,7 @@ const Productos = props =>
 
 
 
-    postRequest( uri, DataOK )
+    postRequest( uri, formData )
       .then( () =>
       {
 
@@ -186,40 +219,7 @@ const Productos = props =>
 
 
   }
-  const cargaData = () =>
-  {
 
-    clearform()
-
-    getRequest( '/productos' )
-      .then( request =>
-      {
-
-        if ( request && request.data && request.data[ 0 ] && request.data[ 0 ].Codigo )
-        {
-
-          var newData = request.data.map( dataRequested =>
-          {
-
-            let instantData = {}
-
-            campos.forEach( item =>
-            {
-              instantData[ item[ 0 ] ] = ( dataRequested[ item[ 0 ] ] === "**null**" ) ? "" : dataRequested[ item[ 0 ] ]
-            } )
-
-            return { ...instantData, id: dataRequested.id }
-
-          } )
-
-
-          setData( newData )
-        }
-        if ( request && request.statusText === 'OK' && request.data && request.data.length === 0 )
-          SetSinDatos( true )
-
-      } )
-  }
 
   const editData = ( item ) =>
   {
@@ -305,10 +305,11 @@ const Productos = props =>
 
 
 
+
+  //#endregion Categorias Handler
+
+
   //#region  Return ----------------------------------
-
-
-
 
   return (
     <>
@@ -366,6 +367,9 @@ const Productos = props =>
         recolocaEditItem={ recolocaEditItem }
         saveData={ saveData }>
         <FormAddProducto
+          cargaData={ cargaData }
+          categorias={ categorias }
+          setCategorias={ setCategorias }
           campos={ campos }
           formData={ formData }
           SetFormData={ SetFormData }

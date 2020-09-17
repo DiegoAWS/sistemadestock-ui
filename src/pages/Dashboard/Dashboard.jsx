@@ -1,6 +1,11 @@
-import React from "react";
+import React from "react"
 import { ResponsiveContainer, AreaChart, XAxis, CartesianGrid, Tooltip, Area, YAxis } from 'recharts'
-export default function Dashboard() {
+import Barras from "./Barras"
+import CategoriasAnalisis from "./CategoriasAnalisis"
+import { Grid } from "@material-ui/core"
+import StockAnalisis from "./StockAnalisis"
+export default function Dashboard ()
+{
 
 
 
@@ -81,31 +86,50 @@ export default function Dashboard() {
         <>
 
 
-            <div style={{ color: 'white', backgroundColor: 'blue', fontSize: '2rem', textAlign: 'center' }}>Análisis de las ventas 2021 ( en G 1 000 000)</div>
-            <div style={{ width: '80vw', height: '70vh', backgroundColor: 'darkblue', margin: '10px auto' }}>
+            <Grid container spacing={ 3 } style={ { backgroundColor: 'black' } }>
 
-                <ResponsiveContainer>
-                    <AreaChart data={data}
-                        margin={{ top: 30, right: 30, left: 0, bottom: 0 }}>
-                        <defs>
-                            <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="yellow" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="yellow" stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="red" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="red" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <XAxis dataKey="name" stroke="white" angle={20} />
-                        <YAxis stroke="white" />
-                        <CartesianGrid stroke="gray" strokeDasharray="3 3" />
-                        <Tooltip />
-                        <Area type="monotone" dataKey="Inversiones" stroke="yellow" fillOpacity={1} fill="url(#colorUv)" />
-                        <Area type="monotone" dataKey="Ganancia Neta" stroke="red" fillOpacity={1} fill="url(#colorPv)" />
-                    </AreaChart>
-                </ResponsiveContainer>
-            </div>
+                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+                    <CategoriasAnalisis />
+                </Grid>
+                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+                    <StockAnalisis />
+                </Grid>
+                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+
+
+                    <Barras />
+
+                </Grid>
+
+                <Grid item xs={ 12 } style={ { backgroundColor: 'black' } }>
+                    <div style={ { color: 'white', backgroundColor: 'blue', fontSize: '2rem', textAlign: 'center' } }>Análisis de las ventas 2021 ( en G 1 000 000)</div>
+                    <div style={ { width: '80vw', height: '70vh', backgroundColor: 'darkblue', margin: '10px auto' } }>
+
+
+                        <ResponsiveContainer>
+                            <AreaChart data={ data }
+                                margin={ { top: 30, right: 30, left: 0, bottom: 0 } }>
+                                <defs>
+                                    <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="yellow" stopOpacity={ 0.8 } />
+                                        <stop offset="95%" stopColor="yellow" stopOpacity={ 0 } />
+                                    </linearGradient>
+                                    <linearGradient id="colorPv" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="5%" stopColor="red" stopOpacity={ 0.8 } />
+                                        <stop offset="95%" stopColor="red" stopOpacity={ 0 } />
+                                    </linearGradient>
+                                </defs>
+                                <XAxis dataKey="name" stroke="white" angle={ 20 } />
+                                <YAxis stroke="white" />
+                                <CartesianGrid stroke="gray" strokeDasharray="3 3" />
+                                <Tooltip />
+                                <Area type="monotone" dataKey="Inversiones" stroke="yellow" fillOpacity={ 1 } fill="url(#colorUv)" />
+                                <Area type="monotone" dataKey="Ganancia Neta" stroke="red" fillOpacity={ 1 } fill="url(#colorPv)" />
+                            </AreaChart>
+                        </ResponsiveContainer>
+                    </div>
+                </Grid>
+            </Grid>
         </>
-    );
+    )
 }

@@ -25,7 +25,14 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   const formatea = text =>
   {
     var re = '\\d(?=(\\d{3})+$)'
-    return text.toString().replace( new RegExp( re, 'g' ), '$& ' )
+
+    if ( text && text.toString() )
+    {
+
+      return text.toString().replace( new RegExp( re, 'g' ), '$& ' )
+    }
+    else
+      return text
   }
 
   const formateaMonedas = () =>

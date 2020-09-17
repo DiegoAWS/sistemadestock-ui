@@ -14,7 +14,7 @@ const useStyle = makeStyles( ( theme ) => ( {
 } ) )
 
 
-const Popup = ( { title, clearform, children, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
+const Popup = ( { title, clearform, children, maxWidth, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
 {
 
 
@@ -31,8 +31,8 @@ const Popup = ( { title, clearform, children, openPopup, setOpenPopup, recolocaE
 
             open={ openPopup }
 
-            maxWidth='md'
-
+            maxWidth={ maxWidth ? maxWidth : 'md' }
+            fullWidth
             classes={ { paper: classes.dialogWrapper } }>
 
 

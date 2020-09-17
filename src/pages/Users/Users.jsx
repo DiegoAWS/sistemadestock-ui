@@ -198,7 +198,7 @@ const Users = () =>
     const editData = item =>
     {
         editingValue.current = item
-        console.log( item )
+
         var temp = data.filter( it => it.id !== item.id )
 
 
