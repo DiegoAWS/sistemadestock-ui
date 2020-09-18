@@ -14,7 +14,7 @@ const useStyle = makeStyles( ( theme ) => ( {
 } ) )
 
 
-const Popup = ( { title, clearform, children, maxWidth, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
+const Popup = ( { title, children, maxWidth, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
 {
 
 

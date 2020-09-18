@@ -36,7 +36,7 @@ import Proveedores from './Proveedores/Proveedores'
 
 import Codebars from './Codebars/Codebars'
 
-
+import Ajustes from './Ajustes/Ajustes'
 
 
 
@@ -76,7 +76,7 @@ export default function App ()
 
           <Route exact path="/users" component={ Users } />
 
-
+          <Route exact path="/ajustes" component={ Ajustes } />
 
 
 

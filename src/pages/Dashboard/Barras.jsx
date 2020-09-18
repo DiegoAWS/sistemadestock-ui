@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import
 {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine,
+    BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ReferenceLine,
 } from 'recharts'
 
 const data = [
@@ -41,8 +41,8 @@ export default class Barras extends PureComponent
                 <XAxis dataKey="name" />
                 <YAxis />
                 <Tooltip />
-                <Legend style={ { color: 'white' } } />
-                <ReferenceLine y={ 0 } stroke="#000" />
+                <Legend style={ { color: 'black' } } />
+                <ReferenceLine y={ 0 } stroke="gold" />
                 <Bar dataKey="Compras" fill="red" />
                 <Bar dataKey="Ventas" fill="violet" />
             </BarChart>

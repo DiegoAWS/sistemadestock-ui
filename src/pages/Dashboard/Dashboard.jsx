@@ -86,22 +86,22 @@ export default function Dashboard ()
         <>
 
 
-            <Grid container spacing={ 3 } style={ { backgroundColor: 'black' } }>
+            <Grid container spacing={ 3 } >
 
-                <Grid item xs={ 12 } style={ { backgroundColor: 'black' } }>
+                <Grid item xs={ 12 } >
                     <CategoriasAnalisis />
                 </Grid>
-                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+                <Grid item xs={ 12 } md={ 6 } >
                     <StockAnalisis />
                 </Grid>
-                <Grid item xs={ 12 } md={ 6 } style={ { backgroundColor: 'black' } }>
+                <Grid item xs={ 12 } md={ 6 } >
 
 
                     <Barras />
 
                 </Grid>
 
-                <Grid item xs={ 12 } style={ { backgroundColor: 'black' } }>
+                <Grid item xs={ 12 } >
                     <div style={ { color: 'white', backgroundColor: 'blue', fontSize: '2rem', textAlign: 'center' } }>Análisis de las ventas 2021 ( en G 1 000 000)</div>
                     <div style={ { width: '80vw', height: '70vh', backgroundColor: 'darkblue', margin: '10px auto' } }>
 

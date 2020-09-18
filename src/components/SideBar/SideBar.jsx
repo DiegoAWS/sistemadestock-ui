@@ -21,6 +21,8 @@ import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
 import PeopleIcon from '@material-ui/icons/People'
+import SettingsIcon from '@material-ui/icons/Settings'
+
 
 import { withRouter } from 'react-router-dom'
 
@@ -86,6 +88,10 @@ const SideBar = ( { history } ) =>
             ruta: '/users',
             icon: PeopleIcon,
             texto: 'Control de Usuarios'
+        }, {
+            ruta: '/ajustes',
+            icon: SettingsIcon,
+            texto: 'Ajustes'
         },
 
 
