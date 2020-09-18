@@ -1,6 +1,6 @@
 import axios from "axios";
 
-var localhost = true;
+var localhost = false;
 
 var HOST = localhost
   ? "http://192.168.137.1:80"
@@ -31,13 +31,17 @@ export const login = (user) => {
     });
 };
 
-export const getProfile = () => {
+export const getProfile = (path) => {
   return axios
-    .get(HOST + "/api/auth/user", {
-      headers: {
-        Authorization: `Bearer ${localStorage.usertoken}`,
-      },
-    })
+    .post(
+      HOST + "/api/user",
+      { path },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.usertoken}`,
+        },
+      }
+    )
     .then((response) => {
       return response;
     })

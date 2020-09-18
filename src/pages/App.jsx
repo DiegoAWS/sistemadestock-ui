@@ -74,9 +74,9 @@ export default function App ()
 
           <SecureRoute path='/codebars' component={ Codebars } />
 
-          <Route exact path="/users" component={ Users } />
+          <SecureRoute exact path="/users" component={ Users } />
 
-          <Route exact path="/ajustes" component={ Ajustes } />
+          <SecureRoute exact path="/ajustes" component={ Ajustes } />
 
 
 

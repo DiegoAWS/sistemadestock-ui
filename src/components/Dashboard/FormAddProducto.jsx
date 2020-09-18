@@ -1,10 +1,13 @@
 import React, { useState } from 'react'
-import { TextField, Grid } from '@material-ui/core'
+import { TextField, Grid, InputAdornment, IconButton } from '@material-ui/core'
 
 import MegaSelecter from './MegaSelecter'
 import FormAddCategoria from './FormAddCategoria'
 
-const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, campos, cargaData } ) =>
+import MoneyOffIcon from '@material-ui/icons/MoneyOff'
+
+
+const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, campos, cargaData, ajustesPrecios } ) =>
 {
 
 
@@ -13,7 +16,7 @@ const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, ca
     //Open Close Form Categorias
     const [ openPopupCategoria, setOpenPopupCategoria ] = useState( false )
 
-    //Control del Form
+    //Control del Form Categorias
     const [ formCategorias, setFormCategorias ] = useState( {
         Nombre: ''
     } )
@@ -31,7 +34,23 @@ const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, ca
 
 
 
+    const AutoFillMoney = item =>
+    {
+        let precioBase = parseInt( formData[ item[ 0 ] ] )
 
+        if ( isNaN( precioBase ) )
+            return
+
+
+        SetFormData( {
+            ...formData,
+            PrecioVentaContadoMinorista: Math.round( ( ajustesPrecios.pMinorista * precioBase ) / 100000 ) * 1000,
+            PrecioVenta3Cuotas: Math.round( ( ajustesPrecios.p3cuotas * precioBase ) / 100000 ) * 1000,
+            PrecioVenta6Cuotas: Math.round( ( ajustesPrecios.p6cuotas * precioBase ) / 100000 ) * 1000,
+            PrecioVenta12Cuotas: Math.round( ( ajustesPrecios.p12cuotas * precioBase ) / 100000 ) * 1000
+        } )
+
+    }
 
 
     //#region  Inputs Genericos ----------------------------------
@@ -66,6 +85,30 @@ const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, ca
         <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
             value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 }
             onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
+
+    )
+
+
+
+    const doubleAutoRellenar = ( item ) => (
+        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
+            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 }
+            InputProps={ {
+                endAdornment: <InputAdornment position="end">
+
+                    <IconButton onClick={ e => { AutoFillMoney( item ) } } color='secondary' title='Autorellenar Precios'>
+
+                        <MoneyOffIcon />
+
+                    </IconButton>
+
+                </InputAdornment >,
+            } }
+            onChange={ e =>
+            {
+                SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } )
+            } } />
+
 
     )
 
@@ -109,6 +152,10 @@ const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, ca
 
             case 'varchar':
                 return varchar( item )
+
+            case 'autoRellenar':
+                return doubleAutoRellenar( item )
+
             default:
                 return ( <></> )
         }

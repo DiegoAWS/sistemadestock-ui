@@ -68,7 +68,7 @@ const NavBar = ( { history, access, accesManager } ) =>
                         localStorage.setItem( "UserOficialName", response.data.name )
                         localStorage.setItem( "UserRole", response.data.role )
 
-                        history.push( '/dashboard' )
+                        history.push( '/codebars' )
                         accesManager( true )
                     }
                 } )

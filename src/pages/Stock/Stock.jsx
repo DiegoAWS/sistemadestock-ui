@@ -23,7 +23,7 @@ const Stock = props =>
     //#region  CONST's ----------------------------------
 
 
-    const [ openPopup, setOpenPopup ] = useState( true )
+    const [ openPopup, setOpenPopup ] = useState( false )
 
     const [ sinDatos, SetSinDatos ] = useState( false )
     const [ data, setData ] = useState( [] ) //Data de la tabla

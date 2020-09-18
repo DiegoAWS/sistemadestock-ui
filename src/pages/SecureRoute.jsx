@@ -1,46 +1,51 @@
-import React from 'react';
+import React from 'react'
 import { withRouter } from 'react-router-dom'
 
 import { Route } from 'react-router-dom'
 import { getProfile } from '../API/apiFunctions'
 
-const SecureRoute = ({ path, component: Component, history }) => {
+const SecureRoute = ( { path, component: Component, history } ) =>
+{
 
 
 
-    if (!localStorage.usertoken) {
-        localStorage.removeItem('usertoken')
-        history.push('/')
+    if ( !localStorage.usertoken )
+    {
+        localStorage.removeItem( 'usertoken' )
+        history.push( '/' )
     }
     //Redireccion Inmediata si no existe Token
 
 
 
-    getProfile().then((response) => {
+    getProfile( path ).then( ( response ) =>
+    {
 
-        if (response && response.data) {
+        if ( response && response.data )
+        {
 
-            localStorage.setItem("UserOficialName", response.data.name);
-            localStorage.setItem("UserRole", response.data.role);
+            localStorage.setItem( "UserOficialName", response.data.name )
+            localStorage.setItem( "UserRole", response.data.role )
         }
-        else {
+        else
+        {
 
 
-            localStorage.removeItem('usertoken')
-            localStorage.removeItem('UserOficialName')
-            localStorage.removeItem('UserRole')
+            localStorage.removeItem( 'usertoken' )
+            localStorage.removeItem( 'UserOficialName' )
+            localStorage.removeItem( 'UserRole' )
 
-            history.push('/')
+            history.push( '/' )
         }
 
-    })
+    } )
 
 
 
 
     return (
-        <Route exact path={path} component={Component} />
+        <Route exact path={ path } component={ Component } />
     )
 
 }
-export default withRouter(SecureRoute)
+export default withRouter( SecureRoute )

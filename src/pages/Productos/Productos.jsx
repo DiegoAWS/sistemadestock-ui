@@ -23,19 +23,19 @@ const createFakeProducto = () =>
   const precioBase = faker.commerce.price( 80000, 1000000 )
   const campos = {
     Codigo: faker.finance.account(),
-    Categoria: faker.commerce.department(),
+    Categoria: null,
     Categoria_id: 1,
     Producto: faker.commerce.product(),
     Marca: "SAMSUNG",
     Color: faker.commerce.color(),
     CostoUnitario: precioBase,
     PrecioVentaContadoMayorista: ( precioBase * 0.8 ).toFixed( 0 ) * 100,
-    PrecioVentaContadoMinorista: ( precioBase * 1.0 ).toFixed( 0 ) * 100,
-    PrecioVenta3Cuotas: ( precioBase * 1.2 ).toFixed( 0 ) * 100,
-    PrecioVenta6Cuotas: ( precioBase * 1.4 ).toFixed( 0 ) * 100,
-    PrecioVenta12Cuotas: ( precioBase * 1.8 ).toFixed( 0 ) * 100,
-    PrecioVenta18Cuotas: ( precioBase * 2 ).toFixed( 0 ) * 100,
-    PrecioVenta24Cuotas: ( precioBase * 2.2 ).toFixed( 0 ) * 100
+    PrecioVentaContadoMinorista: 0,
+    PrecioVenta3Cuotas: 0,
+    PrecioVenta6Cuotas: 0,
+    PrecioVenta12Cuotas: 0,
+    PrecioVenta18Cuotas: 0,
+    PrecioVenta24Cuotas: 0
   }
 
   return campos
@@ -64,7 +64,7 @@ const Productos = props =>
 
     [ 'CostoUnitario', 'Costo Unitario de Compra', 'double' ],
 
-    [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'double' ],
+    [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar' ],
 
     [ 'PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double' ],
 
@@ -119,6 +119,14 @@ const Productos = props =>
   const [ formData, SetFormData ] = useState( formInit )
 
 
+  const [ ajustesPrecio, setAjustesPrecio ] = useState( {
+    pMinorista: 106.25,
+    p3cuotas: 112.50,
+    p6cuotas: 130,
+    p12cuotas: 150,
+  } )
+
+
 
   const editingValue = useRef( {} )
 
@@ -141,7 +149,7 @@ const Productos = props =>
       .then( request =>
       {
 
-        if ( request && request.data && request.data.Productos && request.data.Categorias )
+        if ( request && request.data && request.data.Productos && request.data.Categorias && request.data.Ajuste )
         {
 
           var newData = request.data.Productos.map( dataRequested =>
@@ -171,7 +179,37 @@ const Productos = props =>
 
 
           setCategorias( newCategorias )
+
+
+          if ( request.data.Ajuste[ 0 ] )
+          {
+
+            let dataRequested = request.data.Ajuste[ 0 ]
+
+            let pMinorista = parseInt( dataRequested.pMinorista, 10 )
+            let p3cuotas = parseInt( dataRequested.p3cuotas, 10 )
+            let p6cuotas = parseInt( dataRequested.p6cuotas, 10 )
+            let p12cuotas = parseInt( dataRequested.p12cuotas, 10 )
+
+            if ( !( isNaN( pMinorista ) || isNaN( p3cuotas ) || isNaN( p6cuotas ) || isNaN( p12cuotas ) ) )
+            {
+
+
+              setAjustesPrecio(
+                {
+                  pMinorista,
+                  p3cuotas,
+                  p6cuotas,
+                  p12cuotas,
+                } )
+            }
+
+          }
+
         }
+
+
+
         if ( request && request.statusText === 'OK' && request.data && request.data.Productos.length === 0 )
           SetSinDatos( true )
 
@@ -325,8 +363,8 @@ const Productos = props =>
             variant="contained" color="primary"
             onClick={ () => { clearform(); setOpenPopup( true ) } } > Añadir Productos</Button>
 
-          <Button style={ { margin: '10px' } } variant="contained" color="primary"
-            onClick={ () => { SetFormData( createFakeProducto() ); setOpenPopup( true ) } } >Producto Falso</Button>
+          {/* <Button  style={ { margin: '10px' } } variant="contained" color="primary"
+            onClick={ () => { SetFormData( createFakeProducto() ); setOpenPopup( true ) } } >Producto Falso</Button> */}
         </div>
         <div>
           <TextField
@@ -370,6 +408,7 @@ const Productos = props =>
           cargaData={ cargaData }
           categorias={ categorias }
           setCategorias={ setCategorias }
+          ajustesPrecios={ ajustesPrecio }
           campos={ campos }
           formData={ formData }
           SetFormData={ SetFormData }
