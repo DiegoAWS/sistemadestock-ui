@@ -373,7 +373,7 @@ const Productos = props =>
             color={ ( search.length === 0 ) ? "primary" : "secondary" }
             size="small"
 
-            onChange={ e => { setSearch( e.target.value ); handleSearch( e.target.value ) } }
+            onChange={ e => { setSearch( e.target.value.replace( '!', '' ) ); handleSearch( e.target.value.replace( '!', '' ) ) } }
             variant={ ( search.length === 0 ) ? "outlined" : "filled" }
             InputProps={ {
               startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
