@@ -57,6 +57,8 @@ const FormAddProducto = (
 
     const textoCuotas = item =>
     {
+        if ( formData[ item ] < 1000 )
+            return ''
 
         switch ( item )
         {
@@ -108,10 +110,14 @@ const FormAddProducto = (
 
     //#region  Inputs Genericos ----------------------------------
 
-
-
-
     const varchar = ( item ) => (
+
+        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
+            value={ formData[ item[ 0 ] ] || '' } onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } } />
+    )
+
+
+    const varcharX = ( item ) => (
 
         <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
             value={ formData[ item[ 0 ] ] || '' } onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } } />
@@ -136,7 +142,7 @@ const FormAddProducto = (
     const double = ( item ) => (
 
         <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 } helperText={ textoCuotas( item[ 0 ] ) }
+            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 } helperText={ EstilizaString( textoCuotas( item[ 0 ] ) ) }
             onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
 
     )
@@ -205,7 +211,8 @@ const FormAddProducto = (
 
             case 'varchar':
                 return varchar( item )
-
+            case 'varcharX':
+                return varcharX( item )
             case 'autoRellenar':
                 return doubleAutoRellenar( item )
 
@@ -234,7 +241,7 @@ const FormAddProducto = (
 
 
                     { campos.map( ( item, i ) => (
-                        <Grid item xs={ 12 } sm={ item[ 2 ] === 'categSelector' ? 12 : 6 } lg={ item[ 2 ] === 'categSelector' ? 12 : 4 } key={ i }>
+                        <Grid item xs={ 12 } sm={ item[ 2 ] === 'categSelector' || item[ 2 ] === 'varcharX' ? 12 : 6 } lg={ item[ 2 ] === 'categSelector' || item[ 2 ] === 'varcharX' ? 12 : 4 } key={ i }>
 
 
                             { input( item ) }

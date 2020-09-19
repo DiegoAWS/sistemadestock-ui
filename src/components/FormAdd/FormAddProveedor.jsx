@@ -66,6 +66,13 @@ const FormAddProveedor = ( {
                 </Grid>
                 <Grid item xs={ 12 } sm={ 6 } lg={ 4 }>
 
+                    <TextField label={ 'Telefono' } variant="outlined" margin='normal' size="small"
+                        value={ formData.Telefono || '' } fullWidth
+                        onChange={ e => { SetFormData( { ...formData, Telefono: e.target.value } ) } } />
+
+                </Grid>
+                <Grid item xs={ 12 } sm={ 6 } lg={ 4 }>
+
                     <TextField label={ 'Email' } variant="outlined" margin='normal' size="small"
                         value={ formData.Email || '' } fullWidth
                         onChange={ e => { SetFormData( { ...formData, Email: e.target.value } ) } } />

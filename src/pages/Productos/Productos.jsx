@@ -22,12 +22,12 @@ const Productos = props =>
   //#region  campos Producto ----------------------------------
 
   const campos = [
-
+    [ 'Producto', 'Producto', 'varcharX' ],
     [ 'Categoria', 'Categoría', 'categSelector' ],
 
     [ 'Codigo', 'Código', 'varchar' ],
+    [ 'Marca', 'Marca', 'varchar' ],
 
-    [ 'Producto', 'Producto', 'varchar' ],
     [ 'Marca', 'Marca', 'varchar' ],
 
     [ 'Color', 'Color', 'varchar' ],
