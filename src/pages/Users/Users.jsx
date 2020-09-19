@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Grid, Button, TextField } from '@material-ui/core'
 
-import Popup from '../../components/Dashboard/Popup'
+import Popup from '../../components/FormAdd/Popup'
 import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
 
 import logo from '../../assets/images/logo.png'

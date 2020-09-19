@@ -1,5 +1,8 @@
 import React from 'react'
 import { Dialog, DialogTitle, DialogContent, makeStyles, Typography, Button, Hidden } from '@material-ui/core'
+
+import logo from '../../assets/images/logo.png'
+
 import CloseIcon from '@material-ui/icons/Close'
 import SaveAltIcon from '@material-ui/icons/SaveAlt'
 
@@ -14,7 +17,7 @@ const useStyle = makeStyles( ( theme ) => ( {
 } ) )
 
 
-const Popup = ( { title, children, maxWidth, openPopup, setOpenPopup, recolocaEditItem, logo, saveData } ) =>
+const Popup = ( { title, children, maxWidth, openPopup, setOpenPopup, recolocaEditItem, saveData } ) =>
 {
 
 

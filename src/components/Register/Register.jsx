@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 import { withRouter } from 'react-router-dom'
 
 import { FormControl, InputLabel, Select, Grid, Button, TextField } from '@material-ui/core'
 
 import logo from '../../assets/images/logo.png'
-import Popup from '../Dashboard/Popup';
+import Popup from '../FormAdd/Popup'
 // import { makeStyles } from "@material-ui/core/styles";
 
 
@@ -25,7 +25,8 @@ import loading from '../../assets/images/loading.gif'
 
 // });
 
-const Register = ({ history }) => {
+const Register = ( { history } ) =>
+{
 
     // const classes = useStyles();
 
@@ -42,28 +43,31 @@ const Register = ({ history }) => {
     }
 
 
-    const [state, setState] = useState(init);
+    const [ state, setState ] = useState( init )
 
-    const saveData = e => {
+    const saveData = e =>
+    {
 
         e.preventDefault()
 
-        setState({ ...state, loading: true })
+        setState( { ...state, loading: true } )
 
-        if (state.password !== state.password_confirmation || state.password.length < 8) {
-            if (state.password !== state.password_confirmation)
+        if ( state.password !== state.password_confirmation || state.password.length < 8 )
+        {
+            if ( state.password !== state.password_confirmation )
 
-                setState({ ...state, error: true })
+                setState( { ...state, error: true } )
 
-            if (state.password.length < 8)
-                setState({ ...state, error: true, errorMensaje: "Contraseña muy corta" })
+            if ( state.password.length < 8 )
+                setState( { ...state, error: true, errorMensaje: "Contraseña muy corta" } )
 
 
-            setTimeout(() => {
+            setTimeout( () =>
+            {
 
-                setState({ ...state, error: false, password: '', password_confirmation: '', errorMensaje: "Más de 8 caracteres" })
+                setState( { ...state, error: false, password: '', password_confirmation: '', errorMensaje: "Más de 8 caracteres" } )
 
-            }, 3800)
+            }, 3800 )
             return
         }
 
@@ -77,31 +81,36 @@ const Register = ({ history }) => {
             password: state.password,
             password_confirmation: state.password_confirmation
         }
-        register(user).then((res) => {
+        register( user ).then( ( res ) =>
+        {
 
 
 
-            if (res && res.statusText && res.statusText === "Created") {
+            if ( res && res.statusText && res.statusText === "Created" )
+            {
 
-                history.push('/')
+                history.push( '/' )
 
             }
-            else {
+            else
+            {
                 // helper.innerText = 'Error en el Nombre de Usuario '
 
-                setTimeout(() => {
+                setTimeout( () =>
+                {
                     // helper.innerText = ''
 
-                }, 2000)
+                }, 2000 )
             }
             //mostrar mensaje de Error
-            setState(init)
-        })
+            setState( init )
+        } )
 
     }
 
-    const handlerOpenPopup = (value) => {
-        setState({ ...state, openPopup: value })
+    const handlerOpenPopup = ( value ) =>
+    {
+        setState( { ...state, openPopup: value } )
     }
 
 
@@ -109,39 +118,39 @@ const Register = ({ history }) => {
     return (
 
         <>
-            <Button variant="contained" color="secondary" onClick={e => handlerOpenPopup(true)}>
-                {state.loading ?
-                    <img style={{ width: '20px' }} src={loading} alt="loading" />
+            <Button variant="contained" color="secondary" onClick={ e => handlerOpenPopup( true ) }>
+                { state.loading ?
+                    <img style={ { width: '20px' } } src={ loading } alt="loading" />
                     : 'Añadir Usuario'
                 }
             </Button>
 
             <Popup
-                openPopup={state.openPopup}
-                clearform={() => { setState(init) }}
-                setOpenPopup={value => handlerOpenPopup(value)}
-                title={'Añadir Usuario'}
-                logo={logo}
-                saveData={saveData}>
+                openPopup={ state.openPopup }
+                clearform={ () => { setState( init ) } }
+                setOpenPopup={ value => handlerOpenPopup( value ) }
+                title={ 'Añadir Usuario' }
+                logo={ logo }
+                saveData={ saveData }>
 
-                <Grid justify={'space-around'} container spacing={4}>
-                    <Grid item xs={12} lg={4}>
+                <Grid justify={ 'space-around' } container spacing={ 4 }>
+                    <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
 
                             select
                             label="Perfil"
-                            value={state.role}
-                            onChange={e => setState({ ...state, role: e.target.value })}
-                            SelectProps={{
+                            value={ state.role }
+                            onChange={ e => setState( { ...state, role: e.target.value } ) }
+                            SelectProps={ {
                                 native: true,
-                            }}
+                            } }
                             helperText="Nivel de acceso al sistema"
                             variant="outlined" >
 
-                            <option value={"empleado"}>Empleado</option>
-                            <option value={"jefe"}>Jefe Local</option>
-                            <option value={"admin"}>Administrador</option>
+                            <option value={ "empleado" }>Empleado</option>
+                            <option value={ "jefe" }>Jefe Local</option>
+                            <option value={ "admin" }>Administrador</option>
 
                         </TextField>
 
@@ -149,40 +158,40 @@ const Register = ({ history }) => {
 
                     </Grid>
 
-                    <Grid item xs={12} lg={8}>
+                    <Grid item xs={ 12 } lg={ 8 }>
 
                         <TextField fullWidth
-                            value={state.name} onChange={e => setState({ ...state, name: e.target.value })}
+                            value={ state.name } onChange={ e => setState( { ...state, name: e.target.value } ) }
                             label="Nombre completo" variant="outlined" />
 
                     </Grid>
 
-                    <Grid item xs={12} lg={4}>
+                    <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={state.username}
+                            value={ state.username }
                             helperText="Identificador Único"
-                            onChange={e => setState({ ...state, username: e.target.value })}
+                            onChange={ e => setState( { ...state, username: e.target.value } ) }
                             fullWidth label="Usuario" variant="outlined" />
 
                     </Grid>
 
-                    <Grid item xs={12} lg={4}>
+                    <Grid item xs={ 12 } lg={ 4 }>
 
                         <TextField
-                            value={state.password} onChange={e => setState({ ...state, password: e.target.value })}
-                            error={state.error}
+                            value={ state.password } onChange={ e => setState( { ...state, password: e.target.value } ) }
+                            error={ state.error }
 
                             fullWidth label="Contraseña" variant="outlined" />
 
                     </Grid>
 
-                    <Grid item xs={12} lg={4}>
+                    <Grid item xs={ 12 } lg={ 4 }>
 
-                        <TextField dsdsvalue={state.password_confirmation}
-                            onChange={e => setState({ ...state, password_confirmation: e.target.value })}
-                            fullWidth error={state.error}
-                            helperText={state.errorMensaje}
+                        <TextField dsdsvalue={ state.password_confirmation }
+                            onChange={ e => setState( { ...state, password_confirmation: e.target.value } ) }
+                            fullWidth error={ state.error }
+                            helperText={ state.errorMensaje }
                             label="Repetir Contraseña" variant="outlined" />
 
                     </Grid>
@@ -196,4 +205,4 @@ const Register = ({ history }) => {
     )
 
 }
-export default withRouter(Register);
+export default withRouter( Register )

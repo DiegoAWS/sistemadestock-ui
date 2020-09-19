@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
-import FormAddProveedor from '../../components/Dashboard/FormAddProveedor'
-import logo from '../../assets/images/logo.png'
+import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 
 import Datatable from '../../components/Dashboard/Datatable'
 
-import Popup from '../../components/Dashboard/Popup'
+
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import SearchIcon from '@material-ui/icons/Search'
@@ -291,21 +290,25 @@ const Clientes = props =>
                 responsive
                 handleDelete={ deleteData }
                 handleEdit={ editData } />
-
-            <Popup
+            <FormAddCliente
                 openPopup={ openPopup }
-                clearform={ clearform }
                 setOpenPopup={ setOpenPopup }
-                title={ ( formData.id ) ? 'Editar Cliente' : 'Añadir Cliente' }
-                logo={ logo }
+
+                formData={ formData }
+                SetFormData={ SetFormData }
+
+                data={ data }
+                setData={ setData }
+
                 recolocaEditItem={ recolocaEditItem }
-                saveData={ saveData }>
-                <FormAddProveedor
-                    campos={ campos }
-                    formData={ formData }
-                    SetFormData={ SetFormData }
-                />
-            </Popup>
+                saveData={ saveData }
+            />
+
+
+
+
+
+
 
 
         </>

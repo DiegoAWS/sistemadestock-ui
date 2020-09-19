@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef } from 'react'
 import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
 import MakeCompra from './MakeCompra'
 import Datatable from '../../components/Dashboard/Datatable'
@@ -69,7 +69,7 @@ const Stock = props =>
     //#endregion CONST's
 
     // eslint-disable-next-line
-    useEffect( () => { cargaData() }, [] )
+    // useEffect( () => { cargaData() }, [] )
 
 
 

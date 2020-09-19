@@ -9,7 +9,7 @@ import loading from '../../assets/images/loading.gif'
 function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 {
 
-
+  const [ dataTableData, setDataTableData ] = useState( [] )
   const [ openDeleteConfirm, setOpenDeleteConfirm ] = useState( false )
   const deletingValue = useRef( {} )
 
@@ -35,27 +35,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
       return text
   }
 
-  const formateaMonedas = () =>
-  {
 
-    let dataFormated = data.map( item =>
-    {
-
-      let newItem = item
-      campos.forEach( camp =>
-      {
-
-
-        if ( camp[ 1 ].toString().toLowerCase().includes( 'costo' ) || camp[ 1 ].toString().toLowerCase().includes( 'precio' ) )
-        {
-          newItem[ camp[ 0 ] ] = formatea( item[ camp[ 0 ] ] )
-        }
-      } )
-      return newItem
-    } )
-
-    return dataFormated
-  }
   const preparaColumnas = () =>
   {
 
@@ -77,7 +57,21 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   useEffect( preparaColumnas, [ campos ] )
 
 
+  useEffect( () =>
+  {
+    setDataTableData( [] )
 
+    setDataTableData( data.map( item =>
+    {
+      let newItem = item
+      campos.forEach( camp =>
+      {
+        if ( camp[ 1 ].toString().toLowerCase().includes( 'costo' ) || camp[ 1 ].toString().toLowerCase().includes( 'precio' ) )
+          newItem[ camp[ 0 ] ] = formatea( item[ camp[ 0 ] ] )
+      } )
+      return newItem
+    } ) )
+  }, [ data, campos ] )
 
 
 
@@ -249,7 +243,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
       <DataTable
         columns={ state.allInLine ? columns.slice( 0, state.cantidadColumnas + 1 ) : columns.slice( 0, state.cantidadColumnas ) }
-        data={ formateaMonedas() }
+        data={ dataTableData }
         keyField={ 'id' }
         defaultSortField={ 'id' }
         defaultSortAsc={ false }
@@ -257,7 +251,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
         highlightOnHover
         dense
         noHeader
-        onRowDoubleClicked={ handleShow }
+        onRowClicked={ handleShow }
         expandableRows={ !state.allInLine }
 
         expandOnRowDoubleClicked={ false }

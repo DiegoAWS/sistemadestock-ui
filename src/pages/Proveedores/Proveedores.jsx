@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
-import FormAddProveedor from '../../components/Dashboard/FormAddProveedor'
-import logo from '../../assets/images/logo.png'
+import { getRequest, deleteRequest } from '../../API/apiFunctions'
+
+import FormAddProveedor from '../../components/FormAdd/FormAddProveedor'
 
 import Datatable from '../../components/Dashboard/Datatable'
 
-import Popup from '../../components/Dashboard/Popup'
+
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import SearchIcon from '@material-ui/icons/Search'
@@ -35,7 +35,7 @@ const Proveedores = props =>
     const campos = [
 
 
-        [ 'Nombre', 'Proveedor', 'varchar' ],
+        [ 'Proveedor', 'Proveedor', 'varchar' ],
         [ 'Telefono', 'Teléfono', 'varchar' ],
         [ 'Email', 'Email', 'varchar' ],
         [ 'Direccion', 'Dirección', 'varchar' ],
@@ -73,57 +73,6 @@ const Proveedores = props =>
 
     //#region  CRUD API ----------------------------------
 
-    const saveData = () =>
-    {
-        setOpenPopup( false )
-
-
-
-
-        var uri = '/proveedores'
-
-        if ( formData.id && editingValue.current )
-        {// Editing....
-            uri = uri + '/' + formData.id
-
-
-        }
-
-
-
-        var DataOK = {}
-
-        campos.forEach( ( item, i ) =>
-        {
-
-            DataOK[ item[ 0 ] ] = formData[ item[ 0 ] ]
-
-        } )
-
-
-
-        //Ningun Dato
-        if ( data.length === 0 )
-            setData( [ formData ] )
-        else//Ya hay datos
-            setData( data.concat( formData ) )
-
-
-
-
-
-
-        postRequest( uri, DataOK )
-            .then( () =>
-            {
-
-                cargaData()
-
-
-            } )
-
-
-    }
     const cargaData = () =>
     {
 
@@ -132,7 +81,6 @@ const Proveedores = props =>
         getRequest( '/proveedores' )
             .then( request =>
             {
-
                 if ( request && request.data && request.data[ 0 ] && request.data[ 0 ].id )
                 {
 
@@ -292,20 +240,24 @@ const Proveedores = props =>
                 handleDelete={ deleteData }
                 handleEdit={ editData } />
 
-            <Popup
+
+
+            <FormAddProveedor
                 openPopup={ openPopup }
-                clearform={ clearform }
                 setOpenPopup={ setOpenPopup }
-                title={ ( formData.id ) ? 'Editar Proveedor' : 'Añadir Proveedor' }
-                logo={ logo }
+
+                formData={ formData }
+                SetFormData={ SetFormData }
+
+                data={ data }
+                setData={ setData }
+
+
                 recolocaEditItem={ recolocaEditItem }
-                saveData={ saveData }>
-                <FormAddProveedor
-                    campos={ campos }
-                    formData={ formData }
-                    SetFormData={ SetFormData }
-                />
-            </Popup>
+                cargaData={ cargaData }
+
+            />
+
 
 
         </>

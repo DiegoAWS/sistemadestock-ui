@@ -24,9 +24,9 @@ import Dashboard from './Dashboard/Dashboard'
 
 
 
-import Ventas from './Ventas/Ventas'
+// import Ventas from './Ventas/Ventas'
 
-import Stock from './Stock/Stock'
+// import Stock from './Stock/Stock'
 
 import Productos from './Productos/Productos'
 
@@ -38,6 +38,7 @@ import Codebars from './Codebars/Codebars'
 
 import Ajustes from './Ajustes/Ajustes'
 
+import Back from './Back'
 
 
 export default function App ()
@@ -64,8 +65,8 @@ export default function App ()
 
           <SecureRoute path='/dashboard' component={ Dashboard } />
 
-          <SecureRoute path='/ventas' component={ Ventas } />
-          <SecureRoute path='/stock' component={ Stock } />
+          <SecureRoute path='/ventas' component={ Back } />
+          <SecureRoute path='/stock' component={ Back } />
 
           <SecureRoute path='/productos' component={ Productos } />
           <SecureRoute path='/clientes' component={ Clientes } />

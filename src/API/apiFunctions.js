@@ -1,10 +1,20 @@
 import axios from "axios";
 
-var localhost = true;
+var localhost = false;
+
+//#region  import y cabecera ----------------------------------
+
+// import axiosCancel from 'axios-cancel';
+
+// axiosCancel(axios, {
+//   debug: false // default
+// });
 
 var HOST = localhost
   ? "http://192.168.137.1:80"
   : "https://sistemadestock.herokuapp.com";
+
+//#endregion import y cabecera
 
 //#region  SECURITY ----------------------------------
 
@@ -67,6 +77,8 @@ export const logout = () => {
 
 //#endregion SECURITY
 
+//#region  Request Regulares ----------------------------------
+
 export const getRequest = (url) => {
   return axios
     .get(HOST + "/api" + url, {
@@ -109,3 +121,4 @@ export const deleteRequest = (url) => {
       console.log(err);
     });
 };
+//#endregion Request Regulares

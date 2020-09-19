@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
-import FormAddProducto from '../../components/Dashboard/FormAddProducto'
-import logo from '../../assets/images/logo.png'
+import { getRequest, deleteRequest } from '../../API/apiFunctions'
+import FormAddProducto from '../../components/FormAdd/FormAddProducto'
+
 
 import Datatable from '../../components/Dashboard/Datatable'
 
 
 
-import Popup from '../../components/Dashboard/Popup'
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
 import CloseIcon from '@material-ui/icons/Close'
 import SearchIcon from '@material-ui/icons/Search'
@@ -34,8 +33,6 @@ const Productos = props =>
     [ 'Color', 'Color', 'varchar' ],
 
 
-    [ 'CostoUnitario', 'Costo Unitario de Compra', 'double' ],
-
     [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar' ],
 
     [ 'PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double' ],
@@ -47,6 +44,7 @@ const Productos = props =>
     [ 'PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double' ]
   ]
   //#endregion campos Producto
+
 
 
 
@@ -188,48 +186,6 @@ const Productos = props =>
       } )
   }
 
-  const saveData = () =>
-  {
-    setOpenPopup( false )
-
-
-
-
-    var uri = '/productos'
-
-    if ( formData.id && editingValue.current )
-    {// Editing....
-      uri = uri + '/' + formData.id
-
-
-    }
-
-
-
-
-    //Ningun Datoform
-    if ( data.length === 0 )
-      setData( [ formData ] )
-    else//Ya hay datos
-      setData( data.concat( formData ) )
-
-
-
-
-
-
-    postRequest( uri, formData )
-      .then( () =>
-      {
-
-        cargaData()
-
-
-      } )
-
-
-  }
-
 
   const editData = ( item ) =>
   {
@@ -366,24 +322,34 @@ const Productos = props =>
         handleDelete={ deleteData }
         handleEdit={ editData } />
 
-      <Popup
+
+
+      <FormAddProducto
         openPopup={ openPopup }
-        clearform={ clearform }
         setOpenPopup={ setOpenPopup }
-        title={ ( formData.id ) ? 'Editar Producto' : 'Añadir Producto' }
-        logo={ logo }
+
+
+        formData={ formData }
+        SetFormData={ SetFormData }
+
+
+        data={ data }
+        setData={ setData }
+
+
+
+
+        categorias={ categorias }
+        setCategorias={ setCategorias }
+
         recolocaEditItem={ recolocaEditItem }
-        saveData={ saveData }>
-        <FormAddProducto
-          cargaData={ cargaData }
-          categorias={ categorias }
-          setCategorias={ setCategorias }
-          ajustesPrecios={ ajustesPrecio }
-          campos={ campos }
-          formData={ formData }
-          SetFormData={ SetFormData }
-        />
-      </Popup>
+
+        cargaData={ cargaData }
+        ajustesPrecios={ ajustesPrecio }
+        campos={ campos }
+
+      />
+
 
 
     </>

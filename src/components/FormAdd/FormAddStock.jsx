@@ -7,7 +7,7 @@ import FormAddCategoria from './FormAddCategoria'
 import MoneyOffIcon from '@material-ui/icons/MoneyOff'
 
 
-const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, campos, cargaData, ajustesPrecios } ) =>
+const FormAddStock = ( { formData, SetFormData, categorias, setCategorias, campos, cargaData, ajustesPrecios } ) =>
 {
 
 
@@ -196,4 +196,4 @@ const FormAddProducto = ( { formData, SetFormData, categorias, setCategorias, ca
     )
 
 }
-export default FormAddProducto
+export default FormAddStock
