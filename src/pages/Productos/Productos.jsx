@@ -6,7 +6,6 @@ import logo from '../../assets/images/logo.png'
 import Datatable from '../../components/Dashboard/Datatable'
 
 
-import faker from 'faker/locale/es'
 
 import Popup from '../../components/Dashboard/Popup'
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
@@ -15,33 +14,6 @@ import SearchIcon from '@material-ui/icons/Search'
 
 import AddIcon from '@material-ui/icons/Add'
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
-
-//#region  Fake Producto ----------------------------------
-
-const createFakeProducto = () =>
-{
-  const precioBase = faker.commerce.price( 80000, 1000000 )
-  const campos = {
-    Codigo: faker.finance.account(),
-    Categoria: null,
-    Categoria_id: 1,
-    Producto: faker.commerce.product(),
-    Marca: "SAMSUNG",
-    Color: faker.commerce.color(),
-    CostoUnitario: precioBase,
-    PrecioVentaContadoMayorista: ( precioBase * 0.8 ).toFixed( 0 ) * 100,
-    PrecioVentaContadoMinorista: 0,
-    PrecioVenta3Cuotas: 0,
-    PrecioVenta6Cuotas: 0,
-    PrecioVenta12Cuotas: 0,
-    PrecioVenta18Cuotas: 0,
-    PrecioVenta24Cuotas: 0
-  }
-
-  return campos
-}
-//#endregion Fake Producto
-
 
 
 const Productos = props =>
@@ -363,8 +335,6 @@ const Productos = props =>
             variant="contained" color="primary"
             onClick={ () => { clearform(); setOpenPopup( true ) } } > Añadir Productos</Button>
 
-          {/* <Button  style={ { margin: '10px' } } variant="contained" color="primary"
-            onClick={ () => { SetFormData( createFakeProducto() ); setOpenPopup( true ) } } >Producto Falso</Button> */}
         </div>
         <div>
           <TextField
@@ -379,7 +349,7 @@ const Productos = props =>
               startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
               endAdornment: <InputAdornment position="end">
                 <IconButton
-                  onClick={ e => { setSearch( '' ); handleSearch( '' ) } }                >
+                  onClick={ e => { setSearch( '' ); handleSearch( '' ) } }    >
                   <CloseIcon />
                 </IconButton>
               </InputAdornment>,

@@ -107,7 +107,7 @@ const Codebars = props =>
 
             doc.text( '12x' + precio( prod.PrecioVenta12Cuotas, 12 ), 74, 13.5, null, null, "center" )
 
-            if ( parseInt( prod.PrecioVenta18Cuotas ) > 100 )
+            if ( parseInt( prod.PrecioVenta18Cuotas ) > 1000 )
                 doc.text( '18x' + precio( prod.PrecioVenta18Cuotas, 18 ), 74, 22.5, null, null, "center" )
 
 
