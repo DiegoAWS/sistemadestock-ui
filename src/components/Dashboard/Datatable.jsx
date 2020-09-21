@@ -10,8 +10,6 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 {
 
   const [ dataTableData, setDataTableData ] = useState( [] )
-  const [ openDeleteConfirm, setOpenDeleteConfirm ] = useState( false )
-  const deletingValue = useRef( {} )
 
   const showingValue = useRef( [] )
 
@@ -136,17 +134,17 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
 
 
-  const confirmDelete = item =>
-  {
-    deletingValue.current = item
-    setOpenDeleteConfirm( true )
 
-  }
 
 
   const ActionsButtons = ( { data } ) => (
     <div style={ { flexBasis: '140x', flexGrow: 1, display: 'flex' } }>
-      <IconButton onClick={ e => confirmDelete( data ) }
+      <IconButton onClick={ e =>
+      {
+        if ( window.confirm( "¿Seguro que desea Borrar este ítem?" ) )
+          handleDelete( data )
+
+      } }
         style={ { margin: '0 12px' } }
         size="medium"
         title='Borrar datos' color="secondary"
@@ -156,7 +154,12 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
       </IconButton>
 
-      <IconButton onClick={ ( e ) => { handleEdit( data ) } }
+      <IconButton onClick={ ( e ) =>
+      {
+        if ( window.confirm( "¿Seguro que desea Editar este ítem?" ) )
+          handleEdit( data )
+
+      } }
         title='Editar datos' color="primary"
         size="medium"
 
@@ -263,51 +266,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
         paginationRowsPerPageOptions={ [ 5, 10, 25, 50, 100, 200 ] }
         theme="tableTheme"
       />
-      <Modal
-        open={ openDeleteConfirm }
-        disableScrollLock
-        disableBackdropClick
-        disableEscapeKeyDown
-      >
 
-        <Grid container style={ {
-          backgroundColor: 'white', position: 'absolute',
-          width: 400, top: '50%', left: '50%', borderRadius: '20px',
-          transform: ' translate(-50%, -50%)'
-        } }
-          spacing={ 3 }>
-          <Grid item xs={ 12 }>
-            <h3 style={ { textAlign: 'center' } }>¿Seguro que desea eliminar ese registro?</h3>
-
-          </Grid>
-
-          <Grid item xs={ 12 } style={ { justifyContent: 'space-evenly', display: 'flex' } }>
-            <Button
-
-              color="primary"
-              variant="contained"
-              onClick={ () =>
-              {
-                setOpenDeleteConfirm( false )
-                handleDelete( deletingValue.current )
-                deletingValue.current = {}
-              } }>Borrar</Button>
-
-
-
-            <Button
-
-              color="secondary"
-              variant="contained"
-              onClick={ () =>
-              {
-                deletingValue.current = []
-                setOpenDeleteConfirm( false )
-              } }>Cancelar</Button>
-          </Grid>
-        </Grid>
-
-      </Modal>
 
 
       <Modal

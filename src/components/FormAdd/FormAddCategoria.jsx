@@ -26,6 +26,7 @@ const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCat
 {// Abrir y cerrar Dialog ,  Control del Form  y  CallBack de Actuliza from BD
 
     const [ loadingStatus, setLoadingStatus ] = useState( false )
+    const [ error, setError ] = useState( false )
     const classes = useStyle()
 
 
@@ -33,13 +34,24 @@ const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCat
     const saveCategoriaNueva = () =>
     {
 
+        if ( formCategorias.Nombre.length === 0 )
+        {
+            setError( true )
+            setTimeout( () => { setError( false ) }, 1000 )
+            return
+        }
+
         setLoadingStatus( true )
+        let path = ''
 
+        if ( formCategorias.id )//Editando
+            path = path + '/' + formCategorias.id
 
-        postRequest( '/categorias', formCategorias )
+        postRequest( '/categorias' + path, formCategorias )
             .then( () =>
             {
                 setLoadingStatus( false )
+                setFormCategorias( { Nombre: '' } )
 
                 setOpenPopup( false )
 
@@ -74,8 +86,8 @@ const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCat
                     <Hidden xsDown >
                         <img src={ logo } height="60px" alt="" /></Hidden>
                     <Typography variant="h6" component="div" style={ { flexGrow: 1, textAlign: 'center' } }>
-                        Añadir Categoría
-                        </Typography>
+                        { formCategorias.id ? 'Editar Categoría' : 'Añadir Categoría' }
+                    </Typography>
 
 
                     <Button
@@ -106,7 +118,7 @@ const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCat
                         style={ { margin: '10px' } }
                         onClick={ () =>
                         {
-                            setFormCategorias( {} )
+                            setFormCategorias( { Nombre: '' } )
                             setOpenPopup( false )
                         } } >
                         <CloseIcon />
@@ -118,7 +130,7 @@ const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCat
             <DialogContent dividers>
 
                 <TextField label='Categoría Nueva' variant="outlined" autoFocus margin='normal' size="small" fullWidth
-                    value={ formCategorias.Nombre }
+                    value={ formCategorias.Nombre } error={ error }
                     onChange={ e => { setFormCategorias( { ...formCategorias, Nombre: e.target.value } ) } } />
 
             </DialogContent>

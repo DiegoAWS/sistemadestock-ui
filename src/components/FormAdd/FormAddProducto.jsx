@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
-import { TextField, Grid, InputAdornment, IconButton } from '@material-ui/core'
+import React, { useState, useEffect } from 'react'
+import { TextField, Grid, InputAdornment, IconButton, Checkbox } from '@material-ui/core'
 
-import { postRequest } from '../../API/apiFunctions'
+import { postRequest, deleteRequest } from '../../API/apiFunctions'
 
-import MegaSelecter from '../Dashboard/MegaSelecter'
+import CategoriaSelect from './CategoriaSelect'
+
 import FormAddCategoria from './FormAddCategoria'
 
 import MoneyOffIcon from '@material-ui/icons/MoneyOff'
+
 import Popup from './Popup'
 
 
@@ -17,66 +19,64 @@ const FormAddProducto = (
         data, setData,
         categorias, setCategorias,
 
-        campos, cargaData,
+        cargaData,
         recolocaEditItem, ajustesPrecios
     } ) =>
 {
+    //#region  CONST ----------------------------------
 
-
-
+    //Control del Form Categorias
+    const [ formCategorias, setFormCategorias ] = useState( { Nombre: '' } )
 
     //Open Close Form Categorias
     const [ openPopupCategoria, setOpenPopupCategoria ] = useState( false )
 
-    //Control del Form Categorias
-    const [ formCategorias, setFormCategorias ] = useState( {
-        Nombre: ''
-    } )
+    //Diseable 18 y 24 Cuotas
+    const [ diseable18, setDiseable18 ] = useState( true )
+    const [ diseable24, setDiseable24 ] = useState( true )
+
+    //#endregion CONST
 
 
+    useEffect( () =>
+    {
+        if ( formData.PrecioVenta18Cuotas.length > 0 )
+            setDiseable18( false )
 
+        if ( formData.PrecioVenta24Cuotas.length > 0 )
+            setDiseable24( false )
+    }, [ formData ] )
+
+    //#region  saveData ----------------------------------
 
     const saveData = () =>
     {
         setOpenPopup( false )
 
         var uri = '/productos'
+        let formDataOK = formData
+        if ( diseable18 )
+            formDataOK.PrecioVenta18Cuotas = null
+
+        if ( diseable24 )
+            formDataOK.PrecioVenta24Cuotas = null
+
 
         if ( formData.id )// Editing....
             uri = uri + '/' + formData.id
 
         if ( data.length === 0 )//Ningun Dato
-            setData( [ formData ] )
+            setData( [ formDataOK ] )
         else//Ya hay datos
-            setData( data.concat( formData ) )
+            setData( data.concat( formDataOK ) )
 
-        postRequest( uri, formData ).then( () => { cargaData() } )
+        postRequest( uri, formDataOK ).then( () => { cargaData() } )
     }
 
+    //#endregion saveData
 
 
-    const textoCuotas = item =>
-    {
-        if ( formData[ item ] < 1000 )
-            return ''
-
-        switch ( item )
-        {
-            case 'PrecioVenta3Cuotas':
-                return '3 X ' + Math.round( formData[ item ] / 3000 ) * 1000
-
-            case 'PrecioVenta6Cuotas':
-                return '6 X ' + Math.round( formData[ item ] / 6000 ) * 1000
-
-            case 'PrecioVenta12Cuotas':
-                return '12 X ' + Math.round( formData[ item ] / 12000 ) * 1000
-
-
-            default:
-                return ''
-        }
-    }
-
+    //#region  Estiliza como money String ----------------------------------
 
     const EstilizaString = ( s ) =>
     {
@@ -87,11 +87,15 @@ const FormAddProducto = (
         return s.toString().replace( new RegExp( re, 'g' ), '$& ' )
     }
 
+    //#endregion Estiliza como money String
 
 
-    const AutoFillMoney = item =>
+
+    //#region  Auto Fill Money ----------------------------------
+
+    const AutoFillMoney = () =>
     {
-        let precioBase = parseInt( formData[ item[ 0 ] ] )
+        let precioBase = parseInt( formData.PrecioVentaContadoMayorista )
 
         if ( isNaN( precioBase ) )
             return
@@ -99,133 +103,55 @@ const FormAddProducto = (
 
         SetFormData( {
             ...formData,
-            PrecioVentaContadoMinorista: Math.round( ( ajustesPrecios.pMinorista * precioBase ) / 100000 ) * 1000,
-            PrecioVenta3Cuotas: Math.round( ( ajustesPrecios.p3cuotas * precioBase ) / 100000 ) * 1000,
-            PrecioVenta6Cuotas: Math.round( ( ajustesPrecios.p6cuotas * precioBase ) / 100000 ) * 1000,
-            PrecioVenta12Cuotas: Math.round( ( ajustesPrecios.p12cuotas * precioBase ) / 100000 ) * 1000
+            PrecioVentaContadoMinorista: Math.ceil( ( ajustesPrecios.pMinorista * precioBase ) / 10000 ) * 100,
+            PrecioVenta3Cuotas: Math.ceil( ( ajustesPrecios.p3cuotas * precioBase ) / 30000 ) * 100,
+            PrecioVenta6Cuotas: Math.ceil( ( ajustesPrecios.p6cuotas * precioBase ) / 60000 ) * 100,
+            PrecioVenta12Cuotas: Math.ceil( ( ajustesPrecios.p12cuotas * precioBase ) / 120000 ) * 100,
+            PrecioVenta18Cuotas: Math.ceil( ( ajustesPrecios.p18cuotas * precioBase ) / 180000 ) * 100,
+            PrecioVenta24Cuotas: Math.ceil( ( ajustesPrecios.p24cuotas * precioBase ) / 240000 ) * 100
         } )
 
     }
 
-
-    //#region  Inputs Genericos ----------------------------------
-
-    const varchar = ( item ) => (
-
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ formData[ item[ 0 ] ] || '' } onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } } />
-    )
-
-
-    const varcharX = ( item ) => (
-
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ formData[ item[ 0 ] ] || '' } onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } } />
-    )
-
-    const categSelector = ( item ) => (
-
-        <MegaSelecter
-            textAdd='Añadir Categoría'
-            label='Categoría'
-            etiqueta='Nombre'
-            value={ formData[ item[ 0 ] ] }
-            setValue={ ( cat, id ) =>
-            {
-                SetFormData( { ...formData, [ item[ 0 ] ]: cat, [ item[ 0 ] + '_id' ]: id } )
-            } }
-            list={ categorias }
-            toggleOpenFormAdd={ toggleOpenAddCategoria }
-        />
-
-    )
-    const double = ( item ) => (
-
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 } helperText={ EstilizaString( textoCuotas( item[ 0 ] ) ) }
-            onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
-
-    )
+    //#endregion Auto Fill Money
 
 
 
-    const doubleAutoRellenar = ( item ) => (
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 }
-            InputProps={ {
-                endAdornment: <InputAdornment position="end">
 
-                    <IconButton onClick={ e => { AutoFillMoney( item ) } } color='secondary' title='Autorellenar Precios'>
-
-                        <MoneyOffIcon />
-
-                    </IconButton>
-
-                </InputAdornment >,
-            } }
-            onChange={ e =>
-            {
-                SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } )
-            } } />
+    //#region  Edit Delete Categorias ----------------------------------
 
 
-    )
-
-    const date = ( item ) => (
-
-        <TextField label={ item[ 1 ] } type="date" fullWidth value={ formData[ item[ 0 ] ] }
-            onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } }
-            InputLabelProps={ { shrink: true, } } />
-
-    )
-    //#endregion Inputs Genericos
-
-
-    const toggleOpenAddCategoria = ( value ) =>
+    const handleEditCategoria = ( { Nombre, id } ) =>
     {
-        setOpenPopupCategoria( true )
-        setFormCategorias( { ...formCategorias, Nombre: value } )
-
-
-    }
-
-
-
-
-
-
-    const input = item =>
-    {
-
-        switch ( item[ 2 ] )
+        if ( window.confirm( "Seguro que desea Borrar esa Categoria" ) )
         {
+            setFormCategorias( { ...formCategorias, Nombre: Nombre, id: id } )
 
-            case 'date':
-                return date( item )
-
-            case 'double':
-                return double( item )
-
-            case 'categSelector':
-                return categSelector( item )
-
-            case 'varchar':
-                return varchar( item )
-            case 'varcharX':
-                return varcharX( item )
-            case 'autoRellenar':
-                return doubleAutoRellenar( item )
-
-            default:
-                return ( <></> )
+            setOpenPopupCategoria( true )
         }
     }
+    const handleDeleteCategoria = option =>
+    {
+
+        if ( window.confirm( "Seguro que desea Borrar esa Categoria" ) )
+        {
+
+
+
+            setCategorias( categorias.filter( it => it.id !== option.id ) )
+
+            deleteRequest( '/categorias/' + option.id ).then( () => { cargaData() } )
+
+        }
+    }
+
+    //#endregion Edit Delete Categorias
+
 
     return (
         <Popup
             openPopup={ openPopup }
             setOpenPopup={ setOpenPopup }
-
 
             title={ ( formData.id ) ? 'Editar Producto' : 'Añadir Producto' }
 
@@ -235,24 +161,126 @@ const FormAddProducto = (
 
                 <Grid container spacing={ 3 }>
 
+                    <Grid item xs={ 3 } >
+                        <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formData.Codigo } onChange={ e => { SetFormData( { ...formData, Codigo: e.target.value } ) } } />
+                    </Grid>
+                    <Grid item xs={ 9 }>
+                        <TextField label='Producto' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formData.Producto }
+                            onChange={ e => { SetFormData( { ...formData, Producto: e.target.value } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } >
+
+                        <CategoriaSelect
+
+
+                            value={ formData.Categoria }
+                            setValue={ ( cat, id ) => { SetFormData( { ...formData, Categoria: cat, Categoria_id: id } ) } }
+                            list={ categorias }
+
+                            toggleOpenFormAdd={ value =>
+                            {
+                                setOpenPopupCategoria( true )
+                                setFormCategorias( { ...formCategorias, Nombre: value } )
+                            } }
+
+                            handleEdit={ handleEditCategoria }
+                            handleDelete={ handleDeleteCategoria }
+                        />
+                    </Grid>
+
+
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Marca' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formData.Marca } onChange={ e => { SetFormData( { ...formData, Marca: e.target.value } ) } } />
+                    </Grid>
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label='Color' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formData.Color } onChange={ e => { SetFormData( { ...formData, Color: e.target.value } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Precio Mayorista' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formData.PrecioVentaContadoMayorista ) }
+                            InputProps={ {
+                                endAdornment: <InputAdornment position="end">
+                                    <IconButton onClick={ e => { AutoFillMoney() } } color='secondary' title='Autorellenar Precios'>
+                                        <MoneyOffIcon />  </IconButton>  </InputAdornment >
+                            } }
+                            onChange={ e => { SetFormData( { ...formData, PrecioVentaContadoMayorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formData.PrecioVentaContadoMinorista ) }
+
+                            onChange={ e => { SetFormData( { ...formData, PrecioVentaContadoMinorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
+
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formData.PrecioVenta3Cuotas ) }
+
+                            onChange={ e => { SetFormData( { ...formData, PrecioVenta3Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            InputProps={ { startAdornment: <InputAdornment position="start">3x </InputAdornment > } }
+                        /></Grid>
 
 
 
 
-
-                    { campos.map( ( item, i ) => (
-                        <Grid item xs={ 12 } sm={ item[ 2 ] === 'categSelector' || item[ 2 ] === 'varcharX' ? 12 : 6 } lg={ item[ 2 ] === 'categSelector' || item[ 2 ] === 'varcharX' ? 12 : 4 } key={ i }>
-
-
-                            { input( item ) }
-
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formData.PrecioVenta6Cuotas ) }
+                            InputProps={ { startAdornment: <InputAdornment position="start">6x </InputAdornment > } }
+                            onChange={ e => { SetFormData( { ...formData, PrecioVenta6Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
 
 
-                        </Grid>
-                    ) ) }
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Precio Venta 12 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formData.PrecioVenta12Cuotas ) }
+                            InputProps={ { startAdornment: <InputAdornment position="start">12x </InputAdornment > } }
+                            onChange={ e => { SetFormData( { ...formData, PrecioVenta12Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
+
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+
+                        <TextField label={ diseable18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas' } variant="outlined" margin='normal' size="small" fullWidth
+                            value={ diseable18 ? '' : EstilizaString( formData.PrecioVenta18Cuotas ) }
+                            disabled={ diseable18 }
+                            onChange={ e => { SetFormData( { ...formData, PrecioVenta18Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            InputProps={ {
+                                startAdornment: <InputAdornment position="start">18x </InputAdornment >,
+                                endAdornment: <InputAdornment position="end">
+                                    <Checkbox checked={ !diseable18 }
+                                        onChange={ e => { setDiseable18( !diseable18 ) } }
+                                        title={ diseable18 ? 'Activar 18 Cuotas' : 'Deshabilitar' }
+                                    />
+                                </InputAdornment>
+                            } }
+                        />
+                    </Grid>
+
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label={ diseable24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas' } variant="outlined" margin='normal' size="small" fullWidth
+                            value={ diseable24 ? '' : EstilizaString( formData.PrecioVenta24Cuotas ) }
+                            disabled={ diseable24 }
+                            onChange={ e => { SetFormData( { ...formData, PrecioVenta24Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            InputProps={ {
+                                startAdornment: <InputAdornment position="start">24x </InputAdornment >,
+                                endAdornment: <InputAdornment position="end">
+                                    <Checkbox checked={ !diseable24 }
+                                        onChange={ e => { setDiseable24( !diseable24 ) } }
+                                        title={ diseable24 ? 'Activar 24 Cuotas' : 'Deshabilitar' }
+                                    /></InputAdornment>
+                            } }
+                        />
+                    </Grid>
+
                 </Grid>
-
-
                 <FormAddCategoria openPopup={ openPopupCategoria } setOpenPopup={ setOpenPopupCategoria }// Control PopUP
                     formCategorias={ formCategorias } setFormCategorias={ setFormCategorias } // State del Form
                     categorias={ categorias } setCategorias={ setCategorias } // Lista de Categorias

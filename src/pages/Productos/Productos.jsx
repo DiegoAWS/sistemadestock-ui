@@ -28,8 +28,6 @@ const Productos = props =>
     [ 'Codigo', 'Código', 'varchar' ],
     [ 'Marca', 'Marca', 'varchar' ],
 
-    [ 'Marca', 'Marca', 'varchar' ],
-
     [ 'Color', 'Color', 'varchar' ],
 
 
@@ -51,7 +49,7 @@ const Productos = props =>
   //#region  CONST's STATE ----------------------------------
 
 
-  const [ openPopup, setOpenPopup ] = useState( false )
+  const [ openPopup, setOpenPopup ] = useState( true )
 
   const [ sinDatos, SetSinDatos ] = useState( false )
   const [ data, setData ] = useState( [] ) //Data de la tabla
@@ -68,8 +66,8 @@ const Productos = props =>
 
   var formInit = {
     Codigo: "",
-    Categoria: null,
-    Categoria_id: -1,
+    Categoria: "",
+    Categoria_id: "",
     Producto: "",
     Marca: "",
     Color: "",
@@ -94,6 +92,8 @@ const Productos = props =>
     p3cuotas: 112.50,
     p6cuotas: 130,
     p12cuotas: 150,
+    p18cuotas: 180,
+    p24cuotas: 200
   } )
 
 
@@ -160,7 +160,8 @@ const Productos = props =>
             let p3cuotas = parseInt( dataRequested.p3cuotas, 10 )
             let p6cuotas = parseInt( dataRequested.p6cuotas, 10 )
             let p12cuotas = parseInt( dataRequested.p12cuotas, 10 )
-
+            let p18cuotas = parseInt( dataRequested.p18cuotas, 10 )
+            let p24cuotas = parseInt( dataRequested.p24cuotas, 10 )
             if ( !( isNaN( pMinorista ) || isNaN( p3cuotas ) || isNaN( p6cuotas ) || isNaN( p12cuotas ) ) )
             {
 
@@ -171,6 +172,8 @@ const Productos = props =>
                   p3cuotas,
                   p6cuotas,
                   p12cuotas,
+                  p18cuotas,
+                  p24cuotas
                 } )
             }
 
@@ -212,7 +215,7 @@ const Productos = props =>
 
     clearform()
 
-    deleteRequest( '/productos/' + itemDelete.id, formData )
+    deleteRequest( '/productos/' + itemDelete.id )
       .then( () =>
       {
         cargaData()
