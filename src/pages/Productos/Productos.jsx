@@ -49,10 +49,10 @@ const Productos = props =>
   //#region  CONST's STATE ----------------------------------
 
 
-  const [ openPopup, setOpenPopup ] = useState( true )
+  const [ openPopup, setOpenPopup ] = useState( false )
 
   const [ sinDatos, SetSinDatos ] = useState( false )
-  const [ data, setData ] = useState( [] ) //Data de la tabla
+  const [ dataProductos, setDataProductos ] = useState( [] ) //Data de la tabla
   const [ categorias, setCategorias ] = useState( [] ) // Categorias
 
 
@@ -84,10 +84,10 @@ const Productos = props =>
 
 
   //#endregion Inicializing the Form
-  const [ formData, SetFormData ] = useState( formInit )
+  const [ formProducto, setFormProducto ] = useState( formInit )
 
 
-  const [ ajustesPrecio, setAjustesPrecio ] = useState( {
+  const [ ajustesPrecios, setAjustesPrecio ] = useState( {
     pMinorista: 106.25,
     p3cuotas: 112.50,
     p6cuotas: 130,
@@ -130,14 +130,15 @@ const Productos = props =>
             campos.forEach( item =>
             {
 
-              instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? "" : dataRequested[ item[ 0 ] ]
+              instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? "" : dataRequested[ item[ 0 ] ].replace( ' ', '' )
+
             } )
 
             return { ...instantData, id: dataRequested.id }
 
           } )
 
-          setData( newData )
+          setDataProductos( newData )
 
 
 
@@ -195,12 +196,12 @@ const Productos = props =>
 
     editingValue.current = item
 
-    var temp = data.filter( it => it.id !== item.id )
+    var temp = dataProductos.filter( it => it.id !== item.id )
 
 
-    setData( temp )
+    setDataProductos( temp )
 
-    SetFormData( item )
+    setFormProducto( item )
     setOpenPopup( true )
 
 
@@ -211,7 +212,7 @@ const Productos = props =>
   {
 
 
-    setData( data.filter( it => it.id !== itemDelete.id ) )
+    setDataProductos( dataProductos.filter( it => it.id !== itemDelete.id ) )
 
     clearform()
 
@@ -235,19 +236,19 @@ const Productos = props =>
   {
 
     editingValue.current = {}
-    SetFormData( formInit )
+    setFormProducto( formInit )
 
   }
   const recolocaEditItem = () =>
   {
-    setData( data.concat( editingValue.current ) )
+    setDataProductos( dataProductos.concat( editingValue.current ) )
   }
 
   const handleSearch = text =>
   {
 
 
-    let dataFilter = data.filter( item =>
+    let dataFilter = dataProductos.filter( item =>
     {
       let resp = false
 
@@ -270,9 +271,6 @@ const Productos = props =>
     setFilterData( dataFilter )
   }
   //#endregion Others Functions
-
-
-
 
 
   //#endregion Categorias Handler
@@ -317,7 +315,7 @@ const Productos = props =>
 
       </div>
 
-      <Datatable data={ ( search.length === 0 ) ? data : filterData }
+      <Datatable data={ ( search.length === 0 ) ? dataProductos : filterData }
 
         sinDatos={ sinDatos }
         campos={ campos }
@@ -332,12 +330,12 @@ const Productos = props =>
         setOpenPopup={ setOpenPopup }
 
 
-        formData={ formData }
-        SetFormData={ SetFormData }
+        formProducto={ formProducto }
+        setFormProducto={ setFormProducto }
 
 
-        data={ data }
-        setData={ setData }
+        dataProductos={ dataProductos }
+        setDataProductos={ setDataProductos }
 
 
 
@@ -348,7 +346,7 @@ const Productos = props =>
         recolocaEditItem={ recolocaEditItem }
 
         cargaData={ cargaData }
-        ajustesPrecios={ ajustesPrecio }
+        ajustesPrecios={ ajustesPrecios }
         campos={ campos }
 
       />

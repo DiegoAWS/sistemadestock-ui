@@ -6,10 +6,11 @@ import EditIcon from '@material-ui/icons/Edit'
 import CloseIcon from '@material-ui/icons/Close'
 import loading from '../../assets/images/loading.gif'
 
+
 function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 {
 
-  const [ dataTableData, setDataTableData ] = useState( [] )
+
 
   const showingValue = useRef( [] )
 
@@ -20,18 +21,8 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   } )
 
 
-  const formatea = text =>
-  {
-    var re = '\\d(?=(\\d{3})+$)'
 
-    if ( text && text.toString() )
-    {
 
-      return text.toString().replace( new RegExp( re, 'g' ), '$& ' )
-    }
-    else
-      return text
-  }
 
 
   const preparaColumnas = () =>
@@ -55,21 +46,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
   useEffect( preparaColumnas, [ campos ] )
 
 
-  useEffect( () =>
-  {
-    setDataTableData( [] )
 
-    setDataTableData( data.map( item =>
-    {
-      let newItem = item
-      campos.forEach( camp =>
-      {
-        if ( camp[ 1 ].toString().toLowerCase().includes( 'costo' ) || camp[ 1 ].toString().toLowerCase().includes( 'precio' ) )
-          newItem[ camp[ 0 ] ] = formatea( item[ camp[ 0 ] ] )
-      } )
-      return newItem
-    } ) )
-  }, [ data, campos ] )
 
 
 
@@ -243,10 +220,9 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
   return (
     <div style={ { width: 60 + state.cantidadColumnas * 140, borderRadius: '10px', margin: '0 20px 0 0' } }>
-
       <DataTable
         columns={ state.allInLine ? columns.slice( 0, state.cantidadColumnas + 1 ) : columns.slice( 0, state.cantidadColumnas ) }
-        data={ dataTableData }
+        data={ data }
         keyField={ 'id' }
         defaultSortField={ 'id' }
         defaultSortAsc={ false }
@@ -256,7 +232,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
         noHeader
         onRowClicked={ handleShow }
         expandableRows={ !state.allInLine }
-
+        responsive
         expandOnRowDoubleClicked={ false }
 
         expandableRowsComponent={ <ExpandedComponent /> }

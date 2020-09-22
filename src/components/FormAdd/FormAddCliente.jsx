@@ -24,7 +24,7 @@ const FormAddCliente = ( {
     {
         setOpenPopup( false )
 
-        var uri = '/proveedores'
+        var uri = '/clientes'
 
         if ( formData.id )// Editing....
             uri = uri + '/' + formData.id
@@ -49,7 +49,7 @@ const FormAddCliente = ( {
             setOpenPopup={ setOpenPopup }
 
 
-            title={ ( formData.id ) ? 'Editar Producto' : 'Añadir Producto' }
+            title={ ( formData.id ) ? 'Editar Cliente' : 'Añadir Cliente' }
 
             recolocaEditItem={ recolocaEditItem }
             saveData={ saveData }>
@@ -62,6 +62,13 @@ const FormAddCliente = ( {
                     <TextField label={ 'Cliente' } variant="outlined" margin='normal' size="small"
                         value={ formData.Nombre || '' } fullWidth
                         onChange={ e => { SetFormData( { ...formData, Nombre: e.target.value } ) } } />
+
+                </Grid>
+                <Grid item xs={ 12 } sm={ 6 } lg={ 4 }>
+
+                    <TextField label={ 'Telefono' } variant="outlined" margin='normal' size="small"
+                        value={ formData.Telefono || '' } fullWidth
+                        onChange={ e => { SetFormData( { ...formData, Telefono: e.target.value } ) } } />
 
                 </Grid>
                 <Grid item xs={ 12 } sm={ 6 } lg={ 4 }>

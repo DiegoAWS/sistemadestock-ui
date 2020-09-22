@@ -1,27 +1,104 @@
 import React, { useState } from 'react'
-import { TextField, Grid, InputAdornment, IconButton } from '@material-ui/core'
+import { TextField, Grid } from '@material-ui/core'
 
-import MegaSelecter from './MegaSelecter'
-import FormAddCategoria from './FormAddCategoria'
+import { postRequest, deleteRequest } from '../../API/apiFunctions'
 
-import MoneyOffIcon from '@material-ui/icons/MoneyOff'
+import ProductoSelect from './ProductoSelect'
 
 
-const FormAddStock = ( { formData, SetFormData, categorias, setCategorias, campos, cargaData, ajustesPrecios } ) =>
+import Popup from './Popup'
+import FormAddProducto from './FormAddProducto'
+import ProveedoresSelect from './ProveedoresSelect'
+import FormAddProveedor from './FormAddProveedor'
+
+
+const FormAddStock = (
+    {
+        openPopup, setOpenPopup,
+        formStock, SetFormStock,
+
+        dataStock, setDataStock,
+        dataProveedores, setDataProveedores,
+        dataProductos, setDataProductos,
+        dataCategorias, setDataCategorias,
+
+        cargaData,
+        recolocaEditItem, ajustesPrecios
+    } ) =>
 {
+    //#region  CONST ----------------------------------
 
+    //#region  Form Producto ----------------------------------
 
+    //Control del Form Producto
+    const [ formProducto, setFormProducto ] = useState( {
+        Codigo: "",
+        Categoria: "",
+        Categoria_id: "",
+        Producto: "",
+        Marca: "",
+        Color: "",
 
-
-    //Open Close Form Categorias
-    const [ openPopupCategoria, setOpenPopupCategoria ] = useState( false )
-
-    //Control del Form Categorias
-    const [ formCategorias, setFormCategorias ] = useState( {
-        Nombre: ''
+        PrecioVentaContadoMayorista: "",
+        PrecioVentaContadoMinorista: "",
+        PrecioVenta3Cuotas: "",
+        PrecioVenta6Cuotas: "",
+        PrecioVenta12Cuotas: "",
+        PrecioVenta18Cuotas: "",
+        PrecioVenta24Cuotas: ""
     } )
 
+    //Open Close Form Producto
+    const [ openPopupProducto, setOpenPopupProducto ] = useState( false )
 
+    //#endregion Form Producto
+
+    //#region  form Proveedor ----------------------------------
+
+    const [ formProveedor, setFormProveedor ] = useState( {
+        Proveedor: '',
+        Telefono: '',
+        Email: '',
+        Direccion: '',
+        OtrosDatos: ''
+    } )
+
+    //Open Close Form Proveedor
+    const [ openPopupProveedor, setOpenPopupProveedor ] = useState( false )
+
+    //#endregion form Proveedor
+
+    //#endregion CONST
+
+
+    //#region  saveData ----------------------------------
+
+    const saveData = () =>
+    {
+
+        setOpenPopup( false )
+
+        var uri = '/stocks'
+        let formDataOK = formStock
+
+
+
+        if ( formStock.id )// Editing....
+            uri = uri + '/' + formStock.id
+
+        if ( dataStock.length === 0 )//Ningun Dato
+            setDataStock( [ formDataOK ] )
+        else//Ya hay datos
+            setDataStock( dataStock.concat( formDataOK ) )
+
+        postRequest( uri, formDataOK ).then( () => { cargaData() } )
+    }
+
+    //#endregion saveData
+
+
+
+    //#region  Estiliza como money String ----------------------------------
 
     const EstilizaString = ( s ) =>
     {
@@ -32,168 +109,168 @@ const FormAddStock = ( { formData, SetFormData, categorias, setCategorias, campo
         return s.toString().replace( new RegExp( re, 'g' ), '$& ' )
     }
 
-
-
-    const AutoFillMoney = item =>
-    {
-        let precioBase = parseInt( formData[ item[ 0 ] ] )
-
-        if ( isNaN( precioBase ) )
-            return
-
-
-        SetFormData( {
-            ...formData,
-            PrecioVentaContadoMinorista: Math.round( ( ajustesPrecios.pMinorista * precioBase ) / 100000 ) * 1000,
-            PrecioVenta3Cuotas: Math.round( ( ajustesPrecios.p3cuotas * precioBase ) / 100000 ) * 1000,
-            PrecioVenta6Cuotas: Math.round( ( ajustesPrecios.p6cuotas * precioBase ) / 100000 ) * 1000,
-            PrecioVenta12Cuotas: Math.round( ( ajustesPrecios.p12cuotas * precioBase ) / 100000 ) * 1000
-        } )
-
-    }
-
-
-    //#region  Inputs Genericos ----------------------------------
+    //#endregion Estiliza como money String
 
 
 
+    //#region  Edit Delete Producto ----------------------------------
 
-    const varchar = ( item ) => (
-
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ formData[ item[ 0 ] ] || '' } onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } } />
-    )
-
-    const categSelector = ( item ) => (
-
-        <MegaSelecter
-            textAdd='Añadir Categoría'
-            label='Categoría'
-            etiqueta='Nombre'
-            value={ formData[ item[ 0 ] ] }
-            setValue={ ( cat, id ) =>
-            {
-                SetFormData( { ...formData, [ item[ 0 ] ]: cat, [ item[ 0 ] + '_id' ]: id } )
-            } }
-            list={ categorias }
-            toggleOpenFormAdd={ toggleOpenAddCategoria }
-        />
-
-    )
-    const double = ( item ) => (
-
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 }
-            onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
-
-    )
-
-
-
-    const doubleAutoRellenar = ( item ) => (
-        <TextField label={ item[ 1 ] } variant="outlined" margin='normal' size="small" fullWidth
-            value={ EstilizaString( formData[ item[ 0 ] ] ) || 0 }
-            InputProps={ {
-                endAdornment: <InputAdornment position="end">
-
-                    <IconButton onClick={ e => { AutoFillMoney( item ) } } color='secondary' title='Autorellenar Precios'>
-
-                        <MoneyOffIcon />
-
-                    </IconButton>
-
-                </InputAdornment >,
-            } }
-            onChange={ e =>
-            {
-                SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } )
-            } } />
-
-
-    )
-
-    const date = ( item ) => (
-
-        <TextField label={ item[ 1 ] } type="date" fullWidth value={ formData[ item[ 0 ] ] }
-            onChange={ e => { SetFormData( { ...formData, [ item[ 0 ] ]: e.target.value } ) } }
-            InputLabelProps={ { shrink: true, } } />
-
-    )
-    //#endregion Inputs Genericos
-
-
-    const toggleOpenAddCategoria = ( value ) =>
-    {
-        setOpenPopupCategoria( true )
-        setFormCategorias( { ...formCategorias, Nombre: value } )
-
-
-    }
-
-
-
-
-
-
-    const input = item =>
+    const handleEditProducto = ( { id } ) =>
     {
 
-        switch ( item[ 2 ] )
+        let productoEditar = dataProductos.filter( item => item.id === id )[ 0 ]
+
+        if ( productoEditar )
         {
+            setFormProducto( productoEditar )
 
-            case 'date':
-                return date( item )
-
-            case 'double':
-                return double( item )
-
-            case 'categSelector':
-                return categSelector( item )
-
-            case 'varchar':
-                return varchar( item )
-
-            case 'autoRellenar':
-                return doubleAutoRellenar( item )
-
-            default:
-                return ( <></> )
+            setOpenPopupProducto( true )
         }
+
     }
+
+    const handleDeleteProducto = ( { id } ) =>
+    {
+        setDataProductos( dataProductos.filter( it => it.id.toString() !== id.toString() ) )
+
+        deleteRequest( '/productos/' + id ).then( () => { cargaData() } )
+    }
+
+
+    //#endregion  Edit Delete Producto
+
+
+    //#region  Edit Delete Proveedor ----------------------------------
+
+    const handleEditProveedor = ( { id } ) =>
+    {
+
+        let ProveedorEditar = dataProveedores.filter( item => item.id === id )[ 0 ]
+
+        if ( ProveedorEditar )
+        {
+            setFormProveedor( ProveedorEditar )
+
+            setOpenPopupProveedor( true )
+        }
+
+
+
+    }
+
+
+    const handleDeleteProveedor = ( { id } ) =>
+    {
+
+        setDataProveedores( dataProveedores.filter( it => it.id.toString() !== id.toString() ) )
+
+        deleteRequest( '/proveedores/' + id ).then( () => { cargaData() } )
+    }
+
+
+
+    //#endregion Edit Delete Proveedores
+
+
+    //#region  Return ----------------------------------
+
+
+
 
     return (
+        <Popup
+            openPopup={ openPopup }
+            setOpenPopup={ setOpenPopup }
 
-        <>
+            title={ ( formStock.id ) ? 'Editar Stock' : 'COMPRA' }
 
-            <Grid container spacing={ 3 }>
+            recolocaEditItem={ recolocaEditItem }
+            saveData={ saveData }>
+            <>
 
-
-
-
-
-
-                { campos.map( ( item, i ) => (
-                    <Grid item xs={ 12 } sm={ item[ 2 ] === 'categSelector' ? 12 : 6 } lg={ item[ 2 ] === 'categSelector' ? 12 : 4 } key={ i }>
-
-
-                        { input( item ) }
+                <Grid container spacing={ 3 }>
 
 
 
+                    <Grid item xs={ 12 } >
+
+                        <ProductoSelect
+
+
+                            value={ formStock.Producto }
+                            setValue={ id => { SetFormStock( { ...formStock, Producto_id: id } ) } }
+                            list={ dataProductos }
+
+                            toggleOpenFormAdd={ () => { setOpenPopupProducto( true ) } }
+
+                            handleEdit={ handleEditProducto }
+                            handleDelete={ handleDeleteProducto }
+                        />
                     </Grid>
-                ) ) }
-            </Grid>
+
+                    <Grid item xs={ 12 } >
+
+                        <ProveedoresSelect
+
+                            value={ formStock.Proveedor }
+                            setValue={ id => { SetFormStock( { ...formStock, Proveedor_id: id } ) } }
+                            list={ dataProveedores }
+
+                            toggleOpenFormAdd={ () => { setOpenPopupProveedor( true ) } }
+
+                            handleEdit={ handleEditProveedor }
+                            handleDelete={ handleDeleteProveedor }
+                        />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ EstilizaString( formStock.CostoUnitario ) }
+
+                            onChange={ e => { SetFormStock( { ...formStock, CostoUnitario: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+
+                        /></Grid>
 
 
-            <FormAddCategoria openPopup={ openPopupCategoria } setOpenPopup={ setOpenPopupCategoria }// Control PopUP
-                formCategorias={ formCategorias } setFormCategorias={ setFormCategorias } // State del Form
-                categorias={ categorias } setCategorias={ setCategorias } // Lista de Categorias
-                cargaData={ cargaData }
-            />
-        </>
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                        <TextField label='Cantidad' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formStock.Cantidad } onChange={ e => { SetFormStock( { ...formStock, Cantidad: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formStock.Factura } onChange={ e => { SetFormStock( { ...formStock, Factura: e.target.value } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label='Fecha de Compra' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formStock.FechaCompra } onChange={ e => { SetFormStock( { ...formStock, FechaCompra: e.target.value } ) } } />
+                    </Grid>
 
 
+                </Grid>
+
+                <FormAddProducto
+                    openPopup={ openPopupProducto } setOpenPopup={ setOpenPopupProducto }// Control PopUP
+                    formProducto={ formProducto } setFormProducto={ setFormProducto } // State del Form
+                    categorias={ dataCategorias } setCategorias={ setDataCategorias }
+
+                    dataProductos={ dataProductos } setDataProductos={ setDataProductos } // Lista de Productos
+                    cargaData={ cargaData } recolocaEditItem={ () => { } } ajustesPrecios={ ajustesPrecios }
+                />
+                <FormAddProveedor
+                    data={ dataProveedores } setData={ setDataProveedores } // Lista de Proveedores
+                    formData={ formProveedor } SetFormData={ setFormProveedor } // State del Form
+                    openPopup={ openPopupProveedor } setOpenPopup={ setOpenPopupProveedor }// Control PopUP
+                    recolocaEditItem={ () => { } }
+
+                    cargaData={ cargaData }
+                />
+            </>
+
+
+        </Popup>
     )
-
+    //#endregion Return
 }
 export default FormAddStock

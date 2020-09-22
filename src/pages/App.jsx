@@ -26,7 +26,7 @@ import Dashboard from './Dashboard/Dashboard'
 
 // import Ventas from './Ventas/Ventas'
 
-// import Stock from './Stock/Stock'
+import Stock from './Stock/Stock'
 
 import Productos from './Productos/Productos'
 
@@ -66,7 +66,7 @@ export default function App ()
           <SecureRoute path='/dashboard' component={ Dashboard } />
 
           <SecureRoute path='/ventas' component={ Back } />
-          <SecureRoute path='/stock' component={ Back } />
+          <SecureRoute path='/stock' component={ Stock } />
 
           <SecureRoute path='/productos' component={ Productos } />
           <SecureRoute path='/clientes' component={ Clientes } />

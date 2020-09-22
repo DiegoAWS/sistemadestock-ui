@@ -1,7 +1,8 @@
-import React, { useState, useRef } from 'react'
-import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
-import MakeCompra from './MakeCompra'
+import React, { useState, useEffect, useRef } from 'react'
+import { getRequest, deleteRequest } from '../../API/apiFunctions'
+
 import Datatable from '../../components/Dashboard/Datatable'
+import FormAddStock from '../../components/FormAdd/FormAddStock'
 
 
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
@@ -18,47 +19,129 @@ import AddIcon from '@material-ui/icons/Add'
 const Stock = props =>
 {
 
+    //#region  CONST's State ----------------------------------
 
-
-    //#region  CONST's ----------------------------------
-
-
-    const [ openPopup, setOpenPopup ] = useState( false )
+    const [ openPopup, setOpenPopup ] = useState( true )
 
     const [ sinDatos, SetSinDatos ] = useState( false )
-    const [ data, setData ] = useState( [] ) //Data de la tabla
+
+
+    const [ dataStock, setDataStock ] = useState( [] ) //Data de la tabla STOCK
+    const [ dataProductos, setDataProductos ] = useState( [] ) //Data de la tabla Productos
+    const [ dataProveedores, setDataProveedores ] = useState( [] ) //Data de la tabla Proveedores
+    const [ dataCategorias, setDataCategorias ] = useState( [] ) //Data de la tabla Categorias
+
+    const [ dataFull, setDataFull ] = useState( [] )
+
+    const [ ajustesPrecios, setAjustesPrecio ] = useState( {
+        pMinorista: 106.25,
+        p3cuotas: 112.50,
+        p6cuotas: 130,
+        p12cuotas: 150,
+        p18cuotas: 180,
+        p24cuotas: 200
+    } )
 
     const [ search, setSearch ] = useState( '' )
     const [ filterData, setFilterData ] = useState( [] )
 
+    //#endregion CONST's State
 
     //#region  campos Producto ----------------------------------
 
-    const campos = [
+    const camposProducto = [
 
 
-        [ 'Nombre', 'Proveedor', 'varchar' ],
-        [ 'Telefono', 'Teléfono', 'varchar' ],
-        [ 'Email', 'Email', 'varchar' ],
-        [ 'Direccion', 'Dirección', 'varchar' ],
-        [ 'OtrosDatos', 'Otros', 'varchar' ]
+        [ 'Producto', 'Producto', 'varcharX' ],
+        [ 'Categoria', 'Categoría', 'categSelector' ],
+
+        [ 'Codigo', 'Código', 'varchar' ],
+        [ 'Marca', 'Marca', 'varchar' ],
+
+        [ 'Color', 'Color', 'varchar' ],
+
+
+        [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar' ],
+
+        [ 'PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double' ],
+
+        [ 'PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double' ],
+        [ 'PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double' ],
+        [ 'PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double' ],
+        [ 'PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double' ],
+        [ 'PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double' ]
 
 
     ]
     //#endregion campos Producto
 
+    //#region  campos Proveedor ----------------------------------
+
+    const camposProveedor = [
+
+        [ 'Proveedor', 'Proveedor', 'varchar' ],
+        [ 'Telefono', 'Teléfono', 'varchar' ],
+        [ 'Email', 'Email', 'varchar' ],
+        [ 'Direccion', 'Dirección', 'varchar' ],
+        [ 'OtrosDatos', 'Otros', 'varchar' ]
+    ]
+
+    //#endregion campos Proveedor
+
+    //#region  campos Stock ----------------------------------
+
+    const camposStock = [ [ 'Producto_id' ], [ 'Proveedor_id' ], [ 'CostoUnitario' ], [ 'Cantidad' ], [ 'Factura' ], [ 'FechaCompra' ] ]
+
+    //#endregion campos Stock
+
+    //#region  campos datFull ----------------------------------
+
+    const camposDataFull = [
+        [ 'Codigo', 'Código', 'varchar' ],
+
+        [ 'Categoria', 'Categoría', 'categSelector' ],
+        [ 'Producto', 'Producto', 'varcharX' ],
+
+        [ 'Marca', 'Marca', 'varchar' ],
+
+        [ 'Color', 'Color', 'varchar' ],
+
+        [ 'Cantidad', 'Cantidad', 'double' ],
+        [ 'Proveedor', 'Proveedor', 'varchar' ],
+        [ 'Factura', 'Factura de Compra', 'varchar' ],
+        [ 'FechaCompra', 'Fecha de Compra', 'datetime' ],
+        [ 'CostoUnitario', 'Costo Unitario', 'double' ],
+
+        [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar' ],
+
+        [ 'PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double' ],
+
+        [ 'PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double' ],
+        [ 'PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double' ],
+        [ 'PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double' ],
+        [ 'PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double' ],
+        [ 'PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double' ]
+    ]
+
+    //#endregion campos datFull
 
     //#region  Inicializing the Form ----------------------------------
 
 
+    const initFormStock = {
+        Producto_id: '',
+        Proveedor_id: '',
+        CostoUnitario: '',
+        Cantidad: '',
+        Factura: '',
+        FechaCompra: ''
+    }
 
-
-    var formInit = {}
+    const [ formStock, SetFormStock ] = useState( initFormStock )
 
 
 
     //#endregion Inicializing the Form
-    const [ formData, SetFormData ] = useState( formInit )
 
 
 
@@ -66,116 +149,173 @@ const Stock = props =>
 
 
 
-    //#endregion CONST's
+    //#region  use Effect ----------------------------------
 
     // eslint-disable-next-line
-    // useEffect( () => { cargaData() }, [] )
+    useEffect( () => { cargaData() }, [] )
 
-
-
-    //#region  CRUD API ----------------------------------
-
-    const saveData = () =>
+    useEffect( () =>
     {
-        setOpenPopup( false )
 
-
-
-
-        var uri = '/proveedores'
-
-        if ( formData.id && editingValue.current )
-        {// Editing....
-            uri = uri + '/' + formData.id
-
-
-        }
-
-
-
-        var DataOK = {}
-
-        campos.forEach( ( item, i ) =>
+        let newFullData = dataStock.map( item =>
         {
+            let newProducto = dataProductos.filter( itemProducto =>
+            {
+                if ( itemProducto.id )
+                    return itemProducto.id.toString() === item.Producto_id
+                else
+                    return false
+            } )[ 0 ]
 
-            DataOK[ item[ 0 ] ] = formData[ item[ 0 ] ]
+            let newProveedor = dataProveedores.filter( itemProveedor =>
+            {
 
+                if ( itemProveedor.id )
+                    return itemProveedor.id.toString() === item.Proveedor_id
+                else
+                    return false
+            } )[ 0 ]
+
+            let fullDataItem = { ...item, ...newProducto, ...newProveedor }
+
+            return { ...fullDataItem, id: item.id }
         } )
 
-
-
-        //Ningun Dato
-        if ( data.length === 0 )
-            setData( [ formData ] )
-        else//Ya hay datos
-            setData( data.concat( formData ) )
+        setDataFull( newFullData )
+    }, [ dataStock, dataProductos, dataProveedores ] )
 
 
 
+    //#endregion use Effect
 
 
 
-        postRequest( uri, DataOK )
-            .then( () =>
-            {
+    //#region  Carga Data ----------------------------------
 
-                cargaData()
-
-
-            } )
-
-
-    }
     const cargaData = () =>
     {
-
-        clearform()
-
-
-
-
-
-        getRequest( '/proveedores' )
-            .then( request =>
+        getRequest( '/stocks' ).then( request =>
+        {
+            if ( request && request.statusText === 'OK' && request.data && request.data.Productos && request.data.Proveedors && request.data.Stock )
             {
+                //#region  Productos ----------------------------------
 
-                if ( request && request.data && request.data[ 0 ] && request.data[ 0 ].id )
+                setDataProductos( request.data.Productos.map( dataRequested =>
                 {
 
-                    var newData = request.data.map( dataRequested =>
+                    let instantData = {}
+
+                    camposProducto.forEach( item => { instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? '' : dataRequested[ item[ 0 ] ] } )
+
+                    return { ...instantData, id: dataRequested.id }
+
+                } ) )
+
+                //#endregion Productos
+
+                //#region  Proveedors ----------------------------------
+
+                setDataProveedores( request.data.Proveedors.map( dataRequested =>
+                {
+
+                    let instantData = {}
+
+                    camposProveedor.forEach( item =>
                     {
 
-                        let instantData = {}
-
-                        campos.forEach( item =>
-                        {
-                            instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? "" : dataRequested[ item[ 0 ] ]
-                        } )
-
-                        return { ...instantData, id: dataRequested.id }
-
+                        instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? '' : dataRequested[ item[ 0 ] ]
                     } )
 
+                    return { ...instantData, id: dataRequested.id }
 
-                    setData( newData )
+                } ) )
+
+                //#endregion Proveedors
+
+                //#region  Stock ----------------------------------
+
+                setDataStock( request.data.Stock.map( dataRequested =>
+                {
+
+                    let instantData = {}
+
+                    camposStock.forEach( item => { instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? '' : dataRequested[ item[ 0 ] ] } )
+
+                    return { ...instantData, id: dataRequested.id }
+
+                } ) )
+
+                //#endregion Stock
+
+                //#region  Categorias ----------------------------------
+
+                setDataCategorias( request.data.Categorias.map( dataRequested => ( {
+                    Nombre: dataRequested.Nombre ? dataRequested.Nombre : '',
+                    id: dataRequested.id ? dataRequested.id : ''
+                } ) ) )
+
+                //#endregion Categorias
+
+                //#region  Ajuste Precio ----------------------------------
+
+                if ( request.data.Ajuste[ 0 ] )
+                {
+
+                    let dataRequested = request.data.Ajuste[ 0 ]
+
+                    let pMinorista = parseInt( dataRequested.pMinorista, 10 )
+                    let p3cuotas = parseInt( dataRequested.p3cuotas, 10 )
+                    let p6cuotas = parseInt( dataRequested.p6cuotas, 10 )
+                    let p12cuotas = parseInt( dataRequested.p12cuotas, 10 )
+                    let p18cuotas = parseInt( dataRequested.p18cuotas, 10 )
+                    let p24cuotas = parseInt( dataRequested.p24cuotas, 10 )
+                    if ( !( isNaN( pMinorista ) || isNaN( p3cuotas ) || isNaN( p6cuotas ) || isNaN( p12cuotas ) ) )
+                    {
+
+
+                        setAjustesPrecio(
+                            {
+                                pMinorista,
+                                p3cuotas,
+                                p6cuotas,
+                                p12cuotas,
+                                p18cuotas,
+                                p24cuotas
+                            } )
+                    }
+
                 }
-                if ( request && request.statusText === 'OK' && request.data && request.data.length === 0 )
-                    SetSinDatos( true )
+                //#endregion Ajuste Precio
 
-            } )
+            }
+
+
+
+            if ( request && request.statusText === 'OK' && request.data && request.data.Stock.length === 0 )
+                SetSinDatos( true )
+
+        } )
     }
+
+    //#endregion Carga Data
+
+
+
+    //#region  Edit Delete----------------------------------
+
+
 
     const editData = ( item ) =>
     {
 
         editingValue.current = item
 
-        var temp = data.filter( it => it.id !== item.id )
+        var temp = dataStock.filter( it => it.id !== item.id )
 
 
-        setData( temp )
+        setDataStock( temp )
 
-        SetFormData( item )
+        SetFormStock( item )
         setOpenPopup( true )
 
 
@@ -185,12 +325,13 @@ const Stock = props =>
     const deleteData = ( itemDelete ) =>
     {
 
+        console.log( itemDelete )
 
-        setData( data.filter( it => it.id !== itemDelete.id ) )
+        setDataStock( dataStock.filter( it => it.id !== itemDelete.id ) )
 
         clearform()
 
-        deleteRequest( '/proveedores/' + itemDelete.id, formData )
+        deleteRequest( '/stocks/' + itemDelete.id, formStock )
             .then( () =>
             {
                 cargaData()
@@ -200,7 +341,7 @@ const Stock = props =>
 
 
 
-    //#endregion CRUD API
+    //#endregion Edit Delete
 
 
 
@@ -210,7 +351,7 @@ const Stock = props =>
     {
 
         editingValue.current = {}
-        SetFormData( formInit )
+        SetFormStock( initFormStock )
 
     }
 
@@ -219,11 +360,11 @@ const Stock = props =>
     {
 
 
-        let dataFilter = data.filter( item =>
+        let dataFilter = dataFull.filter( item =>
         {
             let resp = false
 
-            campos.forEach( camp =>
+            camposStock.forEach( camp =>
             {
                 if ( item[ camp[ 0 ] ].toLowerCase().includes( text.toLowerCase() ) )
                     resp = true
@@ -241,8 +382,13 @@ const Stock = props =>
 
         setFilterData( dataFilter )
     }
-    //#endregion Others Functions
 
+
+    const recolocaEditItem = () =>
+    {
+        alert( 'recolocaEditItem' )
+    }
+    //#endregion Others Functions
 
 
 
@@ -287,20 +433,39 @@ const Stock = props =>
 
             </div>
 
-            <Datatable data={ ( search.length === 0 ) ? data : filterData }
+            <Datatable data={ ( search.length === 0 ) ? dataFull : filterData }
 
                 sinDatos={ sinDatos }
-                campos={ campos }
-                responsive
+                campos={ camposDataFull }
+
                 handleDelete={ deleteData }
                 handleEdit={ editData } />
 
-            <MakeCompra openPopup={ openPopup }
-                setOpenPopup={ setOpenPopup } campos={ campos }
-                formData={ formData } SetFormData={ SetFormData }
-                saveData={ saveData } >
 
-            </MakeCompra>
+            <FormAddStock
+                openPopup={ openPopup }
+                setOpenPopup={ setOpenPopup }
+
+                formStock={ formStock }
+                SetFormStock={ SetFormStock }
+
+
+                dataStock={ dataStock }
+                setDataStock={ setDataStock }
+
+                dataProductos={ dataProductos }
+                setDataProductos={ setDataProductos }
+
+                dataProveedores={ dataProveedores }
+                setDataProveedores={ setDataProveedores }
+
+                dataCategorias={ dataCategorias }
+                setDataCategorias={ setDataCategorias }
+
+                recolocaEditItem={ recolocaEditItem }
+                cargaData={ cargaData }
+                ajustesPrecios={ ajustesPrecios }
+            />
 
 
         </>

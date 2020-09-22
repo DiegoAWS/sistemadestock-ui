@@ -30,7 +30,7 @@ const Proveedores = props =>
     const [ filterData, setFilterData ] = useState( [] )
 
 
-    //#region  campos Producto ----------------------------------
+    //#region  campos Proveedores ----------------------------------
 
     const campos = [
 
@@ -43,7 +43,7 @@ const Proveedores = props =>
 
 
     ]
-    //#endregion campos Producto
+    //#endregion campos Proveedores
 
 
     //#region  Inicializing the Form ----------------------------------
@@ -51,7 +51,13 @@ const Proveedores = props =>
 
 
 
-    var formInit = {}
+    var formInit = {
+        Proveedor: '',
+        Telefono: '',
+        Email: '',
+        Direccion: '',
+        OtrosDatos: ''
+    }
 
 
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
+import { getRequest, deleteRequest } from '../../API/apiFunctions'
 import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 
 import Datatable from '../../components/Dashboard/Datatable'
@@ -36,8 +36,9 @@ const Clientes = props =>
 
 
         [ 'Nombre', 'Nombre', 'varchar' ],
-        [ 'Telefono', 'Teléfono', 'varchar' ],
+
         [ 'Email', 'Email', 'varchar' ],
+        [ 'Telefono', 'Teléfono', 'varchar' ],
         [ 'Direccion', 'Dirección', 'varchar' ],
         [ 'OtrosDatos', 'Otros', 'varchar' ]
 
@@ -73,57 +74,6 @@ const Clientes = props =>
 
     //#region  CRUD API ----------------------------------
 
-    const saveData = () =>
-    {
-        setOpenPopup( false )
-
-
-
-
-        var uri = '/clientes'
-
-        if ( formData.id && editingValue.current )
-        {// Editing....
-            uri = uri + '/' + formData.id
-
-
-        }
-
-
-
-        var DataOK = {}
-
-        campos.forEach( ( item, i ) =>
-        {
-
-            DataOK[ item[ 0 ] ] = formData[ item[ 0 ] ]
-
-        } )
-
-
-
-        //Ningun Dato
-        if ( data.length === 0 )
-            setData( [ formData ] )
-        else//Ya hay datos
-            setData( data.concat( formData ) )
-
-
-
-
-
-
-        postRequest( uri, DataOK )
-            .then( () =>
-            {
-
-                cargaData()
-
-
-            } )
-
-
-    }
     const cargaData = () =>
     {
 
@@ -301,7 +251,7 @@ const Clientes = props =>
                 setData={ setData }
 
                 recolocaEditItem={ recolocaEditItem }
-                saveData={ saveData }
+                cargaData={ cargaData }
             />
 
 

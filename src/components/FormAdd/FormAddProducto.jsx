@@ -15,8 +15,8 @@ import Popup from './Popup'
 const FormAddProducto = (
     {
         openPopup, setOpenPopup,
-        formData, SetFormData,
-        data, setData,
+        formProducto, setFormProducto,
+        dataProductos, setDataProductos,
         categorias, setCategorias,
 
         cargaData,
@@ -40,12 +40,19 @@ const FormAddProducto = (
 
     useEffect( () =>
     {
-        if ( formData.PrecioVenta18Cuotas.length > 0 )
-            setDiseable18( false )
 
-        if ( formData.PrecioVenta24Cuotas.length > 0 )
+        if ( formProducto && formProducto.PrecioVenta18Cuotas && formProducto.PrecioVenta18Cuotas.length > 0 )
+            setDiseable18( false )
+        else
+            setDiseable18( true )
+
+
+        if ( formProducto && formProducto.PrecioVenta24Cuotas && formProducto.PrecioVenta24Cuotas.length > 0 )
             setDiseable24( false )
-    }, [ formData ] )
+        else
+            setDiseable24( true )
+
+    }, [ formProducto ] )
 
     //#region  saveData ----------------------------------
 
@@ -54,21 +61,20 @@ const FormAddProducto = (
         setOpenPopup( false )
 
         var uri = '/productos'
-        let formDataOK = formData
+        let formDataOK = formProducto
         if ( diseable18 )
             formDataOK.PrecioVenta18Cuotas = null
 
         if ( diseable24 )
             formDataOK.PrecioVenta24Cuotas = null
 
+        if ( formProducto.id )// Editing....
+            uri = uri + '/' + formProducto.id
 
-        if ( formData.id )// Editing....
-            uri = uri + '/' + formData.id
-
-        if ( data.length === 0 )//Ningun Dato
-            setData( [ formDataOK ] )
+        if ( dataProductos.length === 0 )//Ningun Dato
+            setDataProductos( [ formDataOK ] )
         else//Ya hay datos
-            setData( data.concat( formDataOK ) )
+            setDataProductos( dataProductos.concat( formDataOK ) )
 
         postRequest( uri, formDataOK ).then( () => { cargaData() } )
     }
@@ -95,14 +101,14 @@ const FormAddProducto = (
 
     const AutoFillMoney = () =>
     {
-        let precioBase = parseInt( formData.PrecioVentaContadoMayorista )
+        let precioBase = parseInt( formProducto.PrecioVentaContadoMayorista )
 
         if ( isNaN( precioBase ) )
             return
 
 
-        SetFormData( {
-            ...formData,
+        setFormProducto( {
+            ...formProducto,
             PrecioVentaContadoMinorista: Math.ceil( ( ajustesPrecios.pMinorista * precioBase ) / 10000 ) * 100,
             PrecioVenta3Cuotas: Math.ceil( ( ajustesPrecios.p3cuotas * precioBase ) / 30000 ) * 100,
             PrecioVenta6Cuotas: Math.ceil( ( ajustesPrecios.p6cuotas * precioBase ) / 60000 ) * 100,
@@ -123,26 +129,19 @@ const FormAddProducto = (
 
     const handleEditCategoria = ( { Nombre, id } ) =>
     {
-        if ( window.confirm( "Seguro que desea Borrar esa Categoria" ) )
-        {
-            setFormCategorias( { ...formCategorias, Nombre: Nombre, id: id } )
+        setFormCategorias( { ...formCategorias, Nombre: Nombre, id: id } )
 
-            setOpenPopupCategoria( true )
-        }
+        setOpenPopupCategoria( true )
+
     }
     const handleDeleteCategoria = option =>
     {
 
-        if ( window.confirm( "Seguro que desea Borrar esa Categoria" ) )
-        {
+        setCategorias( categorias.filter( it => it.id !== option.id ) )
+
+        deleteRequest( '/categorias/' + option.id ).then( () => { cargaData() } )
 
 
-
-            setCategorias( categorias.filter( it => it.id !== option.id ) )
-
-            deleteRequest( '/categorias/' + option.id ).then( () => { cargaData() } )
-
-        }
     }
 
     //#endregion Edit Delete Categorias
@@ -153,7 +152,7 @@ const FormAddProducto = (
             openPopup={ openPopup }
             setOpenPopup={ setOpenPopup }
 
-            title={ ( formData.id ) ? 'Editar Producto' : 'Añadir Producto' }
+            title={ ( formProducto.id ) ? 'Editar Producto' : 'Añadir Producto' }
 
             recolocaEditItem={ recolocaEditItem }
             saveData={ saveData }>
@@ -163,12 +162,12 @@ const FormAddProducto = (
 
                     <Grid item xs={ 3 } >
                         <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formData.Codigo } onChange={ e => { SetFormData( { ...formData, Codigo: e.target.value } ) } } />
+                            value={ formProducto.Codigo } onChange={ e => { setFormProducto( { ...formProducto, Codigo: e.target.value } ) } } />
                     </Grid>
                     <Grid item xs={ 9 }>
                         <TextField label='Producto' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formData.Producto }
-                            onChange={ e => { SetFormData( { ...formData, Producto: e.target.value } ) } } />
+                            value={ formProducto.Producto }
+                            onChange={ e => { setFormProducto( { ...formProducto, Producto: e.target.value } ) } } />
                     </Grid>
 
                     <Grid item xs={ 12 } >
@@ -176,8 +175,8 @@ const FormAddProducto = (
                         <CategoriaSelect
 
 
-                            value={ formData.Categoria }
-                            setValue={ ( cat, id ) => { SetFormData( { ...formData, Categoria: cat, Categoria_id: id } ) } }
+                            value={ formProducto.Categoria }
+                            setValue={ ( cat, id ) => { setFormProducto( { ...formProducto, Categoria: cat, Categoria_id: id } ) } }
                             list={ categorias }
 
                             toggleOpenFormAdd={ value =>
@@ -195,36 +194,36 @@ const FormAddProducto = (
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Marca' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formData.Marca } onChange={ e => { SetFormData( { ...formData, Marca: e.target.value } ) } } />
+                            value={ formProducto.Marca } onChange={ e => { setFormProducto( { ...formProducto, Marca: e.target.value } ) } } />
                     </Grid>
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
                         <TextField label='Color' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formData.Color } onChange={ e => { SetFormData( { ...formData, Color: e.target.value } ) } } />
+                            value={ formProducto.Color } onChange={ e => { setFormProducto( { ...formProducto, Color: e.target.value } ) } } />
                     </Grid>
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Precio Mayorista' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ EstilizaString( formData.PrecioVentaContadoMayorista ) }
+                            value={ EstilizaString( formProducto.PrecioVentaContadoMayorista ) }
                             InputProps={ {
                                 endAdornment: <InputAdornment position="end">
                                     <IconButton onClick={ e => { AutoFillMoney() } } color='secondary' title='Autorellenar Precios'>
                                         <MoneyOffIcon />  </IconButton>  </InputAdornment >
                             } }
-                            onChange={ e => { SetFormData( { ...formData, PrecioVentaContadoMayorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVentaContadoMayorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
                     </Grid>
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ EstilizaString( formData.PrecioVentaContadoMinorista ) }
+                            value={ EstilizaString( formProducto.PrecioVentaContadoMinorista ) }
 
-                            onChange={ e => { SetFormData( { ...formData, PrecioVentaContadoMinorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVentaContadoMinorista: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
 
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ EstilizaString( formData.PrecioVenta3Cuotas ) }
+                            value={ EstilizaString( formProducto.PrecioVenta3Cuotas ) }
 
-                            onChange={ e => { SetFormData( { ...formData, PrecioVenta3Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVenta3Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
                             InputProps={ { startAdornment: <InputAdornment position="start">3x </InputAdornment > } }
                         /></Grid>
 
@@ -233,24 +232,24 @@ const FormAddProducto = (
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ EstilizaString( formData.PrecioVenta6Cuotas ) }
+                            value={ EstilizaString( formProducto.PrecioVenta6Cuotas ) }
                             InputProps={ { startAdornment: <InputAdornment position="start">6x </InputAdornment > } }
-                            onChange={ e => { SetFormData( { ...formData, PrecioVenta6Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVenta6Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
 
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Precio Venta 12 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ EstilizaString( formData.PrecioVenta12Cuotas ) }
+                            value={ EstilizaString( formProducto.PrecioVenta12Cuotas ) }
                             InputProps={ { startAdornment: <InputAdornment position="start">12x </InputAdornment > } }
-                            onChange={ e => { SetFormData( { ...formData, PrecioVenta12Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVenta12Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } /></Grid>
 
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
 
                         <TextField label={ diseable18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas' } variant="outlined" margin='normal' size="small" fullWidth
-                            value={ diseable18 ? '' : EstilizaString( formData.PrecioVenta18Cuotas ) }
+                            value={ diseable18 ? '' : EstilizaString( formProducto.PrecioVenta18Cuotas ) }
                             disabled={ diseable18 }
-                            onChange={ e => { SetFormData( { ...formData, PrecioVenta18Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVenta18Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
                             InputProps={ {
                                 startAdornment: <InputAdornment position="start">18x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
@@ -266,9 +265,9 @@ const FormAddProducto = (
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
                         <TextField label={ diseable24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas' } variant="outlined" margin='normal' size="small" fullWidth
-                            value={ diseable24 ? '' : EstilizaString( formData.PrecioVenta24Cuotas ) }
+                            value={ diseable24 ? '' : EstilizaString( formProducto.PrecioVenta24Cuotas ) }
                             disabled={ diseable24 }
-                            onChange={ e => { SetFormData( { ...formData, PrecioVenta24Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
+                            onChange={ e => { setFormProducto( { ...formProducto, PrecioVenta24Cuotas: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } }
                             InputProps={ {
                                 startAdornment: <InputAdornment position="start">24x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
