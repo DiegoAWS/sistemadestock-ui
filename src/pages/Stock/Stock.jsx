@@ -14,7 +14,7 @@ import SearchIcon from '@material-ui/icons/Search'
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
 
-
+import { dateToString } from '../../API/timeFunctions'
 const Stock = props =>
 {
 
@@ -90,7 +90,7 @@ const Stock = props =>
 
     //#region  campos Stock ----------------------------------
 
-    const camposStock = [ [ 'Producto_id' ], [ 'Proveedor_id' ], [ 'CostoUnitario' ], [ 'Cantidad' ], [ 'Factura' ], [ 'FechaCompra' ] ]
+    const camposStock = [ [ 'id' ], [ 'Producto_id' ], [ 'Proveedor_id' ], [ 'CostoUnitario' ], [ 'Cantidad' ], [ 'FechaCompra' ], [ 'Factura' ] ]
 
     //#endregion campos Stock
 
@@ -129,12 +129,12 @@ const Stock = props =>
 
 
     const initFormStock = {
-        Producto_id: '',
-        Proveedor_id: '',
+        Producto_id: '-1',
+        Proveedor_id: '-1',
         CostoUnitario: '',
         Cantidad: '',
         Factura: '',
-        FechaCompra: ''
+        FechaCompra: dateToString( new Date() )
     }
 
     const [ formStock, SetFormStock ] = useState( initFormStock )
@@ -176,9 +176,8 @@ const Stock = props =>
                     return false
             } )[ 0 ]
 
-            let fullDataItem = { ...item, ...newProducto, ...newProveedor }
 
-            return { ...fullDataItem, id: item.id }
+            return { ...item, ...newProducto, ...newProveedor, id: item.id }
         } )
 
         setDataFull( newFullData )
@@ -241,7 +240,7 @@ const Stock = props =>
 
                     camposStock.forEach( item => { instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? '' : dataRequested[ item[ 0 ] ] } )
 
-                    return { ...instantData, id: dataRequested.id }
+                    return { ...instantData }
 
                 } ) )
 
@@ -325,7 +324,7 @@ const Stock = props =>
     const deleteData = ( itemDelete ) =>
     {
 
-        console.log( itemDelete )
+
 
         setDataStock( dataStock.filter( it => it.id !== itemDelete.id ) )
 

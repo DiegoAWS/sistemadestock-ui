@@ -20,15 +20,7 @@ const ProductoSelect = ( { list, toggleOpenFormAdd, value, setValue, handleEdit,
             fullWidth
             value={ value }
             noOptionsText=''
-            onChange={ ( event, newValue ) =>
-            {
-
-                if ( newValue && newValue.id )
-                    setValue( newValue.id )
-                else
-                    setInputValue( '' )
-
-            } }
+            onChange={ ( event, newValue ) => { setValue( newValue ) } }
             inputValue={ inputValue }
             onInputChange={ ( event, newInputValue ) => { setInputValue( newInputValue ) } }
             options={ list }

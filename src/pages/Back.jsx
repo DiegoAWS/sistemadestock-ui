@@ -52,7 +52,7 @@ const Back = ( { history } ) =>
 
         <div className={ classes.mainBackground }>
             <img className={ classes.trabajando } src={ trabajando } alt='' width='100px' />
-            <span className={ classes.text }>En Progreso 96% .....</span>
+            <span className={ classes.text }>En Progreso 99% .....</span>
         </div>
 
 

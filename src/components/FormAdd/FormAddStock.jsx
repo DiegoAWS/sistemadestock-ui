@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TextField, Grid } from '@material-ui/core'
 
 import { postRequest, deleteRequest } from '../../API/apiFunctions'
@@ -12,6 +12,15 @@ import ProveedoresSelect from './ProveedoresSelect'
 import FormAddProveedor from './FormAddProveedor'
 
 
+import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+
+import es from 'date-fns/locale/es'
+
+import { dateToString, stringToDate } from '../../API/timeFunctions'
+
+registerLocale( 'es', es )
+setDefaultLocale( 'es' )
 
 
 const FormAddStock = (
@@ -32,9 +41,9 @@ const FormAddStock = (
 
     //#region  CONST ----------------------------------
 
-    //#region  Form Producto ----------------------------------
+    //#region  Producto ----------------------------------
 
-    //Control del Form Producto
+    //Control del Producto
     const [ formProducto, setFormProducto ] = useState( {
         Codigo: "",
         Categoria: "",
@@ -55,9 +64,11 @@ const FormAddStock = (
     //Open Close Form Producto
     const [ openPopupProducto, setOpenPopupProducto ] = useState( false )
 
-    //#endregion Form Producto
 
-    //#region  form Proveedor ----------------------------------
+    const [ valueProducto, setValueProducto ] = useState( null )
+    //#endregion Producto
+
+    //#region  Proveedor ----------------------------------
 
     const [ formProveedor, setFormProveedor ] = useState( {
         Proveedor: '',
@@ -70,9 +81,39 @@ const FormAddStock = (
     //Open Close Form Proveedor
     const [ openPopupProveedor, setOpenPopupProveedor ] = useState( false )
 
-    //#endregion form Proveedor
+
+
+    const [ valueProveedor, setValueProveedor ] = useState( null )
+    //#endregion Proveedor
 
     //#endregion CONST
+
+
+
+    useEffect( () =>
+    {
+
+        let proveedorSel = dataProveedores.filter( item =>
+        {
+
+            if ( item && item.id && formStock && formStock.Proveedor_id )
+                return item.id.toString() === formStock.Proveedor_id.toString()
+            return false
+
+        } )
+
+        setValueProveedor( proveedorSel.length === 1 ? proveedorSel[ 0 ] : null )
+
+        let productoSel = dataProductos.filter( item =>
+        {
+            if ( item && item.id && formStock && formStock.Producto_id )
+                return item.id.toString() === formStock.Producto_id.toString()
+            return false
+
+        } )
+
+        setValueProducto( productoSel.length === 1 ? productoSel[ 0 ] : null )
+    }, [ dataProveedores, dataProductos, formStock ] )
 
 
     //#region  saveData ----------------------------------
@@ -80,10 +121,14 @@ const FormAddStock = (
     const saveData = () =>
     {
 
+
+
+
+
         setOpenPopup( false )
 
         var uri = '/stocks'
-        let formDataOK = formStock
+        let formDataOK = { ...formStock }
 
 
 
@@ -95,6 +140,10 @@ const FormAddStock = (
         else//Ya hay datos
             setDataStock( dataStock.concat( formDataOK ) )
 
+
+        let data = formDataOK.FechaCompra
+        console.log( data )
+        // formDataOK.FechaCompra = 'HOY'
         postRequest( uri, formDataOK ).then( () => { cargaData() } )
     }
 
@@ -179,7 +228,12 @@ const FormAddStock = (
     //#region  Return ----------------------------------
 
 
+    const CustomDateInput = React.forwardRef( ( { value, onClick }, ref ) => (
 
+        <TextField ref={ ref } label='Fecha de Compra' variant="outlined" margin='normal' size="small"
+            value={ value } onClick={ onClick } fullWidth
+        />
+    ) )
 
     return (
         <Popup
@@ -191,13 +245,17 @@ const FormAddStock = (
             recolocaEditItem={ recolocaEditItem }
             saveData={ saveData }>
             <>
-                <Grid container style={ { border: '1px solid black', borderRadius: '10px', marginBottom: '10px' } }>
-                    <Grid item xs={ 12 } style={ { padding: '0px 10px' } } >
+                <Grid container style={ { border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' } }>
+                    <Grid item xs={ 12 } md={ 6 } style={ { padding: '0px 10px', display: 'flex', alignItems: 'flex-end' } } >
 
                         <ProveedoresSelect
 
-                            value={ formStock.Proveedor }
-                            setValue={ id => { SetFormStock( { ...formStock, Proveedor_id: id } ) } }
+                            value={ valueProveedor }
+                            setValue={ proveedor =>
+                            {
+                                setValueProveedor( proveedor )
+                                SetFormStock( { ...formStock, Proveedor_id: proveedor && proveedor.id ? proveedor.id : -1 } )
+                            } }
                             list={ dataProveedores }
 
                             toggleOpenFormAdd={ () => { setOpenPopupProveedor( true ) } }
@@ -206,30 +264,46 @@ const FormAddStock = (
                             handleDelete={ handleDeleteProveedor }
                         />
                     </Grid>
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } style={ { padding: '0px 10px' } }>
-                        <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small" fullWidth
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 3 } style={ { padding: '0px 10px' } }>
+
+                        <DatePicker
+                            selected={ stringToDate( formStock.FechaCompra ) }
+                            onChange={ date => { SetFormStock( { ...formStock, FechaCompra: dateToString( date ) } ) } }
+                            showTimeInput
+                            timeInputLabel="Hora:"
+                            withPortal
+                            showYearDropdown
+                            dateFormat="dd/MM/yyyy"
+                            todayButton="Hoy"
+                            customInput={ <CustomDateInput /> }
+                        />
+                    </Grid>
+
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 3 } style={ { padding: '0px 10px' } }>
+                        <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small"
+                            fullWidth
                             value={ formStock.Factura } onChange={ e => { SetFormStock( { ...formStock, Factura: e.target.value } ) } } />
                     </Grid>
-
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } style={ { padding: '0px 10px' } }>
-                        <TextField label='Fecha de Compra' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formStock.FechaCompra } onChange={ e => { SetFormStock( { ...formStock, FechaCompra: e.target.value } ) } } />
-                    </Grid>
-
-
                 </Grid>
 
-                <Grid container spacing={ 3 }>
+                <Grid container style={ { border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' } }>
 
-                    <Grid item xs={ 12 } >
+                    <Grid item xs={ 12 } md={ 6 } style={ { padding: '0px 10px', display: 'flex', alignItems: 'flex-end' } }>
 
                         <ProductoSelect
 
 
-                            value={ formStock.Producto }
-                            setValue={ id => { SetFormStock( { ...formStock, Producto_id: id } ) } }
-                            list={ dataProductos }
+                            value={ valueProducto }
+                            setValue={ producto =>
+                            {
+                                setValueProducto( producto )
+                                SetFormStock( { ...formStock, Producto_id: producto && producto.id ? producto.id : -1 } )
 
+                            } }
+
+                            list={ dataProductos }
                             toggleOpenFormAdd={ () => { setOpenPopupProducto( true ) } }
 
                             handleEdit={ handleEditProducto }
@@ -239,7 +313,7 @@ const FormAddStock = (
 
 
 
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                    <Grid item xs={ 12 } sm={ 6 } md={ 3 } style={ { padding: '0px 10px' } } >
                         <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth
                             value={ EstilizaString( formStock.CostoUnitario ) }
 
@@ -248,7 +322,7 @@ const FormAddStock = (
                         /></Grid>
 
 
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
+                    <Grid item xs={ 12 } sm={ 6 } md={ 3 } style={ { padding: '0px 10px' } } >
                         <TextField label='Cantidad' variant="outlined" margin='normal' size="small" fullWidth
                             value={ formStock.Cantidad } onChange={ e => { SetFormStock( { ...formStock, Cantidad: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
                     </Grid>
