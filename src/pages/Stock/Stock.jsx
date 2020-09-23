@@ -6,6 +6,8 @@ import FormAddStock from '../../components/FormAdd/FormAddStock'
 
 
 import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
+
+
 import CloseIcon from '@material-ui/icons/Close'
 import SearchIcon from '@material-ui/icons/Search'
 
@@ -13,11 +15,9 @@ import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
 
 
-
-
-
 const Stock = props =>
 {
+
 
     //#region  CONST's State ----------------------------------
 

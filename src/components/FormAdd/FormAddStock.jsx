@@ -12,6 +12,8 @@ import ProveedoresSelect from './ProveedoresSelect'
 import FormAddProveedor from './FormAddProveedor'
 
 
+
+
 const FormAddStock = (
     {
         openPopup, setOpenPopup,
@@ -26,6 +28,8 @@ const FormAddStock = (
         recolocaEditItem, ajustesPrecios
     } ) =>
 {
+
+
     //#region  CONST ----------------------------------
 
     //#region  Form Producto ----------------------------------
@@ -187,8 +191,8 @@ const FormAddStock = (
             recolocaEditItem={ recolocaEditItem }
             saveData={ saveData }>
             <>
-                <Grid container spacing={ 3 }>
-                    <Grid item xs={ 12 } >
+                <Grid container style={ { border: '1px solid black', borderRadius: '10px', marginBottom: '10px' } }>
+                    <Grid item xs={ 12 } style={ { padding: '0px 10px' } } >
 
                         <ProveedoresSelect
 
@@ -202,19 +206,19 @@ const FormAddStock = (
                             handleDelete={ handleDeleteProveedor }
                         />
                     </Grid>
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } style={ { padding: '0px 10px' } }>
                         <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small" fullWidth
                             value={ formStock.Factura } onChange={ e => { SetFormStock( { ...formStock, Factura: e.target.value } ) } } />
                     </Grid>
 
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 } style={ { padding: '0px 10px' } }>
                         <TextField label='Fecha de Compra' variant="outlined" margin='normal' size="small" fullWidth
                             value={ formStock.FechaCompra } onChange={ e => { SetFormStock( { ...formStock, FechaCompra: e.target.value } ) } } />
                     </Grid>
 
 
                 </Grid>
-                <hr />
+
                 <Grid container spacing={ 3 }>
 
                     <Grid item xs={ 12 } >
