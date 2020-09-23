@@ -31,8 +31,10 @@ const ProveedoresSelect = ( { list, toggleOpenFormAdd, value, setValue, handleEd
             } }
 
             inputValue={ inputValue }
+            onInputChange={ ( event, newInputValue ) => { setInputValue( newInputValue ) } }
             options={ list }
             getOptionLabel={ ( option ) => ( option && option.Proveedor ) ? option.Proveedor : '' }
+
             selectOnFocus
             clearOnBlur
             handleHomeEndKeys

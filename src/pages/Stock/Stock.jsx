@@ -21,7 +21,7 @@ const Stock = props =>
 
     //#region  CONST's State ----------------------------------
 
-    const [ openPopup, setOpenPopup ] = useState( true )
+    const [ openPopup, setOpenPopup ] = useState( false )
 
     const [ sinDatos, SetSinDatos ] = useState( false )
 

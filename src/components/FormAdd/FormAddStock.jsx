@@ -187,10 +187,35 @@ const FormAddStock = (
             recolocaEditItem={ recolocaEditItem }
             saveData={ saveData }>
             <>
-
                 <Grid container spacing={ 3 }>
+                    <Grid item xs={ 12 } >
+
+                        <ProveedoresSelect
+
+                            value={ formStock.Proveedor }
+                            setValue={ id => { SetFormStock( { ...formStock, Proveedor_id: id } ) } }
+                            list={ dataProveedores }
+
+                            toggleOpenFormAdd={ () => { setOpenPopupProveedor( true ) } }
+
+                            handleEdit={ handleEditProveedor }
+                            handleDelete={ handleDeleteProveedor }
+                        />
+                    </Grid>
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formStock.Factura } onChange={ e => { SetFormStock( { ...formStock, Factura: e.target.value } ) } } />
+                    </Grid>
+
+                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
+                        <TextField label='Fecha de Compra' variant="outlined" margin='normal' size="small" fullWidth
+                            value={ formStock.FechaCompra } onChange={ e => { SetFormStock( { ...formStock, FechaCompra: e.target.value } ) } } />
+                    </Grid>
 
 
+                </Grid>
+                <hr />
+                <Grid container spacing={ 3 }>
 
                     <Grid item xs={ 12 } >
 
@@ -208,20 +233,7 @@ const FormAddStock = (
                         />
                     </Grid>
 
-                    <Grid item xs={ 12 } >
 
-                        <ProveedoresSelect
-
-                            value={ formStock.Proveedor }
-                            setValue={ id => { SetFormStock( { ...formStock, Proveedor_id: id } ) } }
-                            list={ dataProveedores }
-
-                            toggleOpenFormAdd={ () => { setOpenPopupProveedor( true ) } }
-
-                            handleEdit={ handleEditProveedor }
-                            handleDelete={ handleDeleteProveedor }
-                        />
-                    </Grid>
 
                     <Grid item xs={ 12 } sm={ 6 } md={ 4 } >
                         <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth
@@ -237,15 +249,6 @@ const FormAddStock = (
                             value={ formStock.Cantidad } onChange={ e => { SetFormStock( { ...formStock, Cantidad: e.target.value.replace( /\D/, '' ).replace( ' ', '' ) } ) } } />
                     </Grid>
 
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
-                        <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formStock.Factura } onChange={ e => { SetFormStock( { ...formStock, Factura: e.target.value } ) } } />
-                    </Grid>
-
-                    <Grid item xs={ 12 } sm={ 6 } md={ 4 }>
-                        <TextField label='Fecha de Compra' variant="outlined" margin='normal' size="small" fullWidth
-                            value={ formStock.FechaCompra } onChange={ e => { SetFormStock( { ...formStock, FechaCompra: e.target.value } ) } } />
-                    </Grid>
 
 
                 </Grid>
