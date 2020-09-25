@@ -11,7 +11,7 @@ import FormAddProducto from './FormAddProducto'
 import ProveedoresSelect from './ProveedoresSelect'
 import FormAddProveedor from './FormAddProveedor'
 
-
+import loadingGif from '../../assets/images/loading.gif'
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -86,8 +86,14 @@ const FormAddStock = (
     const [ valueProveedor, setValueProveedor ] = useState( null )
     //#endregion Proveedor
 
+
+
+    const [ loading, setLoading ] = useState( false )
+
     //#endregion CONST
 
+
+    //#region  useEffect ----------------------------------
 
 
     useEffect( () =>
@@ -116,16 +122,18 @@ const FormAddStock = (
     }, [ dataProveedores, dataProductos, formStock ] )
 
 
+
+    //#endregion useEffect
+
+
     //#region  saveData ----------------------------------
 
     const saveData = () =>
     {
 
+        setLoading( true )
 
 
-
-
-        setOpenPopup( false )
 
         var uri = '/stocks'
         let formDataOK = { ...formStock }
@@ -135,16 +143,25 @@ const FormAddStock = (
         if ( formStock.id )// Editing....
             uri = uri + '/' + formStock.id
 
-        if ( dataStock.length === 0 )//Ningun Dato
-            setDataStock( [ formDataOK ] )
-        else//Ya hay datos
-            setDataStock( dataStock.concat( formDataOK ) )
+        //             else{
+        //  if ( dataStock.length === 0 )//Ningun Dato
+        //             setDataStock( [ formDataOK ] )
+        //         else//Ya hay datos
+        //             setDataStock( dataStock.concat( formDataOK ) )
+
+        //             }
+
 
 
         let data = formDataOK.FechaCompra
         console.log( data )
         // formDataOK.FechaCompra = 'HOY'
-        postRequest( uri, formDataOK ).then( () => { cargaData() } )
+        postRequest( uri, formDataOK ).then( () =>
+        {
+            cargaData()
+            setOpenPopup( false )
+            setLoading( false )
+        } )
     }
 
     //#endregion saveData
@@ -347,10 +364,16 @@ const FormAddStock = (
 
                     cargaData={ cargaData }
                 />
+                <div style={ {
+                    position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw',
+                    backgroundColor: 'rgba(0,0,0,0.6)', display: loading ? 'flex' : 'none',
+                    justifyContent: 'center', alignItems: 'center'
+                } }>
+                    <img src={ loadingGif } alt="" height='30px' /></div>
             </>
 
 
-        </Popup>
+        </Popup >
     )
     //#endregion Return
 }

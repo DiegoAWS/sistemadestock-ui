@@ -1,6 +1,6 @@
 {
-  "name": "proyecto-web-site",
-  "version": "1.0.3",
+  "name": "sistemadestock.com",
+  "version": "0.8.1",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.0",
