@@ -1,15 +1,16 @@
-import React from 'react';
+import React from 'react'
 
-const Ventas =  props =>{
+const Ventas = props =>
+{
 
 
 
-return(
+    return (
 
-<div className=''>
-Modulo VENTAS
-</div>
-)
+        <div className='' style={ { textAlign: 'center' } }>
+            Modulo VENTAS
+        </div>
+    )
 
 }
-export default Ventas;
+export default Ventas

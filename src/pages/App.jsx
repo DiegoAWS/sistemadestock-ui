@@ -78,13 +78,6 @@ export default function App ()
 
           <SecureRoute exact path="/ajustes" component={ Ajustes } />
 
-
-
-
-          {/* <Route exact path='/:project/admin' render={(props)=>(<WebPage admin {...props}/>)} />
-                  <Route exact path='/:project/:pagina' component={WebPage} /> */}
-
-
           <Route path="*" component={ LandingPage } />
         </Switch>
       </SkeletonSideBar>
