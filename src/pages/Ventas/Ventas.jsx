@@ -29,7 +29,8 @@ const useStyle = makeStyles( ( theme ) => ( {
         flexDirection: 'column'
     },
     seccionProductos: {
-        padding: '15px 5px',
+        border: '1px solid black',
+        padding: ' 5px',
         marginBottom: '10px',
         overflow: 'hidden',
         transition: 'max-height 0.5s ease-out'
@@ -41,11 +42,11 @@ const useStyle = makeStyles( ( theme ) => ( {
         marginBottom: '10px',
     },
     nombreProducto: {
-        border: '1px solid black',
+
         textAlign: 'center',
         fontSize: '1rem',
         borderRadius: '10px',
-        padding: '5px',
+        padding: '15px 5px',
         overflowX: 'hidden',
         textOverflow: 'ellipsis',
         width: '100%',
