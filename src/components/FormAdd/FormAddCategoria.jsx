@@ -25,9 +25,13 @@ const useStyle = makeStyles( ( theme ) => ( {
 const FormAddCategoria = ( { openPopup, setOpenPopup, formCategorias, setFormCategorias, cargaData } ) =>
 {// Abrir y cerrar Dialog ,  Control del Form  y  CallBack de Actuliza from BD
 
+
+    const classes = useStyle()
+
+
     const [ loadingStatus, setLoadingStatus ] = useState( false )
     const [ error, setError ] = useState( false )
-    const classes = useStyle()
+
 
 
 
