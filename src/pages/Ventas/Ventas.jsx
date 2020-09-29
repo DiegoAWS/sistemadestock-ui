@@ -29,12 +29,8 @@ const useStyle = makeStyles( ( theme ) => ( {
         flexDirection: 'column'
     },
     seccionProductos: {
-
-        border: '1px solid black',
-        borderRadius: '10px',
         padding: '5px',
         marginBottom: '10px',
-
         overflow: 'hidden',
         transition: 'max-height 0.5s ease-out'
     },
@@ -53,7 +49,7 @@ const useStyle = makeStyles( ( theme ) => ( {
         overflowX: 'hidden',
         textOverflow: 'ellipsis',
         width: '100%',
-        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);'
+
     },
     preciosCard: {
         width: '100%',
@@ -337,7 +333,7 @@ const Ventas = ( props ) =>
                         <Autocomplete
                             size='small'
                             autoComplete
-                            autoFocus
+
                             fullWidth
                             value={ productoSeleccionado }
                             noOptionsText=''
@@ -367,7 +363,7 @@ const Ventas = ( props ) =>
 
                             clearOnBlur
                             renderOption={ option => <h4>  { option.Producto }</h4> }
-                            renderInput={ params => <TextField inputRef={ inputRef }  { ...params } label='Producto' variant="outlined" /> }
+                            renderInput={ params => <TextField autoFocus className={ classes.nombreProducto } inputRef={ inputRef }  { ...params } label='Producto' variant="outlined" /> }
                         />
                     </div>
 
@@ -382,12 +378,7 @@ const Ventas = ( props ) =>
                         //#region PRECIOS
                     }
                     <Grid container direction="column" spacing={ 1 } >
-                        <Grid item container >
-                            <div className={ classes.nombreProducto } >
-                                { ( productoSeleccionado && productoSeleccionado.Producto ) ? productoSeleccionado.Producto
-                                    : 'Ningun producto seleccionado...' }
-                            </div>
-                        </Grid>
+
                         { productoSeleccionado &&
                             <Grid item container style={ { justifyContent: 'space-evenly' } }>
 
