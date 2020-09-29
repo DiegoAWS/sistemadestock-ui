@@ -18,11 +18,32 @@ import EditIcon from '@material-ui/icons/Edit'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import WarningIcon from '@material-ui/icons/Warning'
-
+import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 
 import { getRequest } from '../../API/apiFunctions'
 
 const useStyle = makeStyles( ( theme ) => ( {
+
+    leftContainer: {
+        display: 'flex',
+        flexDirection: 'column'
+    },
+    seccionProductos: {
+
+        border: '1px solid black',
+        borderRadius: '10px',
+        padding: '5px',
+        marginBottom: '10px',
+
+        overflow: 'hidden',
+        transition: 'max-height 0.5s ease-out'
+    },
+    seccionClientes: {
+        border: '1px solid black',
+        borderRadius: '10px',
+        padding: '5px',
+        marginBottom: '10px',
+    },
     nombreProducto: {
         border: '1px solid black',
         textAlign: 'center',
@@ -32,6 +53,7 @@ const useStyle = makeStyles( ( theme ) => ( {
         overflowX: 'hidden',
         textOverflow: 'ellipsis',
         width: '100%',
+        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);'
     },
     preciosCard: {
         width: '100%',
@@ -51,13 +73,14 @@ const useStyle = makeStyles( ( theme ) => ( {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-    }
+    },
+
 } ) )
 
 
 const Ventas = ( props ) =>
 {
-    const classes = useStyle()
+
 
     const filter = createFilterOptions()
 
@@ -70,12 +93,21 @@ const Ventas = ( props ) =>
     const [ productoSeleccionado, setProductoSeleccionado ] = useState( null )
     const [ productoSearchText, setProductoSearchText ] = useState( '' )
 
+
+    const [ carritoProductos, setCarritoProductos ] = useState( [] )
+
+
+    const [ importeTotal, setImporteTotal ] = useState( 0 )
+
     //Data
     // eslint-disable-next-line 
     const [ dataClientes, setDataClientes ] = useState( [] )
     const [ dataProductos, setDataProductos ] = useState( [] )
     // const [ dataVentas, setDataVentas ] = useState( [] )
 
+
+
+    const [ pagado, setPagado ] = useState( '' )
 
     //#endregion State
 
@@ -123,21 +155,20 @@ const Ventas = ( props ) =>
     ]
     //#endregion campos Producto
 
-    //#region  DataTable CONST ----------------------------------
+    //#region  DataTable Columnas ----------------------------------
 
-    const data = [
-        { p: 'Cafetera' }, { p: 'Cafetera' }, { p: 'Cafetera' }, { p: 'Cafetera' },
 
-    ]
     const cols = [
-        { grow: 1, name: 'Producto', selector: 'p' },
-        { width: '60px', cell: row => <IconButton color='secondary' onClick={ () => { console.log( row ) } }>  <CloseIcon />  </IconButton> }
+        { grow: 1, name: 'Producto', selector: 'Producto' },
+        { width: '120px', cell: row => <div style={ { textAlign: 'right' } }>{ 'Gs. ' + row.subTotal }</div> },
+        { width: '60px', cell: row => <IconButton color='secondary' onClick={ () => { handleBajaCarrito( row ) } }>  <CloseIcon />  </IconButton> }
     ]
 
     //#endregion DataTable CONST
 
 
 
+    const classes = useStyle()
 
 
     //#region UseEffect
@@ -146,6 +177,28 @@ const Ventas = ( props ) =>
 
     // eslint-disable-next-line 
     useEffect( () => { cargaData() }, [] )
+
+
+    useEffect( () =>
+    {
+        if ( carritoProductos.length === 0 )
+            setImporteTotal( 0 )
+        else
+        {
+
+
+            let t = 0
+            carritoProductos.forEach( item =>
+            {
+                if ( !isNaN( parseInt( item.subTotal ) ) )
+                    t = t + parseInt( item.subTotal )
+            } )
+
+            if ( t > 0 )
+                setImporteTotal( t )
+        }
+    }, [ carritoProductos ] )
+
 
     //#endregion
 
@@ -234,321 +287,350 @@ const Ventas = ( props ) =>
     }
 
 
-    return <Grid container style={ { height: "100%", width: '100%' } }>
+    //#region  Carrito 
+
+    //Monta en el carrito
+    const addCart = key =>
+    {
+        let produtoSel = { ...productoSeleccionado }
+
+        setCarritoProductos( carritoProductos.concat( { ...produtoSel, subTotal: produtoSel[ key ], idList: carritoProductos.length } ) )
+        setProductoSeleccionado( null )
+    }
+
+    //Baja del carrito
+    const handleBajaCarrito = row =>
+    {
+        //setCarritoProductos
+        if ( window.confirm( 'Seguro que desea quitar de la lista de la compra ' + row.Producto + '...?' ) )
+        {
+
+            let tempCarrito = carritoProductos.filter( item => item.idList.toString() !== row.idList.toString() )
+            setCarritoProductos( tempCarrito )
+
+        }
+
+
+    }
+    //#endregion
+
+
+    return <Grid container spacing={ 3 } style={ { height: "100%", width: '100%' } } >
 
 
         {
             //#region Left PANEL
         }
-        <Grid item container xs={ 12 } md={ 5 } spacing={ 1 }>
-            <div>
-                <div style={ { border: '1px solid black', borderRadius: '10px', padding: '5px' } }>
-                    <Grid item container direction="column" >
-
-                        {
-                            //#region Search Producto
-                        }
+        <Grid item container xs={ 12 } md={ 5 } >
+            <div className={ classes.leftContainer } >
+                <div className={ classes.seccionProductos }
+                    style={ { maxHeight: ( productoSeleccionado && productoSeleccionado.Producto ) ? '500px' : '200px', } } >
 
 
-                        <div style={ { marginBottom: '10px' } } >
+                    {
+                        //#region Search Producto
+                    }
 
-                            <Autocomplete
-                                size='small'
-                                autoComplete
-                                autoFocus
-                                fullWidth
-                                value={ productoSeleccionado }
-                                noOptionsText=''
-                                filterOptions={ ( options, params ) =>
+
+                    <div style={ { marginBottom: '10px' } } >
+
+                        <Autocomplete
+                            size='small'
+                            autoComplete
+                            autoFocus
+                            fullWidth
+                            value={ productoSeleccionado }
+                            noOptionsText=''
+                            filterOptions={ ( options, params ) =>
+                            {
+                                const filtered = filter( options, params )
+
+                                if ( filtered.length === 1 )
                                 {
-                                    const filtered = filter( options, params )
-
-                                    if ( filtered.length === 1 )
+                                    beep()
+                                    setTimeout( () =>
                                     {
-                                        beep()
-                                        setTimeout( () =>
-                                        {
-                                            setInputBlur()
-                                            setProductoSeleccionado( filtered[ 0 ] )
+                                        setInputBlur()
+                                        setProductoSeleccionado( filtered[ 0 ] )
 
-                                        }, 50 )
+                                    }, 50 )
 
 
-                                    }
-                                    return filtered
-                                } }
-                                onChange={ ( e, newValue ) => { setProductoSeleccionado( newValue ) } }
-                                inputValue={ productoSearchText }
-                                onInputChange={ ( event, newInputValue ) => { setProductoSearchText( newInputValue.replace( '!', '' ) ) } }
-                                options={ dataProductos }
-                                getOptionLabel={ option => ( option && option.Producto ) ? option.Producto : '' }
+                                }
+                                return filtered
+                            } }
+                            onChange={ ( e, newValue ) => { setProductoSeleccionado( newValue ) } }
+                            inputValue={ productoSearchText }
+                            onInputChange={ ( event, newInputValue ) => { setProductoSearchText( newInputValue.replace( '!', '' ) ) } }
+                            options={ dataProductos }
+                            getOptionLabel={ option => ( option && option.Producto ) ? option.Producto : '' }
 
-                                clearOnBlur
-                                renderOption={ option => <h4>  { option.Producto }</h4> }
-                                renderInput={ params => <TextField inputRef={ inputRef }  { ...params } label='Producto' variant="outlined" /> }
-                            />
-                        </div>
+                            clearOnBlur
+                            renderOption={ option => <h4>  { option.Producto }</h4> }
+                            renderInput={ params => <TextField inputRef={ inputRef }  { ...params } label='Producto' variant="outlined" /> }
+                        />
+                    </div>
 
 
 
-                        {
-                            //#endregion Search Producto
-                        }
+                    {
+                        //#endregion Search Producto
+                    }
 
 
-                        {
-                            //#region PRECIOS
-                        }
-                        <Grid container direction="column" spacing={ 1 } >
-                            <Grid item container >
-                                <div className={ classes.nombreProducto } >
-                                    { ( productoSeleccionado && productoSeleccionado.Producto ) ? productoSeleccionado.Producto
-                                        : 'Ningun producto seleccionado...' }
-                                </div>
-                            </Grid>
-                            { productoSeleccionado &&
-                                <Grid item container style={ { justifyContent: 'space-evenly' } }>
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVentaContadoMayorista ) ) && //OJO Y ademas solo para Admins!!
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth  >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio Mayorista</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVentaContadoMayorista }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>Pago único</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid>
-                                    }
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVentaContadoMinorista ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio al Contado</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVentaContadoMinorista }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }> Pago único</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid>
-                                    }
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVenta3Cuotas ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio 3 cuotas</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVenta3Cuotas + ' x 3' }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>
-                                                        { 'Gs. ' + ( 3 * parseInt( productoSeleccionado.PrecioVenta3Cuotas ) ) }</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid> }
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVenta6Cuotas ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio 6 cuotas</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVenta6Cuotas + ' x 6' }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>
-                                                        { 'Gs. ' + ( 6 * parseInt( productoSeleccionado.PrecioVenta6Cuotas ) ) }</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid> }
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVenta12Cuotas ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio 12 cuotas</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVenta12Cuotas + ' x 12' }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>
-                                                        { 'Gs. ' + ( 12 * parseInt( productoSeleccionado.PrecioVenta12Cuotas ) ) }</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid> }
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVenta18Cuotas ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio 18 cuotas</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVenta18Cuotas + ' x 18' }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>
-                                                        { 'Gs. ' + ( 18 * parseInt( productoSeleccionado.PrecioVenta18Cuotas ) ) }</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid> }
-
-
-                                    { !isNaN( parseInt( productoSeleccionado.PrecioVenta24Cuotas ) ) &&
-                                        <Grid item sm={ 6 } lg={ 4 }>
-                                            <Button fullWidth >
-                                                <Card className={ classes.preciosCard }>
-                                                    <div style={ { fontSize: '0.8rem' } }>Precio 24 cuotas</div>
-                                                    <div style={ { fontSize: '1rem' } }>
-                                                        { 'Gs. ' + productoSeleccionado.PrecioVenta24Cuotas + ' x 24' }  </div>
-                                                    <div style={ { fontSize: '0.8rem' } }>
-                                                        { 'Gs. ' + ( 24 * parseInt( productoSeleccionado.PrecioVenta24Cuotas ) ) }</div>
-                                                </Card>
-                                            </Button>
-                                        </Grid> }
-                                </Grid>
-
-                            }
-
-                        </Grid>
-
-                        {
-                            //#endregion PRECIOS
-                        }
-
-                    </Grid>
-                </div>
-                <div style={ { border: '1px solid black', borderRadius: '10px', padding: '5px' } }>
-                    <Grid item container direction="column">
-
-                        {
-                            //#region Search Cliente
-                        }
-
-                        <div style={ { display: "flex", marginButtom: '10px' } }>
-                            <TextField
-                                label="Cliente"
-                                variant="outlined"
-                                margin="dense"
-                                size="small"
-                                style={ { flexGrow: "1" } }
-                                value={ clienteSearch }
-                                onChange={ ( e ) =>
-                                {
-
-                                    // setClienteSearch( e.target.value )
-                                } }
-                                InputProps={ {
-                                    endAdornment: (
-                                        <InputAdornment position="end">
-                                            <SearchIcon />
-                                        </InputAdornment>
-                                    ),
-                                } }
-                            />
-                            <IconButton
-                                onClick={ e =>
-                                {
-                                    alert( 'Añadir Cliente' )
-
-                                } }
-                                title="Añadir Cliente"
-                                color="secondary"
-                                size="medium"
-                                variant="contained"
-                            >
-                                <AddIcon />
-                            </IconButton>
-                        </div>
-
-                        {
-                            //#endregion Search Cliente
-                        }
-
-
-                        {
-                            //#region Datos Cliente
-                        }
-
-                        <Grid container direction="column" spacing={ 1 }  >
-
-
-                            <div style={ { border: '1px solid black', borderRadius: '10px', padding: '3px', margin: '5px' } }>
-                                <div style={ { display: 'flex', backgroundColor: 'gray', borderRadius: '10px 10px 0 0', padding: ' 8px' } } >
-                                    <div style={ {
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        alignItems: "center",
-                                    } }
-                                    >
-                                        <AccountCircleIcon />
-                                    </div>
-
-                                    <div style={ { textAlign: "center", flexGrow: '1' } }>
-                                        <Typography variant="h5" color="initial">  Cliente Contado  </Typography>
-                                    </div>
-
-                                    <div>
-                                        <IconButton
-                                            onClick={ e =>
-                                            {
-                                                alert( 'Editar Cliente' )
-
-                                            } }
-                                            title="Editar Cliente"
-                                            style={ { color: '#ff5353' } }
-                                            size="small"
-                                            variant="contained"
-                                        >
-                                            <EditIcon />
-                                        </IconButton>
-                                    </div>
-                                    <div>
-                                        <IconButton
-                                            onClick={ e =>
-                                            {
-                                                alert( 'Historial de Compras del Cliente' )
-
-                                            } }
-                                            title="Historial del Cliente"
-                                            style={ { color: '#5cc4ff' } }
-                                            size="small"
-                                            variant="contained"
-                                        >
-
-                                            <InfoIcon />
-                                        </IconButton>
-                                    </div>
-                                </div>
-
-
-
-                                <div style={ { margin: '10px 0', display: 'flex' } }>
-                                    <div className={ classes.textoCliente }>
-                                        <div>Compras Realizadas </div>
-                                        <div className={ classes.numberCliente } style={ { color: 'blue' } }><ShoppingCartIcon />0</div>
-                                    </div>
-
-                                    <Divider flexItem orientation="vertical" />
-
-                                    <div className={ classes.textoCliente }>
-
-                                        <div>Puntos de Fidelidad </div>
-                                        <div className={ classes.numberCliente } style={ { color: 'green' } }><LoyaltyIcon /> 0</div>
-
-                                    </div>
-
-                                    <Divider flexItem orientation="vertical" />
-
-                                    <div className={ classes.textoCliente }>
-                                        <div>  Pagos Atrasados </div>
-                                        <div className={ classes.numberCliente } style={ { color: 'red' } }><WarningIcon />0</div>
-                                    </div>
-                                </div>
-
+                    {
+                        //#region PRECIOS
+                    }
+                    <Grid container direction="column" spacing={ 1 } >
+                        <Grid item container >
+                            <div className={ classes.nombreProducto } >
+                                { ( productoSeleccionado && productoSeleccionado.Producto ) ? productoSeleccionado.Producto
+                                    : 'Ningun producto seleccionado...' }
                             </div>
                         </Grid>
+                        { productoSeleccionado &&
+                            <Grid item container style={ { justifyContent: 'space-evenly' } }>
 
-                        {
-                            //#endregion Datos Cliente
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVentaContadoMayorista ) ) && //OJO Y ademas solo para Admins!!
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVentaContadoMayorista' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio Mayorista</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVentaContadoMayorista }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>Pago único</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid>
+                                }
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVentaContadoMinorista ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVentaContadoMinorista' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio al Contado</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVentaContadoMinorista }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }> Pago único</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid>
+                                }
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVenta3Cuotas ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVenta3Cuotas' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio 3 cuotas</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVenta3Cuotas + ' x 3' }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>
+                                                    { 'Gs. ' + ( 3 * parseInt( productoSeleccionado.PrecioVenta3Cuotas ) ) }</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid> }
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVenta6Cuotas ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVenta6Cuotas' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio 6 cuotas</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVenta6Cuotas + ' x 6' }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>
+                                                    { 'Gs. ' + ( 6 * parseInt( productoSeleccionado.PrecioVenta6Cuotas ) ) }</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid> }
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVenta12Cuotas ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVenta12Cuotas' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio 12 cuotas</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVenta12Cuotas + ' x 12' }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>
+                                                    { 'Gs. ' + ( 12 * parseInt( productoSeleccionado.PrecioVenta12Cuotas ) ) }</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid> }
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVenta18Cuotas ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVenta18Cuotas' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio 18 cuotas</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVenta18Cuotas + ' x 18' }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>
+                                                    { 'Gs. ' + ( 18 * parseInt( productoSeleccionado.PrecioVenta18Cuotas ) ) }</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid> }
+
+
+                                { !isNaN( parseInt( productoSeleccionado.PrecioVenta24Cuotas ) ) &&
+                                    <Grid item sm={ 6 } lg={ 4 }>
+                                        <Button fullWidth onClick={ e => { addCart( 'PrecioVenta24Cuotas' ) } }>
+                                            <Card className={ classes.preciosCard }>
+                                                <div style={ { fontSize: '0.8rem' } }>Precio 24 cuotas</div>
+                                                <div style={ { fontSize: '1rem' } }>
+                                                    { 'Gs. ' + productoSeleccionado.PrecioVenta24Cuotas + ' x 24' }  </div>
+                                                <div style={ { fontSize: '0.8rem' } }>
+                                                    { 'Gs. ' + ( 24 * parseInt( productoSeleccionado.PrecioVenta24Cuotas ) ) }</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid> }
+                            </Grid>
+
                         }
 
                     </Grid>
+
+                    {
+                        //#endregion PRECIOS
+                    }
+
+
                 </div>
+                <div className={ classes.seccionClientes }>
+
+
+                    {
+                        //#region Search Cliente
+                    }
+
+                    <div style={ { display: "flex", marginButtom: '10px' } }>
+                        <TextField
+                            label="Cliente"
+                            variant="outlined"
+                            margin="dense"
+                            size="small"
+                            style={ { flexGrow: "1" } }
+                            value={ clienteSearch }
+                            onChange={ ( e ) =>
+                            {
+
+                                setClienteSearch( e.target.value )
+                            } }
+                            InputProps={ {
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <SearchIcon />
+                                    </InputAdornment>
+                                ),
+                            } }
+                        />
+                        <IconButton
+                            onClick={ e =>
+                            {
+                                alert( 'Añadir Cliente' )
+
+                            } }
+                            title="Añadir Cliente"
+                            color="secondary"
+                            size="medium"
+                            variant="contained"
+                        >
+                            <AddIcon />
+                        </IconButton>
+                    </div>
+
+                    {
+                        //#endregion Search Cliente
+                    }
+
+
+                    {
+                        //#region Datos Cliente
+                    }
+
+                    <Grid container direction="column" spacing={ 1 }  >
+
+
+                        <div style={ { border: '1px solid black', borderRadius: '10px', padding: '3px', margin: '5px' } }>
+                            <div style={ { display: 'flex', backgroundColor: 'gray', borderRadius: '10px 10px 0 0', padding: ' 8px' } } >
+                                <div style={ {
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                } }
+                                >
+                                    <AccountCircleIcon />
+                                </div>
+
+                                <div style={ { textAlign: "center", flexGrow: '1' } }>
+                                    <Typography variant="h5" color="initial">  Cliente Contado  </Typography>
+                                </div>
+
+                                <div>
+                                    <IconButton
+                                        onClick={ e =>
+                                        {
+                                            alert( 'Editar Cliente' )
+
+                                        } }
+                                        title="Editar Cliente"
+                                        style={ { color: '#ff5353' } }
+                                        size="small"
+                                        variant="contained"
+                                    >
+                                        <EditIcon />
+                                    </IconButton>
+                                </div>
+                                <div>
+                                    <IconButton
+                                        onClick={ e =>
+                                        {
+                                            alert( 'Historial de Compras del Cliente' )
+
+                                        } }
+                                        title="Historial del Cliente"
+                                        style={ { color: '#5cc4ff' } }
+                                        size="small"
+                                        variant="contained"
+                                    >
+
+                                        <InfoIcon />
+                                    </IconButton>
+                                </div>
+                            </div>
+
+
+
+                            <div style={ { margin: '10px 0', display: 'flex' } }>
+                                <div className={ classes.textoCliente }>
+                                    <div>Compras Realizadas </div>
+                                    <div className={ classes.numberCliente } style={ { color: 'blue' } }><ShoppingCartIcon />0</div>
+                                </div>
+
+                                <Divider flexItem orientation="vertical" />
+
+                                <div className={ classes.textoCliente }>
+
+                                    <div>Puntos de Fidelidad </div>
+                                    <div className={ classes.numberCliente } style={ { color: 'green' } }><LoyaltyIcon /> 0</div>
+
+                                </div>
+
+                                <Divider flexItem orientation="vertical" />
+
+                                <div className={ classes.textoCliente }>
+                                    <div>  Pagos Atrasados </div>
+                                    <div className={ classes.numberCliente } style={ { color: 'red' } }><WarningIcon />0</div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </Grid>
+
+                    {
+                        //#endregion Datos Cliente
+                    }
+
+                </div>
+
             </div>
         </Grid>
 
@@ -561,7 +643,7 @@ const Ventas = ( props ) =>
         {
             //#region Right Panel ----------------------------------------------
         }
-        <Grid item xs={ 12 } md={ 7 } style={ { paddingLeft: '15px' } }>
+        <Grid item xs={ 12 } md={ 7 } style={ {} }>
 
 
             {
@@ -574,7 +656,8 @@ const Ventas = ( props ) =>
                 <DataTable
                     style={ { borderRadius: '10px', overflowX: 'hidden' } }
                     columns={ cols }
-                    data={ data }
+                    noDataComponent={ <AddShoppingCartIcon color='primary' /> }
+                    data={ carritoProductos }
                     highlightOnHover
                     noHeader
                     noTableHead
@@ -592,19 +675,17 @@ const Ventas = ( props ) =>
             {
                 //#region Acciones de Compra ----------------------------------------------
             }
-            <div style={ { display: 'flex', justifyContent: 'space-between' } }>
+            <div style={ { display: 'flex', flexDirection: 'column', justifyContent: 'space-between' } }>
 
                 <div>
                     <TextField
                         label="Pagado"
+                        fullWidth
                         variant="outlined"
                         style={ { flexGrow: "1" } }
-                        value={ clienteSearch }
+                        value={ pagado }
                         margin='normal'
-                        onChange={ ( e ) =>
-                        {
-                            setClienteSearch( e.target.value )
-                        } }
+                        onChange={ ( e ) => { setPagado( e.target.value ) } }
                         InputProps={ {
                             endAdornment: (
                                 <InputAdornment position="end">
@@ -613,28 +694,30 @@ const Ventas = ( props ) =>
                             ),
                         } }
                     />
-                    <br />
-                    <Button variant='contained' fullWidth color='secondary'>Pagar</Button>
+
+
                 </div>
-                <div>
+                <div style={ { margin: '10px', padding: '10px' } }>
 
 
-                    <div style={ { marginTop: '10px', display: 'flex', justifyContent: 'flex-end' } }>
-                        <Typography color="textSecondary" variant="h5" gutterBottom> Importe Total : </Typography>
-                        <Typography color="textPrimary" variant="h5" gutterBottom>Gs. 345 000   </Typography>
+                    <div className={ classes.numberCliente }>
+                        <div> Importe Total : </div>
+                        <div>{ 'Gs. ' + importeTotal } </div>
                     </div>
-                    <div style={ { display: 'flex', justifyContent: 'flex-end' } }>
-                        <Typography color="textSecondary" variant="h5" gutterBottom> Pagado : </Typography>
-                        <Typography color="textPrimary" variant="h5" gutterBottom>Gs. 350 000   </Typography>
+                    <div className={ classes.numberCliente }>
+                        <div> Pagado : </div>
+                        <div >{ isNaN( parseInt( pagado ) ) ? '' : 'Gs. ' + parseInt( pagado ) } </div>
                     </div>
                     <hr />
-                    <div style={ { display: 'flex', justifyContent: 'flex-end' } }>
-                        <Typography color="textSecondary" variant="h5" gutterBottom> Cambio : </Typography>
-                        <Typography color="textPrimary" variant="h5" gutterBottom>Gs. 5 000   </Typography>
+                    <div className={ classes.numberCliente }>
+                        <div> Cambio : </div>
+                        <div>{ isNaN( parseInt( pagado ) ) ? '' : 'Gs. ' + ( parseInt( pagado ) - importeTotal ) } </div>
                     </div>
 
                 </div>
-
+                <div>
+                    <Button variant='contained' fullWidth color='secondary' onClick={ e => { alert( 'Imprimir Comprobante Garantia y si corresponde pagaré de cuotas' ) } }>Pagar</Button>
+                </div>
             </div>
             {
                 //#endregion Acciones de Compra
