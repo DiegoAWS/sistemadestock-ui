@@ -29,7 +29,7 @@ const useStyle = makeStyles( ( theme ) => ( {
         flexDirection: 'column'
     },
     seccionProductos: {
-        padding: '5px',
+        padding: '15px 5px',
         marginBottom: '10px',
         overflow: 'hidden',
         transition: 'max-height 0.5s ease-out'
