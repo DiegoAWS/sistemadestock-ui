@@ -294,7 +294,7 @@ const Ventas = ( props ) =>
     {
         let produtoSel = { ...productoSeleccionado }
 
-        setCarritoProductos( carritoProductos.concat( { ...produtoSel, subTotal: produtoSel[ key ], idList: carritoProductos.length } ) )
+        setCarritoProductos( carritoProductos.concat( { ...produtoSel, subTotal: produtoSel[ key ], id: Date.now() } ) )
         setProductoSeleccionado( null )
     }
 
@@ -305,7 +305,7 @@ const Ventas = ( props ) =>
         if ( window.confirm( 'Seguro que desea quitar de la lista de la compra ' + row.Producto + '...?' ) )
         {
 
-            let tempCarrito = carritoProductos.filter( item => item.idList.toString() !== row.idList.toString() )
+            let tempCarrito = carritoProductos.filter( item => item.id.toString() !== row.id.toString() )
             setCarritoProductos( tempCarrito )
 
         }
