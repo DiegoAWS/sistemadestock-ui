@@ -292,6 +292,16 @@ const Ventas = ( props ) =>
     }
     //#endregion
 
+    //#region PRINT
+
+    //#region Comprobante
+
+
+
+    //#endregion
+
+    //#endregion
+
     return <Grid container spacing={ 3 } style={ { height: "100%", width: '100%' } } >
 
         {
