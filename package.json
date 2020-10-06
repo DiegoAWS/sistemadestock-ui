@@ -12,6 +12,7 @@
     "canvg": "^3.0.6",
     "clsx": "^1.1.1",
     "date-fns": "^2.16.1",
+    "file-saver": "^2.0.2",
     "fontsource-roboto": "^3.0.3",
     "jspdf": "^2.1.1",
     "jspdf-autotable": "^3.5.13",

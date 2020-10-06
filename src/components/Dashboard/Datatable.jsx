@@ -7,43 +7,41 @@ import CloseIcon from '@material-ui/icons/Close'
 import loading from '../../assets/images/loading.gif'
 
 
-function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
-{
+function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion = false }) {
 
 
 
-  const showingValue = useRef( [] )
+  const showingValue = useRef([])
 
-  const [ openModalShow, setOpenModalShow ] = useState( false )
-  const [ state, setState ] = useState( {
+  const [openModalShow, setOpenModalShow] = useState(false)
+  const [state, setState] = useState({
     allInLine: true,
     cantidadColumnas: 0
-  } )
+  })
 
 
 
 
 
 
-  const preparaColumnas = () =>
-  {
+  const preparaColumnas = () => {
 
 
-    let capacidad = Math.floor( ( window.innerWidth ) / 140 ) - 1
-    let allInLine = ( campos.length + 1 < capacidad )
+    let capacidad = Math.floor((window.innerWidth) / 140) - 1
+    let allInLine = (campos.length + 1 < capacidad)
 
 
 
-    setState( {
+    setState({
       allInLine,
       cantidadColumnas: allInLine ? campos.length + 1 : capacidad
 
-    } )
+    })
   }
 
 
 
-  useEffect( preparaColumnas, [ campos ] )
+  useEffect(preparaColumnas, [campos])
 
 
 
@@ -55,7 +53,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
 
 
-  if ( !data )
+  if (!data)
     data = []
 
   var op = {
@@ -63,7 +61,7 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
     rangeSeparatorText: 'de'
   }
 
-  createTheme( 'tableTheme', {
+  createTheme('tableTheme', {
     text: {
       primary: '#268bd2',
       secondary: '#2aa198',
@@ -92,37 +90,36 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
       hover: 'rgba(0,0,0,.08)',
       disabled: 'rgba(0,0,0,.12)',
     },
-  } )
+  })
 
-  var columns = !state.allInLine ? [] : [ {
+  var columns = !state.allInLine ? [] : [{
     width: '140px',
     compact: true,
-    cell: row => <ActionsButtons data={ row } />
+    cell: row => <ActionsButtons data={row} />
   }
   ]
 
-  columns = columns.concat( campos.map( item => ( {
+  columns = columns.concat(campos.map(item => ({
 
-    name: item[ 1 ],
-    selector: item[ 0 ],
+    name: item[1],
+    selector: item[0],
     sortable: true,
     width: '140px'
-  } ) ) )
+  })))
 
 
 
 
 
 
-  const ActionsButtons = ( { data } ) => (
-    <div style={ { flexBasis: '140x', flexGrow: 1, display: 'flex' } }>
-      <IconButton onClick={ e =>
-      {
-        if ( window.confirm( "¿Seguro que desea Borrar este ítem?" ) )
-          handleDelete( data )
+  const ActionsButtons = ({ data }) => (
+    <div style={{ flexBasis: '140x', flexGrow: 1, display: 'flex' }}>
+      <IconButton onClick={e => {
+        if (window.confirm("¿Seguro que desea Borrar este ítem?"))
+          handleDelete(data)
 
-      } }
-        style={ { margin: '0 12px' } }
+      }}
+        style={{ margin: '0 12px' }}
         size="medium"
         title='Borrar datos' color="secondary"
         variant="contained">
@@ -131,16 +128,15 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
       </IconButton>
 
-      <IconButton onClick={ ( e ) =>
-      {
-        if ( window.confirm( "¿Seguro que desea Editar este ítem?" ) )
-          handleEdit( data )
+      <IconButton onClick={(e) => {
+        if (window.confirm("¿Seguro que desea Editar este ítem?"))
+          handleEdit(data)
 
-      } }
+      }}
         title='Editar datos' color="primary"
         size="medium"
 
-        style={ { margin: '0 12px' } }
+        style={{ margin: '0 12px' }}
         variant="contained">
 
         <EditIcon />
@@ -149,53 +145,52 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
     </div>
   )
 
-  const NoFitItems = ( { newCols, data } ) => (
+  const NoFitItems = ({ newCols, data }) => (
 
     <>
-      { newCols.map( ( item, i ) => (
+      {newCols.map((item, i) => (
 
-        <div key={ i } style={ {
+        <div key={i} style={{
           border: '1px solid black', flexBasis: '120px',
           flexGrow: 1,
           display: 'flex', flexDirection: 'column',
           backgroundColor: 'gray',
           borderRadius: '10px', margin: '10px'
-        } }>
+        }}>
 
-          <div style={ { backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' } }>  { item.name }</div>
+          <div style={{ backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' }}>  {item.name}</div>
 
-          <div style={ { color: 'white', textAlign: 'center' } }> { data[ item.selector ] }</div>
+          <div style={{ color: 'white', textAlign: 'center' }}> {data[item.selector]}</div>
         </div>
-      ) ) }
+      ))}
     </>
   )
 
 
-  const ExpandedComponent = ( { data } ) =>
-  {
+  const ExpandedComponent = ({ data }) => {
 
 
-    var newCols = columns.slice( state.cantidadColumnas )
+    var newCols = columns.slice(state.cantidadColumnas)
 
 
 
     return (
 
 
-      <div style={ {
+      <div style={{
         width: 60 + state.cantidadColumnas * 140,
         display: 'flex', flexWrap: 'wrap',
         border: '4px solid black',
         borderRadius: '5px', borderTop: ''
-      } }>
+      }}>
 
 
-        <ActionsButtons data={ data } />
+        <ActionsButtons data={data} />
 
-        { ( newCols.length > 0 ) && <NoFitItems
-          newCols={ newCols }
-          data={ data }
-        /> }
+        {(newCols.length > 0) && <NoFitItems
+          newCols={newCols}
+          data={data}
+        />}
 
 
       </div >
@@ -206,85 +201,82 @@ function Datatable ( { campos, sinDatos, data, handleDelete, handleEdit } )
 
 
 
-  const handleShow = row =>
-  {
+  const handleShow = row => {
     let newShow = []
-    campos.forEach( item =>
-    {
-      newShow.push( [ item[ 1 ], row[ item[ 0 ] ] ] )
-    } )
+    campos.forEach(item => {
+      newShow.push([item[1], row[item[0]]])
+    })
     showingValue.current = newShow
-    setOpenModalShow( true )
+    setOpenModalShow(true)
   }
 
 
   return (
-    <div style={ { width: 60 + state.cantidadColumnas * 140, borderRadius: '10px', margin: '0 20px 0 0' } }>
+    <div style={{ width: 60 + state.cantidadColumnas * 140, borderRadius: '10px', margin: '0 20px 0 0' }}>
       <DataTable
-        columns={ state.allInLine ? columns.slice( 0, state.cantidadColumnas + 1 ) : columns.slice( 0, state.cantidadColumnas ) }
-        data={ data }
-        keyField={ 'id' }
-        defaultSortField={ 'id' }
-        defaultSortAsc={ false }
+        columns={state.allInLine ? columns.slice(0, state.cantidadColumnas + 1) : columns.slice(0, state.cantidadColumnas)}
+        data={data}
+        keyField={'id'}
+        defaultSortField={'id'}
+        defaultSortAsc={false}
+        selectableRows={seleccion}
         pagination
         highlightOnHover
         dense
         noHeader
-        onRowClicked={ handleShow }
-        expandableRows={ !state.allInLine }
+        onRowClicked={handleShow}
+        expandableRows={!state.allInLine}
         responsive
-        expandOnRowDoubleClicked={ false }
+        expandOnRowDoubleClicked={false}
 
-        expandableRowsComponent={ <ExpandedComponent /> }
-        noDataComponent={ sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={ loading } width='20px' alt='' /> }
-        paginationComponentOptions={ op }
-        paginationPerPage={ 10 }
-        paginationRowsPerPageOptions={ [ 5, 10, 25, 50, 100, 200 ] }
+        expandableRowsComponent={<ExpandedComponent />}
+        noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loading} width='20px' alt='' />}
+        paginationComponentOptions={op}
+        paginationPerPage={10}
+        paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
         theme="tableTheme"
       />
 
 
 
       <Modal
-        open={ openModalShow }
-        onClose={ r =>
-        {
+        open={openModalShow}
+        onClose={r => {
           showingValue.current = []
-          setOpenModalShow( false )
-        } }
+          setOpenModalShow(false)
+        }}
         disableScrollLock
       >
 
-        <Grid container wrap='wrap' style={ {
+        <Grid container wrap='wrap' style={{
           backgroundColor: 'white', position: 'absolute',
-          width: ( state.cantidadColumnas ) * 120, top: '50%', left: '50%', borderRadius: '20px',
+          width: (state.cantidadColumnas) * 120, top: '50%', left: '50%', borderRadius: '20px',
           transform: ' translate(-50%, -50%)', padding: '10px'
-        } }>
-          <Grid item xs={ 12 } container justify='flex-end'>
+        }}>
+          <Grid item xs={12} container justify='flex-end'>
             <Button
 
               color="secondary"
               variant="contained"
-              onClick={ () =>
-              {
+              onClick={() => {
                 showingValue.current = []
-                setOpenModalShow( false )
-              } }><CloseIcon /></Button>
+                setOpenModalShow(false)
+              }}><CloseIcon /></Button>
           </Grid>
 
 
 
-          { showingValue.current.map( item => (
+          {showingValue.current.map(item => (
 
-            <Grid item key={ item[ 0 ] } style={ { margin: '10px', backgroundColor: 'gray', border: '1px solid black', borderRadius: '10px' } }>
+            <Grid item key={item[0]} style={{ margin: '10px', backgroundColor: 'gray', border: '1px solid black', borderRadius: '10px' }}>
 
-              <div style={ { padding: '2px 10px', backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' } }>
-                { item[ 0 ] }</div>
+              <div style={{ padding: '2px 10px', backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' }}>
+                {item[0]}</div>
 
-              <div style={ { padding: '2px', color: 'white', textAlign: 'center' } }> { item[ 1 ] } </div>
+              <div style={{ padding: '2px', color: 'white', textAlign: 'center' }}> {item[1]} </div>
 
             </Grid>
-          ) ) }
+          ))}
 
 
 

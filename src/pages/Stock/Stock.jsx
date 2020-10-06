@@ -14,7 +14,15 @@ import SearchIcon from '@material-ui/icons/Search'
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
 
+import SaveAltIcon from '@material-ui/icons/SaveAlt';
+import GridOnIcon from '@material-ui/icons/GridOn';
+
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
+
+
+
 import { dateToString } from '../../API/timeFunctions'
+import { exportToXLSX } from '../../components/exportImport/exportToXLSX'
 const Stock = props => {
 
 
@@ -45,8 +53,9 @@ const Stock = props => {
     const [filterData, setFilterData] = useState([])
 
 
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(true)
 
+    const [seleccion, setSeleccion] = useState(false)
     //#endregion CONST's State
 
     //#region  campos Producto ----------------------------------
@@ -132,6 +141,7 @@ const Stock = props => {
 
     //#endregion Inicializing the Form
 
+    const fileName = 'Stock-' + (new Date()).toLocaleDateString('es-ES').replace(RegExp('/', 'gi'), '-')
 
 
     const editingValue = useRef({})
@@ -352,35 +362,44 @@ const Stock = props => {
 
 
 
-
     return (
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
 
 
-                <div>
-                    <Button style={{ margin: '10px' }} variant="contained" color="primary"
+                <div style={{ margin: '10px' }}>
+                    <Button style={{ margin: '0 10px' }} variant="contained" color="primary" size='small'
+                        disabled={loading}
                         startIcon={<AddIcon />}
                         endIcon={<LocalShippingIcon />}
-                        onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Productos al Stock</Button>
+                        onClick={() => { clearform(); setOpenPopup(true) }} >Añadir</Button>
 
+                    <Button style={{ margin: '0 10px' }} variant="contained" color='secondary' size='small'
+                        disabled={loading}
+                        startIcon={<SaveAltIcon />}
+                        endIcon={<GridOnIcon />}
+                        onClick={(e) => exportToXLSX(dataFull, fileName, camposDataFull)}>Exportar a Excel</Button>
+                    <Button style={{ margin: '0 10px' }} variant="contained" color='secondary' size='small'
+                        disabled={loading}
 
+                        endIcon={seleccion && <CheckBoxIcon />}
+                        onClick={(e) => setSeleccion(!seleccion)}>Selección</Button>
                 </div>
+
                 <div>
                     <TextField
                         value={search || ''}
                         margin="dense"
                         color={(search.length === 0) ? "primary" : "secondary"}
                         size="small"
-
+                        disabled={loading}
                         onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
                         variant={(search.length === 0) ? "outlined" : "filled"}
                         InputProps={{
                             startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
                             endAdornment: <InputAdornment position="end">
-                                <IconButton
-                                    onClick={e => { setSearch(''); handleSearch('') }}                >
+                                <IconButton onClick={e => { setSearch(''); handleSearch('') }}                >
                                     <CloseIcon />
                                 </IconButton>
                             </InputAdornment>,
@@ -390,7 +409,7 @@ const Stock = props => {
             </div>
 
             <Datatable data={(search.length === 0) ? dataFull : filterData}
-
+                seleccion={seleccion}
                 sinDatos={sinDatos}
                 campos={camposDataFull}
 
