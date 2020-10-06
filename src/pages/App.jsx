@@ -30,7 +30,6 @@ import Productos from './Productos/Productos'
 
 import Clientes from './Clientes/Clientes'
 
-import Proveedores from './Proveedores/Proveedores'
 
 import Codebars from './Codebars/Codebars'
 
@@ -38,8 +37,7 @@ import Ajustes from './Ajustes/Ajustes'
 
 
 
-export default function App ()
-{
+export default function App() {
 
 
 
@@ -50,33 +48,32 @@ export default function App ()
       <CssBaseline />
 
       <SkeletonSideBar
-        ToolbarContent={ NavBar }
-        SideBar={ <SideBar /> }
+        ToolbarContent={NavBar}
+        SideBar={<SideBar />}
       >
 
 
 
 
         <Switch>
-          <Route exact path="/" component={ LandingPage } />
+          <Route exact path="/" component={LandingPage} />
 
-          <SecureRoute path='/dashboard' component={ Dashboard } />
+          <SecureRoute path='/dashboard' component={Dashboard} />
 
-          <SecureRoute path='/ventas' component={ Ventas } />
-          <SecureRoute path='/stock' component={ Stock } />
+          <SecureRoute path='/ventas' component={Ventas} />
+          <SecureRoute path='/stock' component={Stock} />
 
-          <SecureRoute path='/productos' component={ Productos } />
-          <SecureRoute path='/clientes' component={ Clientes } />
+          <SecureRoute path='/productos' component={Productos} />
+          <SecureRoute path='/clientes' component={Clientes} />
 
-          <SecureRoute path='/proveedores' component={ Proveedores } />
 
-          <SecureRoute path='/codebars' component={ Codebars } />
+          <SecureRoute path='/codebars' component={Codebars} />
 
-          <SecureRoute exact path="/users" component={ Users } />
+          <SecureRoute exact path="/users" component={Users} />
 
-          <SecureRoute exact path="/ajustes" component={ Ajustes } />
+          <SecureRoute exact path="/ajustes" component={Ajustes} />
 
-          <Route path="*" component={ LandingPage } />
+          <Route path="*" component={LandingPage} />
         </Switch>
       </SkeletonSideBar>
 

@@ -15,31 +15,30 @@ import AddIcon from '@material-ui/icons/Add'
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 
 
-const Productos = props =>
-{
+const Productos = props => {
 
 
   //#region  campos Producto ----------------------------------
 
   const campos = [
-    [ 'Producto', 'Producto', 'varcharX' ],
-    [ 'Categoria', 'Categoría', 'categSelector' ],
+    ['Producto', 'Producto', 'varcharX'],
+    ['Categoria', 'Categoría', 'categSelector'],
 
-    [ 'Codigo', 'Código', 'varchar' ],
-    [ 'Marca', 'Marca', 'varchar' ],
+    ['Codigo', 'Código', 'varchar'],
+    ['Marca', 'Marca', 'varchar'],
 
-    [ 'Color', 'Color', 'varchar' ],
+    ['Color', 'Color', 'varchar'],
 
 
-    [ 'PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar' ],
+    ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
 
-    [ 'PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double' ],
+    ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
 
-    [ 'PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double' ],
-    [ 'PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double' ],
-    [ 'PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double' ],
-    [ 'PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double' ],
-    [ 'PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double' ]
+    ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
+    ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
+    ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
+    ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double'],
+    ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
   ]
   //#endregion campos Producto
 
@@ -49,15 +48,17 @@ const Productos = props =>
   //#region  CONST's STATE ----------------------------------
 
 
-  const [ openPopup, setOpenPopup ] = useState( false )
+  const [openPopup, setOpenPopup] = useState(false)
 
-  const [ sinDatos, SetSinDatos ] = useState( false )
-  const [ dataProductos, setDataProductos ] = useState( [] ) //Data de la tabla
-  const [ categorias, setCategorias ] = useState( [] ) // Categorias
+  const [sinDatos, SetSinDatos] = useState(false)
+  const [dataProductos, setDataProductos] = useState([]) //Data de la tabla
 
 
-  const [ search, setSearch ] = useState( '' )
-  const [ filterData, setFilterData ] = useState( [] )
+  const [search, setSearch] = useState('')
+  const [filterData, setFilterData] = useState([])
+
+
+  const [loading, setLoading] = useState(false)
 
   //#region  Inicializing the Form ----------------------------------
 
@@ -67,7 +68,6 @@ const Productos = props =>
   var formInit = {
     Codigo: "",
     Categoria: "",
-    Categoria_id: "",
     Producto: "",
     Marca: "",
     Color: "",
@@ -84,144 +84,127 @@ const Productos = props =>
 
 
   //#endregion Inicializing the Form
-  const [ formProducto, setFormProducto ] = useState( formInit )
+  const [formProducto, setFormProducto] = useState(formInit)
 
 
-  const [ ajustesPrecios, setAjustesPrecio ] = useState( {
+  const [ajustesPrecios, setAjustesPrecio] = useState({
     pMinorista: 106.25,
     p3cuotas: 112.50,
     p6cuotas: 130,
     p12cuotas: 150,
     p18cuotas: 180,
     p24cuotas: 200
-  } )
+  })
 
 
 
-  const editingValue = useRef( {} )
+  const editingValue = useRef({})
 
 
 
   //#endregion CONST's
 
   // eslint-disable-next-line
-  useEffect( () => { cargaData() }, [] )
+  useEffect(() => { cargaData() }, [])
 
 
 
   //#region  CRUD API ----------------------------------
 
-  const cargaData = () =>
-  {
+  const cargaData = () => {
 
 
-    getRequest( '/productos' )
-      .then( request =>
-      {
+    getRequest('/productos').then(request => {
 
-        if ( request && request.data && request.data.Productos && request.data.Categorias && request.data.Ajuste )
-        {
+      setOpenPopup(false)
+      setLoading(false)
 
-          var newData = request.data.Productos.map( dataRequested =>
-          {
+      if (request && request.data && request.data.Productos && request.data.Ajuste) {
 
-            let instantData = {}
+        var newData = request.data.Productos.map(dataRequested => {
 
-            campos.forEach( item =>
-            {
+          let instantData = {}
 
-              instantData[ item[ 0 ] ] = ( !dataRequested[ item[ 0 ] ] ) ? "" : dataRequested[ item[ 0 ] ].replace( ' ', '' )
+          campos.forEach(item => {
 
-            } )
+            instantData[item[0]] = (!dataRequested[item[0]]) ? "" : dataRequested[item[0]]
 
-            return { ...instantData, id: dataRequested.id }
+          })
 
-          } )
+          return { ...instantData, id: dataRequested.id }
 
-          setDataProductos( newData )
+        })
+
+        setDataProductos(newData)
 
 
 
 
-          var newCategorias = request.data.Categorias.map( dataRequested => ( {
-            Nombre: dataRequested.Nombre,
-            id: dataRequested.id
-          } ) )
+        if (request.data.Ajuste[0]) {
+
+          let dataRequested = request.data.Ajuste[0]
+
+          let pMinorista = parseInt(dataRequested.pMinorista, 10)
+          let p3cuotas = parseInt(dataRequested.p3cuotas, 10)
+          let p6cuotas = parseInt(dataRequested.p6cuotas, 10)
+          let p12cuotas = parseInt(dataRequested.p12cuotas, 10)
+          let p18cuotas = parseInt(dataRequested.p18cuotas, 10)
+          let p24cuotas = parseInt(dataRequested.p24cuotas, 10)
+          if (!(isNaN(pMinorista) || isNaN(p3cuotas) || isNaN(p6cuotas) || isNaN(p12cuotas))) {
 
 
-          setCategorias( newCategorias )
-
-
-          if ( request.data.Ajuste[ 0 ] )
-          {
-
-            let dataRequested = request.data.Ajuste[ 0 ]
-
-            let pMinorista = parseInt( dataRequested.pMinorista, 10 )
-            let p3cuotas = parseInt( dataRequested.p3cuotas, 10 )
-            let p6cuotas = parseInt( dataRequested.p6cuotas, 10 )
-            let p12cuotas = parseInt( dataRequested.p12cuotas, 10 )
-            let p18cuotas = parseInt( dataRequested.p18cuotas, 10 )
-            let p24cuotas = parseInt( dataRequested.p24cuotas, 10 )
-            if ( !( isNaN( pMinorista ) || isNaN( p3cuotas ) || isNaN( p6cuotas ) || isNaN( p12cuotas ) ) )
-            {
-
-
-              setAjustesPrecio(
-                {
-                  pMinorista,
-                  p3cuotas,
-                  p6cuotas,
-                  p12cuotas,
-                  p18cuotas,
-                  p24cuotas
-                } )
-            }
-
+            setAjustesPrecio(
+              {
+                pMinorista,
+                p3cuotas,
+                p6cuotas,
+                p12cuotas,
+                p18cuotas,
+                p24cuotas
+              })
           }
 
         }
 
+      }
 
 
-        if ( request && request.statusText === 'OK' && request.data && request.data.Productos.length === 0 )
-          SetSinDatos( true )
 
-      } )
+      if (request && request.statusText === 'OK' && request.data && request.data.Productos.length === 0)
+        SetSinDatos(true)
+
+    })
   }
 
 
-  const editData = ( item ) =>
-  {
+  const editData = (item) => {
 
     editingValue.current = item
 
-    var temp = dataProductos.filter( it => it.id !== item.id )
+    var temp = dataProductos.filter(it => it.id !== item.id)
 
 
-    setDataProductos( temp )
+    setDataProductos(temp)
 
-    setFormProducto( item )
-    setOpenPopup( true )
+    setFormProducto(item)
+    setOpenPopup(true)
 
 
 
   }
 
-  const deleteData = ( itemDelete ) =>
-  {
+  const deleteData = (itemDelete) => {
 
 
-    setDataProductos( dataProductos.filter( it => it.id !== itemDelete.id ) )
+    setDataProductos(dataProductos.filter(it => it.id !== itemDelete.id))
 
     clearform()
 
-    deleteRequest( '/productos/' + itemDelete.id )
-      .then( () =>
-      {
+    deleteRequest('/productos/' + itemDelete.id)
+      .then(() => {
         cargaData()
 
-      } )
+      })
   }
 
 
@@ -232,43 +215,38 @@ const Productos = props =>
 
   //#region  Others Functions ----------------------------------
 
-  const clearform = () =>
-  {
+  const clearform = () => {
 
     editingValue.current = {}
-    setFormProducto( formInit )
+    setFormProducto(formInit)
 
   }
-  const recolocaEditItem = () =>
-  {
-    setDataProductos( dataProductos.concat( editingValue.current ) )
+  const recolocaEditItem = () => {
+    setDataProductos(dataProductos.concat(editingValue.current))
   }
 
-  const handleSearch = text =>
-  {
+  const handleSearch = text => {
 
 
-    let dataFilter = dataProductos.filter( item =>
-    {
+    let dataFilter = dataProductos.filter(item => {
       let resp = false
 
-      campos.forEach( camp =>
-      {
-        if ( item[ camp[ 0 ] ].toLowerCase().includes( text.toLowerCase() ) )
+      campos.forEach(camp => {
+        if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
           resp = true
 
-      } )
+      })
 
       return resp
 
-    } )
+    })
 
-    if ( dataFilter.length === 0 )
-      SetSinDatos( true )
+    if (dataFilter.length === 0)
+      SetSinDatos(true)
     else
-      SetSinDatos( false )
+      SetSinDatos(false)
 
-    setFilterData( dataFilter )
+    setFilterData(dataFilter)
   }
   //#endregion Others Functions
 
@@ -280,74 +258,71 @@ const Productos = props =>
 
   return (
     <>
-      <div style={ { display: 'flex', justifyContent: 'space-between' } }>
+      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
 
 
         <div>
-          <Button style={ { margin: '10px' } }
-            startIcon={ <AddIcon /> }
-            endIcon={ <ImportantDevicesIcon /> }
+          <Button style={{ margin: '10px' }}
+            startIcon={<AddIcon />}
+            endIcon={<ImportantDevicesIcon />}
 
             variant="contained" color="primary"
-            onClick={ () => { clearform(); setOpenPopup( true ) } } > Añadir Productos</Button>
+            onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Productos</Button>
 
         </div>
         <div>
           <TextField
-            value={ search || '' }
+            value={search || ''}
             margin="dense"
-            color={ ( search.length === 0 ) ? "primary" : "secondary" }
+            color={(search.length === 0) ? "primary" : "secondary"}
             size="small"
 
-            onChange={ e => { setSearch( e.target.value.replace( '!', '' ) ); handleSearch( e.target.value.replace( '!', '' ) ) } }
-            variant={ ( search.length === 0 ) ? "outlined" : "filled" }
-            InputProps={ {
+            onChange={e => { setSearch(e.target.value.replace('!', '')); handleSearch(e.target.value.replace('!', '')) }}
+            variant={(search.length === 0) ? "outlined" : "filled"}
+            InputProps={{
               startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
               endAdornment: <InputAdornment position="end">
                 <IconButton
-                  onClick={ e => { setSearch( '' ); handleSearch( '' ) } }    >
+                  onClick={e => { setSearch(''); handleSearch('') }}    >
                   <CloseIcon />
                 </IconButton>
               </InputAdornment>,
-            } } />
+            }} />
         </div>
 
       </div>
 
-      <Datatable data={ ( search.length === 0 ) ? dataProductos : filterData }
+      <Datatable data={(search.length === 0) ? dataProductos : filterData}
 
-        sinDatos={ sinDatos }
-        campos={ campos }
+        sinDatos={sinDatos}
+        campos={campos}
         responsive
-        handleDelete={ deleteData }
-        handleEdit={ editData } />
+        handleDelete={deleteData}
+        handleEdit={editData} />
 
 
 
       <FormAddProducto
-        openPopup={ openPopup }
-        setOpenPopup={ setOpenPopup }
+        openPopup={openPopup}
+        setOpenPopup={setOpenPopup}
 
 
-        formProducto={ formProducto }
-        setFormProducto={ setFormProducto }
+        formProducto={formProducto}
+        setFormProducto={setFormProducto}
 
 
-        dataProductos={ dataProductos }
-        setDataProductos={ setDataProductos }
+        dataProductos={dataProductos}
 
 
+        loading={loading}
+        setLoading={setLoading}
 
+        recolocaEditItem={recolocaEditItem}
 
-        categorias={ categorias }
-        setCategorias={ setCategorias }
-
-        recolocaEditItem={ recolocaEditItem }
-
-        cargaData={ cargaData }
-        ajustesPrecios={ ajustesPrecios }
-        campos={ campos }
+        cargaData={cargaData}
+        ajustesPrecios={ajustesPrecios}
+        campos={campos}
 
       />
 
