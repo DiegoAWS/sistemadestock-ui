@@ -23,16 +23,15 @@ setDefaultLocale('es')
 
 const FormAddStock = (
     {
+
         openPopup, setOpenPopup,
         openPopupProducto, setOpenPopupProducto,
         formStock, SetFormStock,
-
         dataStock,
-
         dataProductos, setDataProductos,
-
         loading, setLoading,
         cargaData, recolocaEditItem, ajustesPrecios
+
     }) => {
 
 
@@ -71,7 +70,6 @@ const FormAddStock = (
     const refProveedores = useRef([])
 
     //#endregion CONST
-
 
     //#region  useEffect ----------------------------------
 
@@ -160,7 +158,6 @@ const FormAddStock = (
 
     //#endregion saveData
 
-
     //#region  Estiliza como money String ----------------------------------
 
     const EstilizaString = (s) => {
@@ -172,8 +169,6 @@ const FormAddStock = (
     }
 
     //#endregion Estiliza como money String
-
-
 
     //#region  Edit Delete Producto ----------------------------------
 
@@ -198,17 +193,19 @@ const FormAddStock = (
 
     //#endregion  Edit Delete Producto
 
+    //#region Autorrellena
 
     const autorrellena = () => {
         if (dataStock.length > 0 && dataStock[dataStock.length - 1]) {
+
             let oldForm = dataStock[dataStock.length - 1]
 
-            SetFormStock({ ...formStock, Proveedor: oldForm.Proveedor })
-            SetFormStock({ ...formStock, FechaCompra: new Date(2020, 1, 1) })
-            SetFormStock({ ...formStock, Factura: 'xxxx' })
+            SetFormStock({ ...formStock, FechaCompra: oldForm.FechaCompra, Factura: oldForm.Factura, Proveedor: oldForm.Proveedor })
+
         }
     }
 
+    //#endregion
 
     //#region  Return ----------------------------------
 
@@ -238,7 +235,6 @@ const FormAddStock = (
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
                     <Grid item xs={12} sm={5} style={{ padding: '0px 10px' }} >
 
-
                         <Autocomplete
                             fullWidth
                             freeSolo
@@ -248,8 +244,8 @@ const FormAddStock = (
                             inputValue={formStock.Proveedor}
                             onInputChange={(event, newInputValue) => { SetFormStock({ ...formStock, Proveedor: newInputValue }) }}
                             renderInput={(params) => <TextField {...params} label="Proveedor" variant="outlined" margin="normal" size="small" fullWidth />}
-
                         />
+
                     </Grid>
 
                     <Grid item xs={12} sm={3} style={{ padding: '0px 10px' }}>
