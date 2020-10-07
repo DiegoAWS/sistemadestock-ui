@@ -5,11 +5,9 @@ import Datatable from '../../components/Dashboard/Datatable'
 import FormAddStock from '../../components/FormAdd/FormAddStock'
 
 
-import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 
 
-import CloseIcon from '@material-ui/icons/Close'
-import SearchIcon from '@material-ui/icons/Search'
 
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
@@ -49,13 +47,16 @@ const Stock = props => {
         p24cuotas: 200
     })
 
-    const [search, setSearch] = useState('')
-    const [filterData, setFilterData] = useState([])
+
 
 
     const [loading, setLoading] = useState(true)
 
     const [seleccion, setSeleccion] = useState(false)
+    const [clearSelection, setClearSelection] = useState(false)
+    const [cantidadSeleccionados, setCantidadSeleccionados] = useState(0)
+    const [elementosSeleccionados, setElementosSeleccionados] = useState([])
+
     //#endregion CONST's State
 
     //#region  campos Producto ----------------------------------
@@ -326,29 +327,6 @@ const Stock = props => {
     }
 
 
-    const handleSearch = text => {
-
-
-        let dataFilter = dataFull.filter(item => {
-            let resp = false
-
-            camposStock.forEach(camp => {
-                if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
-                    resp = true
-
-            })
-
-            return resp
-
-        })
-
-        if (dataFilter.length === 0)
-            SetSinDatos(true)
-        else
-            SetSinDatos(false)
-
-        setFilterData(dataFilter)
-    }
 
 
     const recolocaEditItem = () => {
@@ -357,6 +335,28 @@ const Stock = props => {
     //#endregion Others Functions
 
 
+    const toggleSelections = () => {
+
+
+        if (seleccion) {
+
+            setClearSelection(true)
+
+            setTimeout(() => { setClearSelection(false) }, 100);
+
+        }
+
+
+        setSeleccion(!seleccion)
+
+
+    }
+    const Seleccion = ({ selectedCount, selectedRows }) => {
+        setCantidadSeleccionados(selectedCount)
+        setElementosSeleccionados(selectedRows)
+
+    }
+
 
     //#region  Return ----------------------------------
 
@@ -364,57 +364,51 @@ const Stock = props => {
 
     return (
         <>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-
-
+            <h5 style={{ margin: '0px', position: 'absolute', width: '70%', textAlign: 'center' }}>{seleccion ? cantidadSeleccionados + ' : Elementos Seleccionados' : ''}</h5>
+            <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
 
                 <div style={{ margin: '10px' }}>
-                    <Button style={{ margin: '0 10px' }} variant="contained" color="primary" size='small'
+                    <Button style={{ margin: '10px' }} variant="contained" color="primary" size='small'
                         disabled={loading}
                         startIcon={<AddIcon />}
                         endIcon={<LocalShippingIcon />}
                         onClick={() => { clearform(); setOpenPopup(true) }} >Añadir</Button>
 
-                    <Button style={{ margin: '0 10px' }} variant="contained" color='secondary' size='small'
+                    <Button style={{ margin: '10px' }} variant="contained" color='secondary' size='small'
                         disabled={loading}
                         startIcon={<SaveAltIcon />}
                         endIcon={<GridOnIcon />}
-                        onClick={(e) => exportToXLSX(dataFull, fileName, camposDataFull)}>Exportar a Excel</Button>
-                    <Button style={{ margin: '0 10px' }} variant="contained" color='secondary' size='small'
+                        onClick={(e) => {
+                            if (seleccion && cantidadSeleccionados === 0) {
+                                alert('Ningun elemento seleccionado')
+                                return
+                            }
+                            exportToXLSX(seleccion ? elementosSeleccionados : dataFull, fileName, camposDataFull)
+                        }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
+                    <Button style={{ margin: '10px' }} variant="contained" color='secondary' size='small'
                         disabled={loading}
 
                         endIcon={seleccion && <CheckBoxIcon />}
-                        onClick={(e) => setSeleccion(!seleccion)}>Selección</Button>
+                        onClick={(e) => { toggleSelections() }}>SELECCIONAR</Button>
+
                 </div>
 
-                <div>
-                    <TextField
-                        value={search || ''}
-                        margin="dense"
-                        color={(search.length === 0) ? "primary" : "secondary"}
-                        size="small"
-                        disabled={loading}
-                        onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
-                        variant={(search.length === 0) ? "outlined" : "filled"}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
-                            endAdornment: <InputAdornment position="end">
-                                <IconButton onClick={e => { setSearch(''); handleSearch('') }}                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </InputAdornment>,
-                        }} />
-                </div>
+
 
             </div>
 
-            <Datatable data={(search.length === 0) ? dataFull : filterData}
+            <Datatable data={dataFull}
                 seleccion={seleccion}
                 sinDatos={sinDatos}
+                SetSinDatos={SetSinDatos}
                 campos={camposDataFull}
 
+                clearSelection={clearSelection}
+                Seleccion={Seleccion}
+
                 handleDelete={deleteData}
-                handleEdit={editData} />
+                handleEdit={editData}
+            />
 
 
             <FormAddStock

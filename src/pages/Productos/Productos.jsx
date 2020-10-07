@@ -7,9 +7,8 @@ import Datatable from '../../components/Dashboard/Datatable'
 
 
 
-import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import SearchIcon from '@material-ui/icons/Search'
+import { Button } from '@material-ui/core'
+
 
 import AddIcon from '@material-ui/icons/Add'
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
@@ -53,9 +52,6 @@ const Productos = props => {
   const [sinDatos, SetSinDatos] = useState(false)
   const [dataProductos, setDataProductos] = useState([]) //Data de la tabla
 
-
-  const [search, setSearch] = useState('')
-  const [filterData, setFilterData] = useState([])
 
 
   const [loading, setLoading] = useState(false)
@@ -225,29 +221,7 @@ const Productos = props => {
     setDataProductos(dataProductos.concat(editingValue.current))
   }
 
-  const handleSearch = text => {
 
-
-    let dataFilter = dataProductos.filter(item => {
-      let resp = false
-
-      campos.forEach(camp => {
-        if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
-          resp = true
-
-      })
-
-      return resp
-
-    })
-
-    if (dataFilter.length === 0)
-      SetSinDatos(true)
-    else
-      SetSinDatos(false)
-
-    setFilterData(dataFilter)
-  }
   //#endregion Others Functions
 
 
@@ -271,31 +245,14 @@ const Productos = props => {
             onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Productos</Button>
 
         </div>
-        <div>
-          <TextField
-            value={search || ''}
-            margin="dense"
-            color={(search.length === 0) ? "primary" : "secondary"}
-            size="small"
 
-            onChange={e => { setSearch(e.target.value.replace('!', '')); handleSearch(e.target.value.replace('!', '')) }}
-            variant={(search.length === 0) ? "outlined" : "filled"}
-            InputProps={{
-              startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
-              endAdornment: <InputAdornment position="end">
-                <IconButton
-                  onClick={e => { setSearch(''); handleSearch('') }}    >
-                  <CloseIcon />
-                </IconButton>
-              </InputAdornment>,
-            }} />
-        </div>
 
       </div>
 
-      <Datatable data={(search.length === 0) ? dataProductos : filterData}
+      <Datatable data={dataProductos}
 
         sinDatos={sinDatos}
+        SetSinDatos={SetSinDatos}
         campos={campos}
         responsive
         handleDelete={deleteData}

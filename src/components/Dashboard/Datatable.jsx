@@ -1,66 +1,22 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useRef, useCallback, useMemo } from 'react'
 import DataTable, { createTheme } from 'react-data-table-component'
-import { IconButton, Modal, Button, Grid } from '@material-ui/core'
+import { TextField, InputAdornment, IconButton, Modal, Button, Grid } from '@material-ui/core'
+
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import EditIcon from '@material-ui/icons/Edit'
 import CloseIcon from '@material-ui/icons/Close'
+import SearchIcon from '@material-ui/icons/Search'
+
 import loading from '../../assets/images/loading.gif'
 
 
-function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion = false }) {
-
-
-
-  const showingValue = useRef([])
-
-  const [openModalShow, setOpenModalShow] = useState(false)
-  const [state, setState] = useState({
-    allInLine: true,
-    cantidadColumnas: 0
-  })
 
 
 
 
+function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEdit, seleccion = false, clearSelection = false, Seleccion }) {
 
-
-  const preparaColumnas = () => {
-
-
-    let capacidad = Math.floor((window.innerWidth) / 140) - 1
-    let allInLine = (campos.length + 1 < capacidad)
-
-
-
-    setState({
-      allInLine,
-      cantidadColumnas: allInLine ? campos.length + 1 : capacidad
-
-    })
-  }
-
-
-
-  useEffect(preparaColumnas, [campos])
-
-
-
-
-
-
-  window.onresize = e => { preparaColumnas() }
-
-
-
-
-  if (!data)
-    data = []
-
-  var op = {
-    rowsPerPageText: 'Filas por Pagina:',
-    rangeSeparatorText: 'de'
-  }
-
+  //#region CreaTheme
   createTheme('tableTheme', {
     text: {
       primary: '#268bd2',
@@ -92,19 +48,37 @@ function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion
     },
   })
 
-  var columns = !state.allInLine ? [] : [{
-    width: '140px',
-    compact: true,
-    cell: row => <ActionsButtons data={row} />
-  }
-  ]
+  //#endregion
+
+
+  if (!data)
+    data = []
+
+
+  const showingValue = useRef([])
+
+  const [openModalShow, setOpenModalShow] = useState(false)
+
+  const [search, setSearch] = useState('')
+  const [filterData, setFilterData] = useState([])
+
+
+
+  var columns =
+    [{
+      name: 'Acción',
+      grow: 0,
+      cell: row => <ActionsButtons data={row} />
+    }
+    ]
 
   columns = columns.concat(campos.map(item => ({
+    minWidth: '100px',
+    grow: ['Codigo', 'Categoria', 'Producto', 'FechaCompra',].includes(item[0]) ? 1 : 0,
 
     name: item[1],
     selector: item[0],
-    sortable: true,
-    width: '140px'
+    sortable: true
   })))
 
 
@@ -113,92 +87,37 @@ function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion
 
 
   const ActionsButtons = ({ data }) => (
-    <div style={{ flexBasis: '140x', flexGrow: 1, display: 'flex' }}>
-      <IconButton onClick={e => {
-        if (window.confirm("¿Seguro que desea Borrar este ítem?"))
-          handleDelete(data)
+    <div style={{ display: 'flex' }}>
 
-      }}
-        style={{ margin: '0 12px' }}
-        size="medium"
+      <IconButton
+        style={{ margin: '0 5px' }}
+        size="small"
         title='Borrar datos' color="secondary"
-        variant="contained">
+        variant="contained"
+        onClick={e => {
+          if (window.confirm("¿Seguro que desea Borrar este ítem?"))
+            handleDelete(data)
+        }}>
 
         <DeleteForeverIcon />
 
       </IconButton>
 
-      <IconButton onClick={(e) => {
-        if (window.confirm("¿Seguro que desea Editar este ítem?"))
-          handleEdit(data)
-
-      }}
+      <IconButton
         title='Editar datos' color="primary"
-        size="medium"
-
-        style={{ margin: '0 12px' }}
-        variant="contained">
+        size="small"
+        style={{ margin: '0 5px' }}
+        variant="contained"
+        onClick={(e) => {
+          if (window.confirm("¿Seguro que desea Editar este ítem?"))
+            handleEdit(data)
+        }} >
 
         <EditIcon />
 
       </IconButton>
     </div>
   )
-
-  const NoFitItems = ({ newCols, data }) => (
-
-    <>
-      {newCols.map((item, i) => (
-
-        <div key={i} style={{
-          border: '1px solid black', flexBasis: '120px',
-          flexGrow: 1,
-          display: 'flex', flexDirection: 'column',
-          backgroundColor: 'gray',
-          borderRadius: '10px', margin: '10px'
-        }}>
-
-          <div style={{ backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' }}>  {item.name}</div>
-
-          <div style={{ color: 'white', textAlign: 'center' }}> {data[item.selector]}</div>
-        </div>
-      ))}
-    </>
-  )
-
-
-  const ExpandedComponent = ({ data }) => {
-
-
-    var newCols = columns.slice(state.cantidadColumnas)
-
-
-
-    return (
-
-
-      <div style={{
-        width: 60 + state.cantidadColumnas * 140,
-        display: 'flex', flexWrap: 'wrap',
-        border: '4px solid black',
-        borderRadius: '5px', borderTop: ''
-      }}>
-
-
-        <ActionsButtons data={data} />
-
-        {(newCols.length > 0) && <NoFitItems
-          newCols={newCols}
-          data={data}
-        />}
-
-
-      </div >
-
-    )
-
-  }
-
 
 
   const handleShow = row => {
@@ -211,11 +130,62 @@ function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion
   }
 
 
+
+  const handleSearch = text => {
+
+
+
+    let dataFilter = data.filter(item => {
+
+      let resp = false
+
+
+      campos.forEach(camp => {
+
+
+        if ((item[camp[0]]).toString().toLowerCase().includes(text.toLowerCase())) {
+
+          resp = true
+        }
+
+      })
+
+      return resp
+
+    })
+
+    if (dataFilter.length === 0)
+      SetSinDatos(true)
+    else
+      SetSinDatos(false)
+
+    setFilterData(dataFilter)
+  }
+
   return (
-    <div style={{ width: 60 + state.cantidadColumnas * 140, borderRadius: '10px', margin: '0 20px 0 0' }}>
+    <div >
+      <div>
+        <TextField
+          value={search || ''}
+          margin="dense"
+          color={(search.length === 0) ? "primary" : "secondary"}
+          size="small"
+
+          onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
+          variant={"outlined"}
+          InputProps={{
+            startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
+            endAdornment: <InputAdornment position="end">
+              <IconButton onClick={e => { setSearch(''); handleSearch('') }}                >
+                <CloseIcon />
+              </IconButton>
+            </InputAdornment>,
+          }} />
+      </div>
+
       <DataTable
-        columns={state.allInLine ? columns.slice(0, state.cantidadColumnas + 1) : columns.slice(0, state.cantidadColumnas)}
-        data={data}
+        columns={useMemo(() => columns, [columns])}
+        data={(search.length === 0) ? data : filterData}
         keyField={'id'}
         defaultSortField={'id'}
         defaultSortAsc={false}
@@ -224,14 +194,17 @@ function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion
         highlightOnHover
         dense
         noHeader
-        onRowClicked={handleShow}
-        expandableRows={!state.allInLine}
+        onRowClicked={useCallback(handleShow, [handleShow])}
         responsive
-        expandOnRowDoubleClicked={false}
-
-        expandableRowsComponent={<ExpandedComponent />}
+        selectableRowsVisibleOnly
+        selectableRowsHighlight
+        clearSelectedRows={clearSelection}
+        onSelectedRowsChange={useCallback(Seleccion, [Seleccion])}
         noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loading} width='20px' alt='' />}
-        paginationComponentOptions={op}
+        paginationComponentOptions={{
+          rowsPerPageText: 'Filas por Pagina:',
+          rangeSeparatorText: 'de'
+        }}
         paginationPerPage={10}
         paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
         theme="tableTheme"
@@ -250,7 +223,7 @@ function Datatable({ campos, sinDatos, data, handleDelete, handleEdit, seleccion
 
         <Grid container wrap='wrap' style={{
           backgroundColor: 'white', position: 'absolute',
-          width: (state.cantidadColumnas) * 120, top: '50%', left: '50%', borderRadius: '20px',
+          top: '50%', left: '50%', borderRadius: '20px',
           transform: ' translate(-50%, -50%)', padding: '10px'
         }}>
           <Grid item xs={12} container justify='flex-end'>

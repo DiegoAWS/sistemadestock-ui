@@ -13,7 +13,7 @@
 <br/>[X]CRNM : Categoria Marca y Color
 <br/>
 <br/>
-<br/>[ ]IMPORTAR EXPORTAR INVENTARIO
+<br/>[X]IMPORTAR EXPORTAR INVENTARIO
 <br/>[ ]PRINT cvs-pdf
 <br/>
 <br/>
