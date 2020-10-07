@@ -162,28 +162,33 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
     setFilterData(dataFilter)
   }
 
+  const SearchField = () => (
+    <div>
+      <TextField
+        value={search || ''}
+        margin="dense"
+        color={(search.length === 0) ? "primary" : "secondary"}
+        size="small"
+
+        onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
+        variant={"outlined"}
+        InputProps={{
+          startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
+          endAdornment: <InputAdornment position="end">
+            <IconButton onClick={e => { setSearch(''); handleSearch('') }}                >
+              <CloseIcon />
+            </IconButton>
+          </InputAdornment>,
+        }} />
+    </div>
+  )
+
   return (
     <div >
-      <div>
-        <TextField
-          value={search || ''}
-          margin="dense"
-          color={(search.length === 0) ? "primary" : "secondary"}
-          size="small"
 
-          onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
-          variant={"outlined"}
-          InputProps={{
-            startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
-            endAdornment: <InputAdornment position="end">
-              <IconButton onClick={e => { setSearch(''); handleSearch('') }}                >
-                <CloseIcon />
-              </IconButton>
-            </InputAdornment>,
-          }} />
-      </div>
 
       <DataTable
+        subHeader={<SearchField />}
         columns={useMemo(() => columns, [columns])}
         data={(search.length === 0) ? data : filterData}
         keyField={'id'}
