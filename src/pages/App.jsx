@@ -18,7 +18,7 @@ import SideBar from '../components/SideBar/SideBar'
 
 
 
-import Dashboard from './Dashboard/Dashboard'
+import RealDashboard from './Dashboard/RealDashboard'
 
 
 
@@ -58,7 +58,7 @@ export default function App() {
         <Switch>
           <Route exact path="/" component={LandingPage} />
 
-          <SecureRoute path='/dashboard' component={Dashboard} />
+          <SecureRoute path='/dashboard' component={RealDashboard} />
 
           <SecureRoute path='/ventas' component={Ventas} />
           <SecureRoute path='/stock' component={Stock} />

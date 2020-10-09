@@ -13,7 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 
 
-import PrintIcon from '@material-ui/icons/Print'
+// import PrintIcon from '@material-ui/icons/Print'
 
 import AssessmentIcon from '@material-ui/icons/Assessment'
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
@@ -72,10 +72,6 @@ const SideBar = ({ history }) => {
         },
 
         {
-            ruta: '/codebars',
-            icon: PrintIcon,
-            texto: 'Codigos de Barra'
-        }, {
             ruta: '/users',
             icon: PeopleIcon,
             texto: 'Control de Usuarios'

@@ -4,8 +4,7 @@ import Barras from "./Barras"
 import CategoriasAnalisis from "./CategoriasAnalisis"
 import { Grid } from "@material-ui/core"
 import StockAnalisis from "./StockAnalisis"
-export default function Dashboard ()
-{
+export default function Dashboard() {
 
 
 
@@ -86,7 +85,7 @@ export default function Dashboard ()
         <>
 
 
-            <Grid container spacing={ 3 } >
+            {/* <Grid container spacing={ 3 } >
 
                 <Grid item xs={ 12 } >
                     <CategoriasAnalisis />
@@ -129,7 +128,7 @@ export default function Dashboard ()
                         </ResponsiveContainer>
                     </div>
                 </Grid>
-            </Grid>
+            </Grid> */}
         </>
     )
 }
