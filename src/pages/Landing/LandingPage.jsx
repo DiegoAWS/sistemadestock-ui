@@ -33,20 +33,23 @@ const useStyles = makeStyles({
 const LandingPage = ({ history }) => {
     const classes = useStyles()
 
-  
 
-  
 
-    if (localStorage.usertoken)
+
+
+    if (localStorage.getItem('UserRole') === 'admin')
         history.push('/dashboard')
+    else if (localStorage.getItem('UserRole') === 'vendedor')
+        history.push('/venta')
+
 
     return (
 
-                <div className={classes.mainBackground}>
+        <div className={classes.mainBackground}>
 
-                   
-                </div>
-          
+
+        </div>
+
 
     )
 

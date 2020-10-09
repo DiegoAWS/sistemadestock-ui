@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 
 import CssBaseline from "@material-ui/core/CssBaseline"
 
-import NavBar from '../components/NavBar/NavBar'
+
 import LandingPage from './Landing/LandingPage'
 import SecureRoute from './SecureRoute'
 
@@ -12,7 +12,6 @@ import SecureRoute from './SecureRoute'
 import Users from './Users/Users'
 
 import SkeletonSideBar from './SkeletonSideBar'
-import SideBar from '../components/SideBar/SideBar'
 
 
 
@@ -47,10 +46,7 @@ export default function App() {
 
       <CssBaseline />
 
-      <SkeletonSideBar
-        ToolbarContent={NavBar}
-        SideBar={<SideBar />}
-      >
+      <SkeletonSideBar >
 
 
 

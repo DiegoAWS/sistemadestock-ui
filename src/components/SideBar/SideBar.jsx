@@ -27,22 +27,13 @@ import { withRouter } from 'react-router-dom'
 
 const SideBar = ({ history }) => {
 
+
     const page = history.location.pathname
 
     const to = (where) => {
         history.push(where)
     }
-    const espaciado = (value) => {
 
-        const EstilizaString = (s) => {
-            var re = '\\d(?=(\\d{3})+$)'
-            return s.toString().replace(new RegExp(re, 'g'), '$& ')
-        }
-
-
-
-        return EstilizaString(value)
-    }
 
     const lista = [
         {
@@ -87,7 +78,7 @@ const SideBar = ({ history }) => {
 
         <>
 
-            <List>
+            < List >
 
                 {
                     lista.map(item => (
@@ -95,7 +86,7 @@ const SideBar = ({ history }) => {
 
                             <ListItemIcon >  <item.icon color={page === item.ruta ? 'secondary' : 'primary'} />  </ListItemIcon>
 
-                            <ListItemText primary={espaciado(item.texto)} />
+                            <ListItemText primary={item.texto} />
                             <Divider light variant={'middle'} />
                         </ListItem>
 

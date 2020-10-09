@@ -18,7 +18,7 @@ import { login, getProfile, logout } from '../../API/apiFunctions'
 import loading from '../../assets/images/loading.gif'
 
 
-const NavBar = ({ history, access, accesManager }) => {
+const NavBar = ({ history, access, accesManager, title }) => {
     const init = {
         username: '',
         password: '',
@@ -61,7 +61,13 @@ const NavBar = ({ history, access, accesManager }) => {
                         localStorage.setItem("UserOficialName", response.data.name)
                         localStorage.setItem("UserRole", response.data.role)
 
-                        history.push('/dashboard')
+
+                        if (response.data.role === 'admin')
+                            history.push('/dashboard')
+                        else if (response.data.role === 'vendedor')
+                            history.push('/venta')
+
+
                         accesManager(true)
                     }
                 })
@@ -143,6 +149,7 @@ const NavBar = ({ history, access, accesManager }) => {
             return (
 
                 <>
+                    <h1 style={{ margin: '20px' }}>{title}</h1>
                     <h2 style={{ margin: '10px' }}>{localStorage.getItem('UserOficialName')}</h2>
                     <h3 style={{ padding: '10px', backgroundColor: 'black', margin: '10px', borderRadius: '10px', border: '2px solid red', color: 'red' }}>{localStorage.getItem('UserRole')}</h3>
                     <Button color="primary" title='Cerrar Sesión' onClick={logoutHandler}>
