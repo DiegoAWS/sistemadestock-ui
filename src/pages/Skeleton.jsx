@@ -130,7 +130,7 @@ const Skeleton = ({ children, history, location }) => {
         <Toolbar>
           <NavBar history={history} accesManager={accesManager} access={show} title={title} />
         </Toolbar>
-        <div className={classes.nombreUsuario}>{localStorage.getItem('UserOficialName')}</div>
+        {show && <div className={classes.nombreUsuario}>{localStorage.getItem('UserOficialName')}</div>}
 
       </AppBar>
 

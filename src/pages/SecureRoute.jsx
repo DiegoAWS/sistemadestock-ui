@@ -7,9 +7,11 @@ import { getProfile } from '../API/apiFunctions'
 const SecureRoute = ({ path, component: Component, history }) => {
 
 
-
     if (!localStorage.usertoken) {
+
         localStorage.removeItem('usertoken')
+        localStorage.removeItem('UserOficialName')
+        localStorage.removeItem('UserRole')
         history.push('/')
     }
     //Redireccion Inmediata si no existe Token
@@ -33,7 +35,7 @@ const SecureRoute = ({ path, component: Component, history }) => {
             localStorage.removeItem('usertoken')
             localStorage.removeItem('UserOficialName')
             localStorage.removeItem('UserRole')
-
+            history.push('/')
 
         }
 

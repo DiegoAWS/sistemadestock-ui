@@ -36,11 +36,11 @@ const LandingPage = ({ history }) => {
 
 
 
-
-    if (localStorage.getItem('UserRole') === 'admin')
+    if (localStorage.getItem('UserRole') && localStorage.getItem('UserRole') === 'admin')
         history.push('/dashboard')
-    else if (localStorage.getItem('UserRole') === 'vendedor')
-        history.push('/venta')
+
+    if (localStorage.getItem('UserRole') && localStorage.getItem('UserRole') === 'vendedor')
+        history.push('/ventas')
 
 
     return (

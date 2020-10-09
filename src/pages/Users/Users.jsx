@@ -271,7 +271,7 @@ const Users = () => {
                             variant="outlined" >
 
                             <option value={"vendedor"}>Vendedor(a)</option>
-                            <option value={"cobrador"}>Cobrador</option>
+                            {/* <option value={"cobrador"}>Cobrador</option> */}
 
                             <option value={"admin"}>Administrador</option>
 

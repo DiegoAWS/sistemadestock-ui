@@ -63,7 +63,7 @@ const NavBar = ({ history, access, accesManager, title }) => {
                         if (response.data.role === 'admin')
                             history.push('/dashboard')
                         else if (response.data.role === 'vendedor')
-                            history.push('/venta')
+                            history.push('/ventas')
 
 
                         accesManager(true)
