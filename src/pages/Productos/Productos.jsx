@@ -225,8 +225,6 @@ const Productos = props => {
   //#endregion Others Functions
 
 
-  //#endregion Categorias Handler
-
 
   //#region  Return ----------------------------------
 

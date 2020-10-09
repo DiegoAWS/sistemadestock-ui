@@ -8,7 +8,8 @@ import FormAddStock from '../../components/FormAdd/FormAddStock'
 import { Button } from '@material-ui/core'
 
 
-
+import SearchIcon from '@material-ui/icons/Search';
+import MenuIcon from '@material-ui/icons/Menu'
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
 
@@ -25,6 +26,9 @@ const Stock = props => {
 
 
     //#region  CONST's State ----------------------------------
+
+
+    const [buscar, setBuscar] = useState(false)
 
     const [openPopup, setOpenPopup] = useState(false)
     //Open Close Form Producto
@@ -368,6 +372,17 @@ const Stock = props => {
             <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
 
                 <div style={{ margin: '10px' }}>
+                    <Button style={{ margin: '10px' }} variant="contained" color={!buscar ? "primary" : "secondary"} size='small'
+                        disabled={loading}
+                        startIcon={<SearchIcon />}
+
+                        onClick={() => { setBuscar(!buscar) }} >Buscar</Button>
+                    <Button style={{ margin: '10px' }} variant="contained" color={!seleccion ? "primary" : "secondary"} size='small'
+                        disabled={loading}
+                        startIcon={!seleccion && <MenuIcon />}
+                        endIcon={seleccion && <CheckBoxIcon />}
+                        onClick={(e) => { toggleSelections() }}>{seleccion ? cantidadSeleccionados + '  Elementos' : 'TODOS'}</Button>
+
                     <Button style={{ margin: '10px' }} variant="contained" color="primary" size='small'
                         disabled={loading}
                         startIcon={<AddIcon />}
@@ -385,11 +400,6 @@ const Stock = props => {
                             }
                             exportToXLSX(seleccion ? elementosSeleccionados : dataFull, fileName, camposDataFull)
                         }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
-                    <Button style={{ margin: '10px' }} variant="contained" color='secondary' size='small'
-                        disabled={loading}
-
-                        endIcon={seleccion && <CheckBoxIcon />}
-                        onClick={(e) => { toggleSelections() }}>SELECCIONAR</Button>
 
                 </div>
 
@@ -398,6 +408,7 @@ const Stock = props => {
             </div>
 
             <Datatable data={dataFull}
+                buscar={buscar}
                 seleccion={seleccion}
                 sinDatos={sinDatos}
                 SetSinDatos={SetSinDatos}

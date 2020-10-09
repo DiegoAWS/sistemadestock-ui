@@ -14,7 +14,7 @@ import loading from '../../assets/images/loading.gif'
 
 
 
-function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEdit, seleccion = false, clearSelection = false, Seleccion }) {
+function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEdit, seleccion = false, clearSelection = false, Seleccion, buscar = true }) {
 
   //#region CreaTheme
   createTheme('tableTheme', {
@@ -123,7 +123,8 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
   const handleShow = row => {
     let newShow = []
     campos.forEach(item => {
-      newShow.push([item[1], row[item[0]]])
+      if (row[item[0]].length > 0)
+        newShow.push([item[1], row[item[0]]])
     })
     showingValue.current = newShow
     setOpenModalShow(true)
@@ -188,7 +189,9 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
 
 
       <DataTable
-        subHeader={<SearchField />}
+        subHeader={buscar}
+        subHeaderAlign='left'
+        subHeaderComponent={<SearchField />}
         columns={useMemo(() => columns, [columns])}
         data={(search.length === 0) ? data : filterData}
         keyField={'id'}
@@ -219,15 +222,20 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
 
       <Modal
         open={openModalShow}
-        onClose={r => {
+        disableEnforceFocus
+        disableBackdropClick
+        disableAutoFocus
+        disableScrollLock
+        onClose={() => {
           showingValue.current = []
           setOpenModalShow(false)
         }}
-        disableScrollLock
       >
 
-        <Grid container wrap='wrap' style={{
-          backgroundColor: 'white', position: 'absolute',
+        <Grid container wrap='wrap' justify='space-between' style={{
+          backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%)',
+          backgroundColor: '#dedede',
+          position: 'absolute',
           top: '50%', left: '50%', borderRadius: '20px',
           transform: ' translate(-50%, -50%)', padding: '10px'
         }}>
@@ -248,7 +256,7 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
 
             <Grid item key={item[0]} style={{ margin: '10px', backgroundColor: 'gray', border: '1px solid black', borderRadius: '10px' }}>
 
-              <div style={{ padding: '2px 10px', backgroundColor: 'red', borderStartEndRadius: '10px', borderStartStartRadius: '10px', color: 'white', textAlign: 'center' }}>
+              <div style={{ padding: '2px 10px', backgroundColor: 'red', borderRadius: '10px 10px 0 0', color: 'white', textAlign: 'center' }}>
                 {item[0]}</div>
 
               <div style={{ padding: '2px', color: 'white', textAlign: 'center' }}> {item[1]} </div>
