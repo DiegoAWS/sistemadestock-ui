@@ -206,7 +206,7 @@ const FormAddProducto = (
                                     <IconButton onClick={e => { AutoFillMoney() }} color='secondary' title='Autorellenar Precios'>
                                         <MoneyOffIcon />  </IconButton>  </InputAdornment >
                             }}
-                            onChange={e => { setFormProducto({ ...formProducto, PrecioVentaContadoMayorista: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
+                            onChange={e => { setFormProducto({ ...formProducto, PrecioVentaContadoMayorista: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} >

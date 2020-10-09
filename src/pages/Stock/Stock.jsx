@@ -144,7 +144,7 @@ const Stock = props => {
 
     //#endregion campos datFull
 
-    //#region  Inicializing the Form ----------------------------------
+    //#region   Form Stock ----------------------------------
 
 
     const initFormStock = {
@@ -161,6 +161,33 @@ const Stock = props => {
 
 
     //#endregion Inicializing the Form
+
+    //#region Form Producto
+
+
+    //#region Form Producto ----------------------------------
+
+    const initFormProducto = {
+        Codigo: "",
+        Categoria: "",
+        Categoria_id: "",
+        Producto: "",
+        Marca: "",
+        Color: "",
+
+        PrecioVentaContadoMayorista: "",
+        PrecioVentaContadoMinorista: "",
+        PrecioVenta3Cuotas: "",
+        PrecioVenta6Cuotas: "",
+        PrecioVenta12Cuotas: "",
+        PrecioVenta18Cuotas: "",
+        PrecioVenta24Cuotas: ""
+    }
+    //Control del Producto
+    const [formProducto, setFormProducto] = useState(initFormProducto)
+
+    //#endregion
+
 
     const fileName = 'Stock-' + (new Date()).toLocaleDateString('es-ES').replace(RegExp('/', 'gi'), '-')
 
@@ -356,7 +383,7 @@ const Stock = props => {
 
         editingValue.current = {}
         SetFormStock(initFormStock)
-
+        setFormProducto(initFormProducto)
     }
 
 
@@ -462,6 +489,8 @@ const Stock = props => {
                 proveedores={proveedores}
                 cargaData={cargaData} recolocaEditItem={recolocaEditItem}
                 ajustesPrecios={ajustesPrecios} dataStock={dataStock}
+                formProducto={formProducto} setFormProducto={setFormProducto}
+
             />
 
 

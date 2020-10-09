@@ -30,6 +30,7 @@ const FormAddStock = (
         dataStock, proveedores,
         dataProductos, setDataProductos,
         loading, setLoading,
+        formProducto, setFormProducto,
         cargaData, recolocaEditItem, ajustesPrecios
 
     }) => {
@@ -40,26 +41,6 @@ const FormAddStock = (
     const [costoUniError, setCostoUniError] = useState(false)
     const [cantidadError, setCantidadError] = useState(false)
     const [productoError, setProductoError] = useState(false)
-
-    //#region  Producto ----------------------------------
-
-    //Control del Producto
-    const [formProducto, setFormProducto] = useState({
-        Codigo: "",
-        Categoria: "",
-        Categoria_id: "",
-        Producto: "",
-        Marca: "",
-        Color: "",
-
-        PrecioVentaContadoMayorista: "",
-        PrecioVentaContadoMinorista: "",
-        PrecioVenta3Cuotas: "",
-        PrecioVenta6Cuotas: "",
-        PrecioVenta12Cuotas: "",
-        PrecioVenta18Cuotas: "",
-        PrecioVenta24Cuotas: ""
-    })
 
 
 
@@ -100,7 +81,7 @@ const FormAddStock = (
 
         refProveedores.current = proveedores.map(item => item.Proveedor)
 
-    }, [dataStock])
+    }, [proveedores])
 
 
 
@@ -297,7 +278,7 @@ const FormAddStock = (
 
                     <Grid item xs={12} sm={6} md={3} style={{ padding: '0px 10px' }} >
                         <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth error={costoUniError}
-                            value={EstilizaString(formStock.CostoUnitario)} onChange={e => { SetFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
+                            value={EstilizaString(formStock.CostoUnitario)} onChange={e => { SetFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
                     </Grid>
 
 
