@@ -233,7 +233,7 @@ const FormAddStock = (
                 </Button>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
-                    <Grid item xs={12} sm={5} style={{ padding: '0px 10px' }} >
+                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0px 10px' }} >
 
                         <Autocomplete
                             fullWidth
@@ -248,7 +248,7 @@ const FormAddStock = (
 
                     </Grid>
 
-                    <Grid item xs={12} sm={3} style={{ padding: '0px 10px' }}>
+                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0px 10px' }}>
 
                         <DatePicker
                             selected={stringToDate(formStock.FechaCompra)}
@@ -264,7 +264,7 @@ const FormAddStock = (
                     </Grid>
 
 
-                    <Grid item xs={12} sm={4} style={{ padding: '0px 10px' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0px 10px' }}>
                         <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small"
                             fullWidth
                             value={formStock.Factura} onChange={e => { SetFormStock({ ...formStock, Factura: e.target.value }) }} />
