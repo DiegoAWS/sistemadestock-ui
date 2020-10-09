@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 
-import { TextField, Button, Hidden } from '@material-ui/core'
+import { TextField, Button, Hidden, Avatar } from '@material-ui/core'
 
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd'
 import VpnKeyIcon from '@material-ui/icons/VpnKey'
@@ -11,8 +11,6 @@ import CancelPresentationIcon from '@material-ui/icons/CancelPresentation'
 
 import logo from '../../assets/images/logo.png'
 
-
-import { withRouter } from 'react-router-dom'
 import { login, getProfile, logout } from '../../API/apiFunctions'
 
 import loading from '../../assets/images/loading.gif'
@@ -149,12 +147,12 @@ const NavBar = ({ history, access, accesManager, title }) => {
             return (
 
                 <>
-                    <h1 style={{ margin: '20px' }}>{title}</h1>
-                    <h2 style={{ margin: '10px' }}>{localStorage.getItem('UserOficialName')}</h2>
-                    <h3 style={{ padding: '10px', backgroundColor: 'black', margin: '10px', borderRadius: '10px', border: '2px solid red', color: 'red' }}>{localStorage.getItem('UserRole')}</h3>
-                    <Button color="primary" title='Cerrar Sesión' onClick={logoutHandler}>
-                        <CancelPresentationIcon />
-                    </Button>
+
+                    <Avatar style={{ backgroundColor: '#2d2c2c' }}>
+                        <Button color="secondary" title='Cerrar Sesión' onClick={logoutHandler}>
+                            <CancelPresentationIcon />
+                        </Button>
+                    </Avatar>
                 </>
             )
         }
@@ -170,7 +168,8 @@ const NavBar = ({ history, access, accesManager, title }) => {
 
             <Hidden xsDown >
 
-                <img src={logo} height="65px" alt="" />
+                {!access && <img src={logo} height="65px" alt="" />}
+                {access && <h1 style={{ margin: '20px', color: 'white' }}>{title}</h1>}
             </Hidden>
             <Hidden mdDown >
 
@@ -184,4 +183,4 @@ const NavBar = ({ history, access, accesManager, title }) => {
     )
 }
 
-export default withRouter(NavBar)
+export default NavBar

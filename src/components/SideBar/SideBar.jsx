@@ -77,7 +77,6 @@ const SideBar = ({ history }) => {
     return (
 
         <>
-
             < List >
 
                 {

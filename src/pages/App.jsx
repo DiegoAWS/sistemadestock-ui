@@ -11,7 +11,7 @@ import SecureRoute from './SecureRoute'
 
 import Users from './Users/Users'
 
-import SkeletonSideBar from './SkeletonSideBar'
+import Skeleton from './Skeleton'
 
 
 
@@ -46,10 +46,7 @@ export default function App() {
 
       <CssBaseline />
 
-      <SkeletonSideBar >
-
-
-
+      <Skeleton >
 
         <Switch>
           <Route exact path="/" component={LandingPage} />
@@ -71,7 +68,7 @@ export default function App() {
 
           <Route path="*" component={LandingPage} />
         </Switch>
-      </SkeletonSideBar>
+      </Skeleton>
 
     </Router>
 

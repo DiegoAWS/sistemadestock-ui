@@ -1,21 +1,16 @@
 import axios from "axios";
 
-var localhost = true;
-
-//#region  import y cabecera ----------------------------------
+var localhost = false;
 
 // import axiosCancel from 'axios-cancel';
 
 // axiosCancel(axios, {
 //   debug: false // default
 // });
-// 192.168.137.1:80"
 
 var HOST = localhost
   ? "http://192.168.137.1"
   : "https://sistemadestock.herokuapp.com";
-
-//#endregion import y cabecera
 
 //#region  SECURITY ----------------------------------
 

@@ -6,7 +6,7 @@ import Drawer from "@material-ui/core/Drawer"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
 
-
+import headerImg from '../assets/images/header.jpg'
 import SideBar from '../components/SideBar/SideBar'
 import NavBar from '../components/NavBar/NavBar'
 const drawerWidth = 240
@@ -16,8 +16,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
   },
   appBar: {
-    zIndex: theme.zIndex.drawer + 1
-
+    zIndex: theme.zIndex.drawer + 1,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
   },
   drawer: {
     width: drawerWidth,
@@ -51,7 +53,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   toolbar: {
-    height: '60px',
+    height: '70px',
     width: '100%',
     backgroundColor: 'transparent'
   },
@@ -70,9 +72,20 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     bottom: 0
   },
+  nombreUsuario: {
+    color: 'white',
+    position: 'absolute',
+    top: '48px',
+    right: '50px',
+    margin: '10px',
+    fontSize: 'small',
+    border: '1px solid white',
+    borderRadius: '5px',
+    padding: ' 0 5px'
+  }
 }))
 
-const Skeleton = ({ path, children, }) => {
+const Skeleton = ({ children, history, location }) => {
   const classes = useStyles()
 
   const [open, setOpen] = React.useState(false)
@@ -80,7 +93,11 @@ const Skeleton = ({ path, children, }) => {
 
   const isAdmin = localStorage.getItem('UserRole') === 'admin'
 
-  const title = path ? path.replace('/') : ''
+
+  let title = location.pathname.replace('/', '').toLowerCase()
+
+  if (title.length > 0)
+    title = title[0].toUpperCase() + title.substring(1)
 
   useEffect(() => {
     setShow(localStorage.getItem('usertoken') ? true : false)
@@ -107,10 +124,14 @@ const Skeleton = ({ path, children, }) => {
     <div className={classes.root}>
 
 
-      <AppBar position="fixed" className={classes.appBar} color={show ? 'default' : 'transparent'}>
+      <AppBar position="fixed" className={classes.appBar}
+        style={{ backgroundImage: show ? `url(${headerImg})` : '' }}
+        color={show ? 'default' : 'transparent'}>
         <Toolbar>
-          <NavBar accesManager={accesManager} access={show} title={title.replace('/', '')} />
+          <NavBar history={history} accesManager={accesManager} access={show} title={title} />
         </Toolbar>
+        <div className={classes.nombreUsuario}>{localStorage.getItem('UserOficialName')}</div>
+
       </AppBar>
 
       {isAdmin && <Drawer
@@ -130,8 +151,8 @@ const Skeleton = ({ path, children, }) => {
           }),
         }}
       >
-        {/* <div className={classes.toolbar}> </div> */}
-        {SideBar}
+        <div className={classes.toolbar}> </div>
+        <SideBar />
       </Drawer>}
       <main className={classes.content}>
         <div className={classes.toolbarContent} />
