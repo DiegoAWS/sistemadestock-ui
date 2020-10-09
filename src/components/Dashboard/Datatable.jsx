@@ -74,7 +74,7 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
 
   columns = columns.concat(campos.map(item => ({
     minWidth: '100px',
-    grow: ['Codigo', 'Categoria', 'Producto', 'FechaCompra', 'name', 'Nombre', 'Email', 'Telefono', 'OtrosDatos'].includes(item[0]) ? 1 : 0,
+    grow: ['Codigo', 'Categoria', 'Producto', 'Proveedor', 'FechaCompra', 'name', 'Nombre', 'Email', 'Telefono', 'OtrosDatos'].includes(item[0]) ? 1 : 0,
 
     name: item[1],
     selector: item[0],

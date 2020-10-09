@@ -18,6 +18,7 @@ import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 import AssessmentIcon from '@material-ui/icons/Assessment'
 import ImportantDevicesIcon from '@material-ui/icons/ImportantDevices'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
+import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
 import PeopleIcon from '@material-ui/icons/People'
 import SettingsIcon from '@material-ui/icons/Settings'
@@ -55,7 +56,11 @@ const SideBar = ({ history }) => {
             icon: ImportantDevicesIcon,
             texto: 'Productos'
         },
-
+        {
+            ruta: '/proveedores',
+            icon: LocalShippingIcon,
+            texto: 'Proveedores'
+        },
         {
             ruta: '/clientes',
             icon: ContactMailIcon,

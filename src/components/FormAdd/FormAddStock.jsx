@@ -27,7 +27,7 @@ const FormAddStock = (
         openPopup, setOpenPopup,
         openPopupProducto, setOpenPopupProducto,
         formStock, SetFormStock,
-        dataStock,
+        dataStock, proveedores,
         dataProductos, setDataProductos,
         loading, setLoading,
         cargaData, recolocaEditItem, ajustesPrecios
@@ -92,14 +92,13 @@ const FormAddStock = (
 
 
 
-
     //#endregion useEffect
 
     //#region useEffect CNRM
 
     useEffect(() => {
 
-        refProveedores.current = [...new Set(dataStock.map(item => item.Proveedor))].filter(item => item && item.length > 0)
+        refProveedores.current = proveedores.map(item => item.Proveedor)
 
     }, [dataStock])
 

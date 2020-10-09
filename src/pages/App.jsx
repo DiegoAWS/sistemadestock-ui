@@ -29,8 +29,8 @@ import Productos from './Productos/Productos'
 
 import Clientes from './Clientes/Clientes'
 
+import Proveedores from './Proveedores/Proveedores'
 
-import Codebars from './Codebars/Codebars'
 
 import Ajustes from './Ajustes/Ajustes'
 
@@ -57,10 +57,10 @@ export default function App() {
           <SecureRoute path='/stock' component={Stock} />
 
           <SecureRoute path='/productos' component={Productos} />
+          <SecureRoute path='/proveedores' component={Proveedores} />
           <SecureRoute path='/clientes' component={Clientes} />
 
 
-          <SecureRoute path='/codebars' component={Codebars} />
 
           <SecureRoute exact path="/users" component={Users} />
 

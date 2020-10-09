@@ -52,7 +52,7 @@ const Stock = props => {
     })
 
 
-
+    const [proveedores, setProveedores] = useState([])
 
     const [loading, setLoading] = useState(true)
 
@@ -96,6 +96,22 @@ const Stock = props => {
     const camposStock = [['id'], ['Producto_id'], ['Proveedor'], ['CostoUnitario'], ['Cantidad'], ['FechaCompra'], ['Factura']]
 
     //#endregion campos Stock
+
+
+    //#region  campos Proveedores ----------------------------------
+
+    const camposProveedores = [
+
+
+        ['Proveedor', 'Proveedor', 'varchar'],
+        ['Telefono', 'Teléfono', 'varchar'],
+        ['Email', 'Email', 'varchar'],
+        ['Direccion', 'Dirección', 'varchar'],
+        ['OtrosDatos', 'Otros', 'varchar']
+
+
+    ]
+    //#endregion campos Proveedores
 
     //#region  campos datFull ----------------------------------
 
@@ -193,7 +209,7 @@ const Stock = props => {
             else
                 setOpenPopup(false)
 
-            if (request && request.statusText === 'OK' && request.data && request.data.Productos && request.data.Stock && request.data.Ajuste) {
+            if (request && request.statusText === 'OK' && request.data && request.data.Productos && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
 
 
                 //#region  Productos ----------------------------------
@@ -224,6 +240,19 @@ const Stock = props => {
 
                 //#endregion Stock
 
+
+                //#region Proveedores
+                const dataProveedores = request.data.Proveedors.map(dataRequested => {
+
+                    let instantData = {}
+
+                    camposProveedores.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+
+                    return { ...instantData, id: dataRequested.id }
+
+                })
+                //#endregion
+                setProveedores(dataProveedores)
                 //#region  Ajuste Precio ----------------------------------
 
                 if (request.data.Ajuste[0]) {
@@ -430,7 +459,7 @@ const Stock = props => {
                 dataProductos={dataProductos} setDataProductos={setDataProductos}
 
                 loading={loading} setLoading={setLoading}
-
+                proveedores={proveedores}
                 cargaData={cargaData} recolocaEditItem={recolocaEditItem}
                 ajustesPrecios={ajustesPrecios} dataStock={dataStock}
             />

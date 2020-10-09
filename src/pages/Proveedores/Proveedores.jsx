@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { getRequest, deleteRequest } from '../../API/apiFunctions'
-import FormAddCliente from '../../components/FormAdd/FormAddCliente'
+
+import FormAddProveedor from '../../components/FormAdd/FormAddProveedor'
 
 import Datatable from '../../components/Dashboard/Datatable'
 
@@ -9,11 +10,10 @@ import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core
 import CloseIcon from '@material-ui/icons/Close'
 import SearchIcon from '@material-ui/icons/Search'
 
-import ContactMailIcon from '@material-ui/icons/ContactMail'
+import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
 
-
-const Clientes = props => {
+const Proveedores = props => {
 
 
 
@@ -29,21 +29,20 @@ const Clientes = props => {
     const [filterData, setFilterData] = useState([])
 
 
-    //#region  campos Cliente ----------------------------------
+    //#region  campos Proveedores ----------------------------------
 
-    const campos = [
+    const camposProveedores = [
 
 
-        ['Nombre', 'Nombre', 'varchar'],
-
+        ['Proveedor', 'Proveedor', 'varchar'],
+        ['Telefono', 'Teléfono', 'varchar'],
         ['Email', 'Email', 'varchar'],
-        ['Telefono', 'Id', 'varchar'],
         ['Direccion', 'Dirección', 'varchar'],
         ['OtrosDatos', 'Otros', 'varchar']
 
 
     ]
-    //#endregion campos Producto
+    //#endregion campos Proveedores
 
 
     //#region  Inicializing the Form ----------------------------------
@@ -51,7 +50,13 @@ const Clientes = props => {
 
 
 
-    var formInit = {}
+    var formInit = {
+        Proveedor: '',
+        Telefono: '',
+        Email: '',
+        Direccion: '',
+        OtrosDatos: ''
+    }
 
 
 
@@ -77,16 +82,15 @@ const Clientes = props => {
 
         clearform()
 
-        getRequest('/clientes')
+        getRequest('/proveedores')
             .then(request => {
-
                 if (request && request.data && request.data[0] && request.data[0].id) {
 
                     var newData = request.data.map(dataRequested => {
 
                         let instantData = {}
 
-                        campos.forEach(item => {
+                        camposProveedores.forEach(item => {
                             instantData[item[0]] = (!dataRequested[item[0]]) ? "" : dataRequested[item[0]]
                         })
 
@@ -126,7 +130,7 @@ const Clientes = props => {
 
         clearform()
 
-        deleteRequest('/clientes/' + itemDelete.id, formData)
+        deleteRequest('/proveedores/' + itemDelete.id, formData)
             .then(() => {
                 cargaData()
 
@@ -157,7 +161,7 @@ const Clientes = props => {
         let dataFilter = data.filter(item => {
             let resp = false
 
-            campos.forEach(camp => {
+            camposProveedores.forEach(camp => {
                 if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
                     resp = true
 
@@ -189,11 +193,12 @@ const Clientes = props => {
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
 
+
                 <div>
                     <Button style={{ margin: '10px' }} variant="contained" color="primary"
                         startIcon={<AddIcon />}
-                        endIcon={<ContactMailIcon />}
-                        onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Cliente </Button>
+                        endIcon={<LocalShippingIcon />}
+                        onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Proveedor</Button>
 
 
                 </div>
@@ -222,11 +227,14 @@ const Clientes = props => {
             <Datatable data={(search.length === 0) ? data : filterData}
 
                 sinDatos={sinDatos}
-                campos={campos}
+                campos={camposProveedores}
                 responsive
                 handleDelete={deleteData}
                 handleEdit={editData} />
-            <FormAddCliente
+
+
+
+            <FormAddProveedor
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}
 
@@ -236,14 +244,11 @@ const Clientes = props => {
                 data={data}
                 setData={setData}
 
+
                 recolocaEditItem={recolocaEditItem}
                 cargaData={cargaData}
+
             />
-
-
-
-
-
 
 
 
@@ -253,4 +258,4 @@ const Clientes = props => {
     //#endregion Return
 
 }
-export default Clientes
+export default Proveedores
