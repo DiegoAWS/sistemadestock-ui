@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   content: {
 
     position: 'absolute',
-    marginLeft: '60px',
+
     padding: '10px',
     marginTop: '30px',
     top: 0,
@@ -154,7 +154,7 @@ const Skeleton = ({ children, history, location }) => {
         <div className={classes.toolbar}> </div>
         <SideBar />
       </Drawer>}
-      <main className={classes.content}>
+      <main className={classes.content} style={{ marginLeft: isAdmin ? '60px' : '0px' }}>
         <div className={classes.toolbarContent} />
         {children}
       </main>

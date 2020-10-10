@@ -13,7 +13,7 @@ import { getRequest } from "../../API/apiFunctions";
 import AreaGraph from './AreaGraph'
 
 
-
+//#region fakeData
 const data = [
     {
         "name": "Enero",
@@ -230,6 +230,7 @@ const data = [
     },
 
 ]
+//#endregion
 
 //#region makeStyle
 
@@ -453,7 +454,7 @@ const RealDashboard = () => {
                         <Card className={classes.root}>
                             <div className={classes.numericValue} style={{ backgroundColor: '#5bc0de' }}>{formater.format(valorStock)}</div>
 
-                            <div className={classes.textCard} style={{ color: 'rgb(144 2 22)' }}> <MonetizationOnIcon /> Valor base de Stock </div>
+                            <div className={classes.textCard} style={{ color: 'rgb(0 74 71)' }}> <MonetizationOnIcon /> Valor base de Stock </div>
                         </Card>
                     </Grid>
                 </Grid>

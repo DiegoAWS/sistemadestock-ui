@@ -26,7 +26,13 @@ const useStyle = makeStyles((theme) => ({
 
     leftContainer: {
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        padding: '0 12px'
+    },
+    rightContainer: {
+        display: 'flex',
+        flexDirection: 'column',
+        padding: '0 12px'
     },
     seccionProductos: {
         border: '1px solid black',
@@ -67,7 +73,10 @@ const useStyle = makeStyles((theme) => ({
 
 //#endregion JSS
 
-
+const formater = new Intl.NumberFormat("es-PY", {
+    style: "currency",
+    currency: "PYG",
+});
 
 const Ventas = (props) => {
 
@@ -147,7 +156,17 @@ const Ventas = (props) => {
     const [clienteSeleccionado, setClienteSeleccionado] = useState(null)
     const [clienteSearchText, setClienteSearchText] = useState("")
 
+
     const [openFormAddCliente, setOpenFormAddCliente] = useState(false)
+    const initFormAddCliente = {
+        Nombre: '',
+        Email: '',
+        Telefono: '',
+        Direccion: '',
+        OtrosDatos: ''
+    }
+
+    const [formDataAddClient, setFormDataAddCliente] = useState(initFormAddCliente)
 
     const [carritoProductos, setCarritoProductos] = useState([])
 
@@ -166,6 +185,8 @@ const Ventas = (props) => {
     const [pagado, setPagado] = useState('')
 
     //#endregion State
+
+    const refFijarValue = useRef(false)
 
     //#region UseEffect
 
@@ -236,7 +257,10 @@ const Ventas = (props) => {
                         }))
                     }
                     //#endregion
-
+                    if (refFijarValue.current) {
+                        setClienteSeleccionado(formDataAddClient)
+                        refFijarValue.current = false
+                    }
 
                 }
 
@@ -278,7 +302,7 @@ const Ventas = (props) => {
 
     //#region PAGAR
     const pagarCuenta = () => {
-
+        console.log(carritoProductos)
         alert('Imprimir Comprobante Garantia y si corresponde pagaré de cuotas')
     }
     //#endregion
@@ -293,7 +317,8 @@ const Ventas = (props) => {
 
     //#endregion
 
-    return <Grid container spacing={3} style={{ height: "100%", width: '100%' }} >
+
+    return <Grid container style={{ width: '100%' }} >
 
         {
             //#region Left PANEL
@@ -337,9 +362,13 @@ const Ventas = (props) => {
                         value={clienteSeleccionado}
                         onChange={(e, newValue) => { setClienteSeleccionado(newValue) }}
 
+                        getOptionSelected={(option, value) => {
+
+                            return option.Nombre === value.Nombre
+                        }}
+
                         inputValue={clienteSearchText}
                         onInputChange={(event, newInputValue) => { setClienteSearchText(newInputValue) }}
-
                         getOptionLabel={option => (option && option.Nombre) ? option.Nombre : ''}
                         renderOption={option => <h4>  {option.Nombre}</h4>}
                         renderInput={params => <TextField className={classes.nombreProducto} inputRef={inputRefCliente}
@@ -514,13 +543,14 @@ const Ventas = (props) => {
                     {productoSeleccionado &&
                         <Grid item container style={{ justifyContent: 'space-evenly' }}>
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && //OJO Y ademas solo para Admins!!
-                                <Grid item sm={6} lg={4}>
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
+
+                                <Grid item sm={6} lg={4} >
                                     <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMayorista') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVentaContadoMayorista}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>Pago único</div>
                                         </Card>
                                     </Button>
@@ -533,75 +563,85 @@ const Ventas = (props) => {
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio al Contado</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVentaContadoMinorista}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVentaContadoMinorista)}  </div>
                                             <div style={{ fontSize: '0.8rem' }}> Pago único</div>
                                         </Card>
                                     </Button>
                                 </Grid>
                             }
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta3Cuotas)) &&
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta3Cuotas)) && clienteSeleccionado &&
                                 <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVenta3Cuotas') }}>
+                                    <Button fullWidth
+
+                                        onClick={e => { addCart('PrecioVenta3Cuotas') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio 3 cuotas</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVenta3Cuotas + ' x 3'}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVenta3Cuotas) + ' x 3'}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>
-                                                {'Gs. ' + (3 * parseInt(productoSeleccionado.PrecioVenta3Cuotas))}</div>
+                                                {formater.format((3 * parseInt(productoSeleccionado.PrecioVenta3Cuotas)))}</div>
                                         </Card>
                                     </Button>
                                 </Grid>}
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta6Cuotas)) &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVenta6Cuotas') }}>
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta6Cuotas)) && clienteSeleccionado &&
+                                <Grid item sm={6} lg={4} >
+                                    <Button fullWidth
+
+                                        onClick={e => { addCart('PrecioVenta6Cuotas') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio 6 cuotas</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVenta6Cuotas + ' x 6'}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVenta6Cuotas) + ' x 6'}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>
-                                                {'Gs. ' + (6 * parseInt(productoSeleccionado.PrecioVenta6Cuotas))}</div>
+                                                {formater.format((6 * parseInt(productoSeleccionado.PrecioVenta6Cuotas)))}</div>
                                         </Card>
                                     </Button>
                                 </Grid>}
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta12Cuotas)) &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVenta12Cuotas') }}>
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta12Cuotas)) && clienteSeleccionado &&
+                                <Grid item sm={6} lg={4} >
+                                    <Button fullWidth
+
+                                        onClick={e => { addCart('PrecioVenta12Cuotas') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio 12 cuotas</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVenta12Cuotas + ' x 12'}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVenta12Cuotas) + ' x 12'}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>
-                                                {'Gs. ' + (12 * parseInt(productoSeleccionado.PrecioVenta12Cuotas))}</div>
+                                                {formater.format((12 * parseInt(productoSeleccionado.PrecioVenta12Cuotas)))}</div>
                                         </Card>
                                     </Button>
                                 </Grid>}
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta18Cuotas)) &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVenta18Cuotas') }}>
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta18Cuotas)) && clienteSeleccionado &&
+                                <Grid item sm={6} lg={4} >
+                                    <Button fullWidth
+
+                                        onClick={e => { addCart('PrecioVenta18Cuotas') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio 18 cuotas</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVenta18Cuotas + ' x 18'}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVenta18Cuotas) + ' x 18'}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>
-                                                {'Gs. ' + (18 * parseInt(productoSeleccionado.PrecioVenta18Cuotas))}</div>
+                                                {formater.format((18 * parseInt(productoSeleccionado.PrecioVenta18Cuotas)))}</div>
                                         </Card>
                                     </Button>
                                 </Grid>}
 
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta24Cuotas)) &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVenta24Cuotas') }}>
+                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta24Cuotas)) && clienteSeleccionado &&
+                                <Grid item sm={6} lg={4} >
+                                    <Button fullWidth
+
+                                        onClick={e => { addCart('PrecioVenta24Cuotas') }}>
                                         <Card className={classes.preciosCard}>
                                             <div style={{ fontSize: '0.8rem' }}>Precio 24 cuotas</div>
                                             <div style={{ fontSize: '1rem' }}>
-                                                {'Gs. ' + productoSeleccionado.PrecioVenta24Cuotas + ' x 24'}  </div>
+                                                {formater.format(productoSeleccionado.PrecioVenta24Cuotas) + ' x 24'}  </div>
                                             <div style={{ fontSize: '0.8rem' }}>
-                                                {'Gs. ' + (24 * parseInt(productoSeleccionado.PrecioVenta24Cuotas))}</div>
+                                                {formater.format((24 * parseInt(productoSeleccionado.PrecioVenta24Cuotas)))}</div>
                                         </Card>
                                     </Button>
                                 </Grid>}
@@ -627,7 +667,7 @@ const Ventas = (props) => {
         {
             //#region Right Panel ----------------------------------------------
         }
-        <Grid item xs={12} sm={12} md={6} style={{}}>
+        <Grid item xs={12} sm={12} md={6} className={classes.rightContainer} >
 
 
             {
@@ -669,7 +709,11 @@ const Ventas = (props) => {
                         style={{ flexGrow: "1" }}
                         value={pagado}
                         margin='normal'
-                        onChange={(e) => { setPagado(e.target.value) }}
+                        onChange={(e) => {
+                            let texto = e.target.value.replace(/[^(?:Gs. )?.\d]/g, '')
+
+                            setPagado(texto)
+                        }}
                         InputProps={{
                             endAdornment: (
                                 <InputAdornment position="end">
@@ -683,24 +727,27 @@ const Ventas = (props) => {
                 </div>
                 <div style={{ margin: '10px', padding: '10px' }}>
 
+                    <div className={classes.numberCliente}>
+                        <div> Pagado : </div>
+                        <div >{isNaN(parseInt(pagado)) ? '' : formater.format(parseInt(pagado))} </div>
+                    </div>
 
                     <div className={classes.numberCliente}>
                         <div> Importe Total : </div>
-                        <div>{'Gs. ' + importeTotal} </div>
+                        <div>{importeTotal === 0 ? '' : formater.format(importeTotal)} </div>
                     </div>
-                    <div className={classes.numberCliente}>
-                        <div> Pagado : </div>
-                        <div >{isNaN(parseInt(pagado)) ? '' : 'Gs. ' + parseInt(pagado)} </div>
-                    </div>
+
                     <hr />
                     <div className={classes.numberCliente}>
                         <div> Cambio : </div>
-                        <div>{isNaN(parseInt(pagado)) ? '' : 'Gs. ' + (parseInt(pagado) - importeTotal)} </div>
+                        <div>{isNaN(parseInt(pagado)) ? '' : formater.format(parseInt(pagado) - importeTotal)} </div>
                     </div>
 
                 </div>
                 <div>
-                    <Button variant='contained' fullWidth color='secondary' onClick={e => { pagarCuenta() }}>Pagar</Button>
+                    <Button variant='contained' fullWidth
+                        disabled={carritoProductos.length === 0}
+                        color='secondary' onClick={() => { pagarCuenta() }}>Pagar</Button>
                 </div>
             </div>
             {
@@ -720,20 +767,19 @@ const Ventas = (props) => {
             openPopup={openFormAddCliente}
             setOpenPopup={setOpenFormAddCliente}
 
-            formData={clienteSeleccionado ? clienteSeleccionado : {
-                Nombre: '',
-                Email: '',
-                Telefono: '',
-                Direccion: '',
-                OtrosDatos: ''
-            }}
-            SetFormData={setClienteSeleccionado}
+            formData={formDataAddClient}
+            SetFormData={setFormDataAddCliente}
 
             data={dataClientes}
             setData={setDataClientes}
 
             recolocaEditItem={() => { }}
-            cargaData={cargaData}
+            cargaData={() => {
+                refFijarValue.current = true
+                cargaData()
+            }
+
+            }
         />
 
         {
