@@ -5,8 +5,7 @@ import { makeStyles } from "@material-ui/core/styles"
 import Drawer from "@material-ui/core/Drawer"
 import AppBar from "@material-ui/core/AppBar"
 import Toolbar from "@material-ui/core/Toolbar"
-
-import headerImg from '../assets/images/header.jpg'
+import Hidden from "@material-ui/core/Hidden"
 import SideBar from '../components/SideBar/SideBar'
 import NavBar from '../components/NavBar/NavBar'
 const drawerWidth = 240
@@ -19,7 +18,8 @@ const useStyles = makeStyles((theme) => ({
     zIndex: theme.zIndex.drawer + 1,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    backgroundPosition: 'center'
+    backgroundPosition: 'center',
+    display: 'relative'
   },
   drawer: {
     width: drawerWidth,
@@ -75,9 +75,8 @@ const useStyles = makeStyles((theme) => ({
   nombreUsuario: {
     color: 'white',
     position: 'absolute',
-    top: '48px',
-    right: '50px',
-    margin: '10px',
+    bottom: '10px',
+    right: '70px',
     fontSize: 'small',
     border: '1px solid white',
     borderRadius: '5px',
@@ -125,13 +124,12 @@ const Skeleton = ({ children, history, location }) => {
 
 
       <AppBar position="fixed" className={classes.appBar}
-        style={{ backgroundImage: show ? `url(${headerImg})` : '' }}
-        color={show ? 'default' : 'transparent'}>
+        style={{ backgroundColor: show ? 'black' : 'transparent' }}>
+
         <Toolbar>
           <NavBar history={history} accesManager={accesManager} access={show} title={title} />
         </Toolbar>
-        {show && <div className={classes.nombreUsuario}>{localStorage.getItem('UserOficialName')}</div>}
-
+        <Hidden xsDown > {show && <div className={classes.nombreUsuario}>{localStorage.getItem('UserOficialName')}</div>} </Hidden>
       </AppBar>
 
       {isAdmin && <Drawer

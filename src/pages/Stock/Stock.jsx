@@ -31,25 +31,23 @@ const Stock = props => {
     const [buscar, setBuscar] = useState(false)
 
     const [openPopup, setOpenPopup] = useState(false)
-    //Open Close Form Producto
-    const [openPopupProducto, setOpenPopupProducto] = useState(false)
 
     const [sinDatos, SetSinDatos] = useState(false)
 
 
-    const [dataStock, setDataStock] = useState([]) //Data de la tabla STOCK
-    const [dataProductos, setDataProductos] = useState([]) //Data de la tabla Productos
+    const [dataStock, setDataStock] = useState([])
 
-    const [dataFull, setDataFull] = useState([])
-
-    const [ajustesPrecios, setAjustesPrecio] = useState({
+    let initAjuste = {
+        pMayorista: 102,
         pMinorista: 106.25,
         p3cuotas: 112.50,
         p6cuotas: 130,
         p12cuotas: 150,
         p18cuotas: 180,
         p24cuotas: 200
-    })
+    }
+
+    const [ajustesPrecios, setAjustesPrecio] = useState(initAjuste)
 
 
     const [proveedores, setProveedores] = useState([])
@@ -62,41 +60,6 @@ const Stock = props => {
     const [elementosSeleccionados, setElementosSeleccionados] = useState([])
 
     //#endregion CONST's State
-
-    //#region  campos Producto ----------------------------------
-
-    const camposProducto = [
-
-
-        ['Producto', 'Producto', 'varcharX'],
-        ['Categoria', 'Categoría', 'categSelector'],
-
-        ['Codigo', 'Código', 'varchar'],
-        ['Marca', 'Marca', 'varchar'],
-
-        ['Color', 'Color', 'varchar'],
-
-
-        ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
-
-        ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
-
-        ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
-        ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
-        ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
-        ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double'],
-        ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
-
-
-    ]
-    //#endregion campos Producto
-
-    //#region  campos Stock ----------------------------------
-
-    const camposStock = [['id'], ['Producto_id'], ['Proveedor'], ['CostoUnitario'], ['Cantidad'], ['FechaCompra'], ['Factura']]
-
-    //#endregion campos Stock
-
 
     //#region  campos Proveedores ----------------------------------
 
@@ -115,26 +78,20 @@ const Stock = props => {
 
     //#region  campos datFull ----------------------------------
 
+
     const camposDataFull = [
         ['Codigo', 'Código', 'varchar'],
-
         ['Categoria', 'Categoría', 'categSelector'],
         ['Producto', 'Producto', 'varcharX'],
-
         ['Marca', 'Marca', 'varchar'],
-
         ['Color', 'Color', 'varchar'],
-
         ['Cantidad', 'Cantidad', 'double'],
         ['Proveedor', 'Proveedor', 'varchar'],
         ['Factura', 'Factura de Compra', 'varchar'],
         ['FechaCompra', 'Fecha de Compra', 'datetime'],
         ['CostoUnitario', 'Costo Unitario', 'double'],
-
         ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
-
         ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
-
         ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
         ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
         ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
@@ -148,33 +105,16 @@ const Stock = props => {
 
 
     const initFormStock = {
-        Producto_id: '-1',
         Proveedor: '',
         CostoUnitario: '',
         Cantidad: '',
         Factura: '',
-        FechaCompra: dateToString(new Date())
-    }
-
-    const [formStock, SetFormStock] = useState(initFormStock)
-
-
-
-    //#endregion Inicializing the Form
-
-    //#region Form Producto
-
-
-    //#region Form Producto ----------------------------------
-
-    const initFormProducto = {
+        FechaCompra: dateToString(new Date()),
         Codigo: "",
         Categoria: "",
-        Categoria_id: "",
         Producto: "",
         Marca: "",
         Color: "",
-
         PrecioVentaContadoMayorista: "",
         PrecioVentaContadoMinorista: "",
         PrecioVenta3Cuotas: "",
@@ -183,10 +123,15 @@ const Stock = props => {
         PrecioVenta18Cuotas: "",
         PrecioVenta24Cuotas: ""
     }
-    //Control del Producto
-    const [formProducto, setFormProducto] = useState(initFormProducto)
 
-    //#endregion
+    const [formStock, setFormStock] = useState(initFormStock)
+
+
+
+    //#endregion Inicializing the Form
+
+
+
 
 
     const fileName = 'Stock-' + (new Date()).toLocaleDateString('es-ES').replace(RegExp('/', 'gi'), '-')
@@ -200,22 +145,6 @@ const Stock = props => {
 
     // eslint-disable-next-line
     useEffect(() => { cargaData() }, [])
-
-    useEffect(() => {
-
-        let newFullData = dataStock.map(item => {
-            let newProducto = dataProductos.filter(itemProducto => itemProducto.id ? itemProducto.id.toString() === item.Producto_id : false
-
-            )[0]
-
-
-
-
-            return { ...item, ...newProducto, id: item.id }
-        })
-
-        setDataFull(newFullData)
-    }, [dataStock, dataProductos])
 
 
 
@@ -231,27 +160,10 @@ const Stock = props => {
 
             setLoading(false)
 
-            if (openPopupProducto)
-                setOpenPopupProducto(false)
-            else
-                setOpenPopup(false)
 
-            if (request && request.statusText === 'OK' && request.data && request.data.Productos && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
+            setOpenPopup(false)
 
-
-                //#region  Productos ----------------------------------
-
-                setDataProductos(request.data.Productos.map(dataRequested => {
-
-                    let instantData = {}
-
-                    camposProducto.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
-
-                    return { ...instantData, id: dataRequested.id }
-
-                }))
-
-                //#endregion Productos
+            if (request && request.statusText === 'OK' && request.data && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
 
                 //#region  Stock ----------------------------------
 
@@ -259,7 +171,7 @@ const Stock = props => {
 
                     let instantData = {}
 
-                    camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+                    camposDataFull.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
                     return { ...instantData }
 
@@ -280,44 +192,23 @@ const Stock = props => {
                 })
                 //#endregion
                 setProveedores(dataProveedores)
+
+
                 //#region  Ajuste Precio ----------------------------------
 
-                if (request.data.Ajuste[0]) {
+                if (request.data.Ajuste) {
 
-                    let dataRequested = request.data.Ajuste[0]
+                    let dataRequested = request.data.Ajuste
 
-                    let pMinorista = parseInt(dataRequested.pMinorista, 10)
-                    let p3cuotas = parseInt(dataRequested.p3cuotas, 10)
-                    let p6cuotas = parseInt(dataRequested.p6cuotas, 10)
-                    let p12cuotas = parseInt(dataRequested.p12cuotas, 10)
-                    let p18cuotas = parseInt(dataRequested.p18cuotas, 10)
-                    let p24cuotas = parseInt(dataRequested.p24cuotas, 10)
-                    if (!(isNaN(pMinorista) || isNaN(p3cuotas) || isNaN(p6cuotas) || isNaN(p12cuotas))) {
+                    let newAjuste = {}
+                    dataRequested.forEach(item => { newAjuste = { ...newAjuste, [item.campo]: item.valor } })
 
+                    setAjustesPrecio(newAjuste)
 
-                        setAjustesPrecio(
-                            {
-                                pMinorista,
-                                p3cuotas,
-                                p6cuotas,
-                                p12cuotas,
-                                p18cuotas,
-                                p24cuotas
-                            })
-                    }
 
                 } else {
 
-                    setAjustesPrecio(
-                        {
-                            pMinorista: 106.25,
-                            p3cuotas: 112.50,
-                            p6cuotas: 130,
-                            p12cuotas: 150,
-                            p18cuotas: 180,
-                            p24cuotas: 200
-                        })
-
+                    setAjustesPrecio(initAjuste)
 
                 }
                 //#endregion Ajuste Precio
@@ -349,7 +240,7 @@ const Stock = props => {
 
         setDataStock(temp)
 
-        SetFormStock(item)
+        setFormStock(item)
         setOpenPopup(true)
 
 
@@ -382,8 +273,8 @@ const Stock = props => {
     const clearform = () => {
 
         editingValue.current = {}
-        SetFormStock(initFormStock)
-        setFormProducto(initFormProducto)
+        setFormStock(initFormStock)
+
     }
 
 
@@ -392,8 +283,6 @@ const Stock = props => {
     const recolocaEditItem = () => {
         setDataStock(dataStock.concat(editingValue.current))
     }
-    //#endregion Others Functions
-
 
     const toggleSelections = () => {
 
@@ -416,6 +305,8 @@ const Stock = props => {
         setElementosSeleccionados(selectedRows)
 
     }
+
+    //#endregion Others Functions
 
 
     //#region  Return ----------------------------------
@@ -454,7 +345,7 @@ const Stock = props => {
                                 alert('Ningun elemento seleccionado')
                                 return
                             }
-                            exportToXLSX(seleccion ? elementosSeleccionados : dataFull, fileName, camposDataFull)
+                            exportToXLSX(seleccion ? elementosSeleccionados : dataStock, fileName, camposDataFull)
                         }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
 
                 </div>
@@ -463,7 +354,7 @@ const Stock = props => {
 
             </div>
 
-            <Datatable data={dataFull}
+            <Datatable data={dataStock}
                 buscar={buscar}
                 seleccion={seleccion}
                 sinDatos={sinDatos}
@@ -480,17 +371,11 @@ const Stock = props => {
 
             <FormAddStock
                 openPopup={openPopup} setOpenPopup={setOpenPopup}
-                openPopupProducto={openPopupProducto} setOpenPopupProducto={setOpenPopupProducto}
-                formStock={formStock} SetFormStock={SetFormStock}
-
-                dataProductos={dataProductos} setDataProductos={setDataProductos}
-
+                formStock={formStock} setFormStock={setFormStock}
                 loading={loading} setLoading={setLoading}
                 proveedores={proveedores}
                 cargaData={cargaData} recolocaEditItem={recolocaEditItem}
                 ajustesPrecios={ajustesPrecios} dataStock={dataStock}
-                formProducto={formProducto} setFormProducto={setFormProducto}
-
             />
 
 

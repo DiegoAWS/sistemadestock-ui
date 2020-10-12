@@ -123,14 +123,14 @@ const NavBar = ({ history, access, accesManager, title }) => {
             return (
                 <>
                     <Hidden xsDown >
-                        <AssignmentIndIcon /></Hidden>
+                        <AssignmentIndIcon color='primary' /></Hidden>
 
                     <TextField label="Usuario" variant="outlined" size='small'
                         autoComplete="user" error={state.inputError} type='text' onKeyDown={keyHandler}
                         value={state.username} onChange={e => setState({ ...state, username: e.target.value })} style={{ marginRight: '10px' }} />
 
                     <Hidden xsDown >
-                        <VpnKeyIcon /></Hidden>
+                        <VpnKeyIcon color='primary' /></Hidden>
                     <TextField label="Contraseña" variant="outlined" size='small' type='password' error={state.inputError}
                         onKeyDown={keyHandler} value={state.password} onChange={e => setState({ ...state, password: e.target.value })} />
 
@@ -166,14 +166,30 @@ const NavBar = ({ history, access, accesManager, title }) => {
     return (
         <>
 
-            <Hidden xsDown >
+            {access ?
+                <img src={logo} height="64px" alt="" style={{ zIndex: 2 }} />
+                : <Hidden smDown > <img src={logo} height="64px" alt="" style={{ zIndex: 2 }} />  </Hidden>
+            }
 
-                {!access && <img src={logo} height="65px" alt="" />}
-                {access && <h1 style={{ margin: '20px', color: 'white' }}>{title}</h1>}
+
+
+
+            <Hidden mdUp >
+
+                {access && <h1 style={{
+                    marginLeft: '10px', color: access ? 'white' : 'black', position: 'absolute',
+                    left: '50%', transform: 'translateX(-50%)', zIndex: 1
+                }}> {title}</h1>}
+
             </Hidden>
-            <Hidden mdDown >
 
-                <h3 style={{ marginLeft: '10px' }}> Sistema de Stock</h3>
+            <Hidden smDown >
+                {access && <h3 style={{ marginLeft: '50px', color: 'white' }}>{title}</h3>}
+
+                <h1 style={{
+                    marginLeft: '10px', color: access ? 'white' : 'black', position: 'absolute',
+                    left: access ? '50%' : '25%', transform: 'translateX(-50%)'
+                }}> Sistema de Stock</h1>
 
             </Hidden>
             <div style={{ height: '100%', backgroundColor: 'transparent', flexGrow: 1 }}></div>

@@ -1,16 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { TextField, Grid, Button } from '@material-ui/core'
+import { TextField, Grid, Button, InputAdornment, IconButton, Checkbox } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 
-import { postRequest, deleteRequest } from '../../API/apiFunctions'
+import { postRequest } from '../../API/apiFunctions'
 
-import ProductoSelect from './ProductoSelect'
 
+import MoneyOffIcon from '@material-ui/icons/MoneyOff'
 import Popup from './Popup'
-import FormAddProducto from './FormAddProducto'
 
 import loadingGif from '../../assets/images/loading.gif'
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
+
 import 'react-datepicker/dist/react-datepicker.css'
 
 import es from 'date-fns/locale/es'
@@ -21,16 +21,14 @@ registerLocale('es', es)
 setDefaultLocale('es')
 
 
+
 const FormAddStock = (
     {
 
         openPopup, setOpenPopup,
-        openPopupProducto, setOpenPopupProducto,
-        formStock, SetFormStock,
+        formStock, setFormStock,
         dataStock, proveedores,
-        dataProductos, setDataProductos,
         loading, setLoading,
-        formProducto, setFormProducto,
         cargaData, recolocaEditItem, ajustesPrecios
 
     }) => {
@@ -40,40 +38,22 @@ const FormAddStock = (
 
     const [costoUniError, setCostoUniError] = useState(false)
     const [cantidadError, setCantidadError] = useState(false)
-    const [productoError, setProductoError] = useState(false)
 
 
 
+    //Diseable 18 y 24 Cuotas
+    const [diseable18, setDiseable18] = useState(true)
+    const [diseable24, setDiseable24] = useState(true)
 
-    const [valueProducto, setValueProducto] = useState(null)
-    //#endregion Producto
 
+    const refCategorias = useRef([])
+    const refMarcas = useRef([])
+    const refColors = useRef([])
     const refProveedores = useRef([])
 
     //#endregion CONST
 
-    //#region  useEffect ----------------------------------
 
-
-    useEffect(() => {
-
-
-        let productoSel = dataProductos.filter(item => {
-            if (item && item.id && formStock && formStock.Producto_id)
-                return item.id.toString() === formStock.Producto_id.toString()
-            return false
-
-        })
-
-
-
-        setValueProducto(productoSel.length === 1 ? productoSel[0] : null)
-    }, [dataStock, dataProductos, formStock])
-
-
-
-
-    //#endregion useEffect
 
     //#region useEffect CNRM
 
@@ -107,13 +87,6 @@ const FormAddStock = (
 
         }
 
-        if (!valueProducto || !valueProducto.Producto || valueProducto.Producto.length === 0) {
-            setProductoError(true)
-
-            setTimeout(() => { setProductoError(false) }, 1000)
-            return
-
-        }
 
 
         setLoading(true)
@@ -138,6 +111,24 @@ const FormAddStock = (
 
     //#endregion saveData
 
+
+
+    //#region Autorrellena
+
+    const autorrellena = () => {
+        if (dataStock.length > 0 && dataStock[dataStock.length - 1]) {
+
+            let oldForm = dataStock[dataStock.length - 1]
+
+            setFormStock({ ...formStock, FechaCompra: oldForm.FechaCompra, Factura: oldForm.Factura, Proveedor: oldForm.Proveedor })
+
+        }
+    }
+
+    //#endregion
+
+
+
     //#region  Estiliza como money String ----------------------------------
 
     const EstilizaString = (s) => {
@@ -150,42 +141,31 @@ const FormAddStock = (
 
     //#endregion Estiliza como money String
 
-    //#region  Edit Delete Producto ----------------------------------
 
-    const handleEditProducto = ({ id }) => {
 
-        let productoEditar = dataProductos.filter(item => item.id === id)[0]
+    //#region  Auto Fill Money ----------------------------------
 
-        if (productoEditar) {
-            setFormProducto(productoEditar)
+    const AutoFillMoney = () => {
+        let precioBase = parseInt(formStock.PrecioVentaContadoMayorista)
 
-            setOpenPopupProducto(true)
-        }
+        if (isNaN(precioBase))
+            return
+
+
+        setFormStock({
+            ...formStock,
+            PrecioVentaContadoMinorista: Math.ceil((ajustesPrecios.pMinorista * precioBase) / 10000) * 100,
+            PrecioVenta3Cuotas: Math.ceil((ajustesPrecios.p3cuotas * precioBase) / 30000) * 100,
+            PrecioVenta6Cuotas: Math.ceil((ajustesPrecios.p6cuotas * precioBase) / 60000) * 100,
+            PrecioVenta12Cuotas: Math.ceil((ajustesPrecios.p12cuotas * precioBase) / 120000) * 100,
+            PrecioVenta18Cuotas: Math.ceil((ajustesPrecios.p18cuotas * precioBase) / 180000) * 100,
+            PrecioVenta24Cuotas: Math.ceil((ajustesPrecios.p24cuotas * precioBase) / 240000) * 100
+        })
 
     }
 
-    const handleDeleteProducto = ({ id }) => {
-        setDataProductos(dataProductos.filter(it => it.id.toString() !== id.toString()))
+    //#endregion Auto Fill Money
 
-        deleteRequest('/productos/' + id).then(() => { cargaData() })
-    }
-
-
-    //#endregion  Edit Delete Producto
-
-    //#region Autorrellena
-
-    const autorrellena = () => {
-        if (dataStock.length > 0 && dataStock[dataStock.length - 1]) {
-
-            let oldForm = dataStock[dataStock.length - 1]
-
-            SetFormStock({ ...formStock, FechaCompra: oldForm.FechaCompra, Factura: oldForm.Factura, Proveedor: oldForm.Proveedor })
-
-        }
-    }
-
-    //#endregion
 
     //#region  Return ----------------------------------
 
@@ -213,26 +193,26 @@ const FormAddStock = (
                 </Button>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
-                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0px 10px' }} >
+                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px' }}>
 
                         <Autocomplete
                             fullWidth
                             freeSolo
                             options={refProveedores.current}
                             value={formStock.Proveedor}
-                            onChange={(event, newInputValue) => { SetFormStock({ ...formStock, Proveedor: newInputValue ? newInputValue : '' }) }}
+                            onChange={(event, newInputValue) => { setFormStock({ ...formStock, Proveedor: newInputValue ? newInputValue : '' }) }}
                             inputValue={formStock.Proveedor}
-                            onInputChange={(event, newInputValue) => { SetFormStock({ ...formStock, Proveedor: newInputValue }) }}
+                            onInputChange={(event, newInputValue) => { setFormStock({ ...formStock, Proveedor: newInputValue }) }}
                             renderInput={(params) => <TextField {...params} label="Proveedor" variant="outlined" margin="normal" size="small" fullWidth />}
                         />
 
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0px 10px' }}>
+                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0 10px' }} >
 
                         <DatePicker
                             selected={stringToDate(formStock.FechaCompra)}
-                            onChange={date => { SetFormStock({ ...formStock, FechaCompra: dateToString(date) }) }}
+                            onChange={date => { setFormStock({ ...formStock, FechaCompra: dateToString(date) }) }}
                             showTimeInput
                             timeInputLabel="Hora:"
                             withPortal
@@ -244,59 +224,156 @@ const FormAddStock = (
                     </Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0px 10px' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Factura de Compra' variant="outlined" margin='normal' size="small"
                             fullWidth
-                            value={formStock.Factura} onChange={e => { SetFormStock({ ...formStock, Factura: e.target.value }) }} />
+                            value={formStock.Factura} onChange={e => { setFormStock({ ...formStock, Factura: e.target.value }) }} />
                     </Grid>
                 </Grid>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', paddingTop: '10px' }}>
 
-                    <Grid item xs={12} md={6} style={{ padding: '0px 10px', display: 'flex', alignItems: 'flex-end' }}>
+                    <Grid item xs={12} sm={4} md={4} style={{ padding: '0 10px' }}>
+                        <Autocomplete
+                            freeSolo
+                            value={formStock.Categoria}
+                            onChange={(event, newInputValue) => { setFormStock({ ...formStock, Categoria: newInputValue ? newInputValue : '' }) }}
+                            inputValue={formStock.Categoria}
+                            onInputChange={(event, newInputValue) => { setFormStock({ ...formStock, Categoria: newInputValue }) }}
+                            options={refCategorias.current}
+                            renderInput={(params) => <TextField {...params} label="Categoria" variant="outlined" margin="normal" size="small" fullWidth />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={6} style={{ padding: '0 10px' }}>
+                        <TextField label='Producto' variant="outlined" margin='normal' size="small" fullWidth
+                            value={formStock.Producto}
+                            onChange={e => { setFormStock({ ...formStock, Producto: e.target.value }) }} />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
+                        <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth
+                            value={formStock.Codigo} onChange={e => { setFormStock({ ...formStock, Codigo: e.target.value }) }} />
+                    </Grid>
 
 
-                        <ProductoSelect
 
 
-                            value={valueProducto}
-                            setValue={producto => {
-                                setValueProducto(producto)
-                                SetFormStock({ ...formStock, Producto_id: producto && producto.id ? producto.id : -1 })
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }} >
+                        <TextField label='Cantidad' variant="outlined" margin='normal' size="small" fullWidth error={cantidadError}
+                            value={formStock.Cantidad} onChange={e => { setFormStock({ ...formStock, Cantidad: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
+                    </Grid>
 
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <Autocomplete
+                            freeSolo
+                            value={formStock.Marca}
+                            inputValue={formStock.Marca ? formStock.Marca : ''}
+                            onInputChange={(event, newInputValue) => { setFormStock({ ...formStock, Marca: newInputValue }) }}
+                            options={refMarcas.current}
+                            renderInput={(params) => <TextField {...params} label="Marca" variant="outlined" margin="normal" size="small" fullWidth />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <Autocomplete
+                            freeSolo
+                            value={formStock.Color}
+                            inputValue={formStock.Color ? formStock.Color : ''}
+                            onInputChange={(event, newInputValue) => { setFormStock({ ...formStock, Color: newInputValue }) }}
+                            options={refColors.current}
+                            renderInput={(params) => <TextField {...params} label="Color" variant="outlined" margin="normal" size="small" fullWidth />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4}  >
+                        <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth error={costoUniError}
+                            value={EstilizaString(formStock.CostoUnitario)}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">
+                                    <IconButton onClick={e => { AutoFillMoney() }} color='secondary' title='Autorellenar Precios'>
+                                        <MoneyOffIcon />  </IconButton>  </InputAdornment >
                             }}
-                            error={productoError}
-                            list={dataProductos}
-                            toggleOpenFormAdd={() => { setOpenPopupProducto(true) }}
+                            onChange={e => { setFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
+                    </Grid>
 
-                            handleEdit={handleEditProducto}
-                            handleDelete={handleDeleteProducto}
+                    <Grid item xs={12} sm={6} md={4} >
+                        <TextField label='Precio Mayorista' variant="outlined" margin='normal' size="small" fullWidth
+                            value={EstilizaString(formStock.PrecioVentaContadoMayorista)}
+
+                            onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMayorista: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
+                            value={EstilizaString(formStock.PrecioVentaContadoMinorista)}
+
+                            onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMinorista: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
+
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={EstilizaString(formStock.PrecioVenta3Cuotas)}
+
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta3Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }}
+                            InputProps={{ startAdornment: <InputAdornment position="start">3x </InputAdornment > }}
+                        /></Grid>
+
+
+
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={EstilizaString(formStock.PrecioVenta6Cuotas)}
+                            InputProps={{ startAdornment: <InputAdornment position="start">6x </InputAdornment > }}
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
+
+
+                    <Grid item xs={12} sm={6} md={4} >
+                        <TextField label='Precio Venta 12 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                            value={EstilizaString(formStock.PrecioVenta12Cuotas)}
+                            InputProps={{ startAdornment: <InputAdornment position="start">12x </InputAdornment > }}
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta12Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
+
+
+                    <Grid item xs={12} sm={6} md={4} >
+
+                        <TextField label={diseable18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                            value={diseable18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
+                            disabled={diseable18}
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta18Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">18x </InputAdornment >,
+                                endAdornment: <InputAdornment position="end">
+                                    <Checkbox checked={!diseable18}
+                                        onChange={e => { setDiseable18(!diseable18) }}
+                                        title={diseable18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
+                                    />
+                                </InputAdornment>
+                            }}
                         />
                     </Grid>
 
 
-
-                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0px 10px' }} >
-                        <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth error={costoUniError}
-                            value={EstilizaString(formStock.CostoUnitario)} onChange={e => { SetFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
+                    <Grid item xs={12} sm={6} md={4}>
+                        <TextField label={diseable24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                            value={diseable24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
+                            disabled={diseable24}
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta24Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }}
+                            InputProps={{
+                                startAdornment: <InputAdornment position="start">24x </InputAdornment >,
+                                endAdornment: <InputAdornment position="end">
+                                    <Checkbox checked={!diseable24}
+                                        onChange={e => { setDiseable24(!diseable24) }}
+                                        title={diseable24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
+                                    /></InputAdornment>
+                            }}
+                        />
                     </Grid>
-
-
-                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0px 10px' }} >
-                        <TextField label='Cantidad' variant="outlined" margin='normal' size="small" fullWidth error={cantidadError}
-                            value={formStock.Cantidad} onChange={e => { SetFormStock({ ...formStock, Cantidad: e.target.value.replace(/\D/, '').replace(' ', '') }) }} />
-                    </Grid>
-
-
 
                 </Grid>
 
-                <FormAddProducto
-                    openPopup={openPopupProducto} setOpenPopup={setOpenPopupProducto}// Control PopUP
-                    formProducto={formProducto} setFormProducto={setFormProducto} // State del Form
-                    dataProductos={dataProductos} cargaData={cargaData} setLoading={setLoading}
-                    loading={loading} recolocaEditItem={() => { }} ajustesPrecios={ajustesPrecios}
-                />
 
                 <div style={{
                     position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw',

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react"
 import DataTable from 'react-data-table-component'
 
-import { makeStyles, Grid, Card, TextField, InputAdornment, Typography, IconButton, Button, Divider } from "@material-ui/core"
+import { makeStyles, Grid, Card, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
 
@@ -9,7 +9,6 @@ import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete
 import AccountCircleIcon from "@material-ui/icons/AccountCircle"
 import AddIcon from "@material-ui/icons/Add"
 import CloseIcon from '@material-ui/icons/Close'
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney'
 import InfoIcon from '@material-ui/icons/Info'
 import EditIcon from '@material-ui/icons/Edit'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
@@ -18,7 +17,7 @@ import WarningIcon from '@material-ui/icons/Warning'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 
 
-import { getRequest } from '../../API/apiFunctions'
+import { getRequest, postRequest } from '../../API/apiFunctions'
 import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 
 //#region JSS
@@ -83,15 +82,24 @@ const Ventas = (props) => {
     //#region Constantes utiles
 
     const filterProducto = createFilterOptions({ stringify: option => option.Codigo + option.Producto })
-    const filterCliente = createFilterOptions({ stringify: option => option.Nombre })
+    const filterCliente = createFilterOptions({ stringify: option => option.Nombre + option.Telefono })
     const classes = useStyle()
 
     //  DataTable Columnas ----------------------------------
     const cols = [
 
-        { grow: 1, name: 'Producto', selector: 'Producto' },
-        { width: '120px', cell: row => <div style={{ textAlign: 'right' }}>{'Gs. ' + row.subTotal}</div> },
-        { width: '60px', cell: row => <IconButton color='secondary' onClick={() => { handleBajaCarrito(row) }}>  <CloseIcon />  </IconButton> }
+        {
+            cell: row => (<div style={{ display: 'flex', padding: '10px 0' }}>
+                {(row.cantidad > 1) && <div style={{ whiteSpace: 'nowrap', fontSize: 'large' }}>{row.cantidad + 'x'} </div>}
+                <div style={{ fontSize: 'large', display: 'flex', alignItems: 'center', textAlign: 'center' }}>{row.Producto}</div>
+                <div style={{ margin: '0 10px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                    {formater.format(row.subTotal)}
+                </div>
+                <IconButton color='secondary' onClick={() => { handleBajaCarrito(row) }}>  <CloseIcon />  </IconButton>
+
+            </div>)
+
+        }
 
     ]
 
@@ -180,7 +188,7 @@ const Ventas = (props) => {
     // const [ dataVentas, setDataVentas ] = useState( [] )
 
 
-
+    const [cantidad, setCantidad] = useState(1)
 
     const [pagado, setPagado] = useState('')
 
@@ -281,9 +289,23 @@ const Ventas = (props) => {
     //Monta en el carrito
     const addCart = key => {
         let produtoSel = { ...productoSeleccionado }
+        if (!isNaN(parseInt(produtoSel[key]))) {
+            setCarritoProductos(carritoProductos.concat({
+                ...produtoSel,
+                Pago: key,
+                cantidad: cantidad,
+                subTotal: parseInt(produtoSel[key]) * cantidad,
+                idProducto: produtoSel.id,
+                id: Date.now()
+            }))
 
-        setCarritoProductos(carritoProductos.concat({ ...produtoSel, subTotal: produtoSel[key], id: Date.now() }))
-        setProductoSeleccionado(null)
+            setTimeout(() => {
+                setCantidad(1)
+                setProductoSeleccionado(null)
+            }, 2000)
+
+
+        }
     }
 
     //Baja del carrito
@@ -302,8 +324,14 @@ const Ventas = (props) => {
 
     //#region PAGAR
     const pagarCuenta = () => {
-        console.log(carritoProductos)
-        alert('Imprimir Comprobante Garantia y si corresponde pagaré de cuotas')
+        console.log()
+
+        postRequest('/ventas', { productos: carritoProductos, clientes: clienteSeleccionado })
+            .then(response => {
+                console.log(response)
+            })
+
+
     }
     //#endregion
 
@@ -546,14 +574,42 @@ const Ventas = (props) => {
                             {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
 
                                 <Grid item sm={6} lg={4} >
-                                    <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMayorista') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>Pago único</div>
-                                        </Card>
-                                    </Button>
+                                    <Card className={classes.preciosCard}>
+                                        <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
+                                        <div style={{ fontSize: '1rem' }}>
+                                            {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
+
+
+                                        <div>
+                                            <TextField
+                                                label="Cantidad"
+                                                fullWidth
+                                                variant="outlined"
+                                                type='number'
+                                                inputProps={{ min: 1, max: 10000 }}
+                                                value={cantidad}
+                                                margin='none'
+                                                size='small'
+                                                onClick={e => { e.stopPropagation() }}
+                                                onChange={(e) => {
+                                                    if (e.target.value.length === 0)
+                                                        setCantidad(1)
+                                                    else
+                                                        setCantidad(e.target.value.replace(/\D/g, ''))
+                                                }}
+                                                onKeyDown={k => {
+                                                    if (k.key === "Enter" && parseInt(pagado) > importeTotal)
+                                                        pagarCuenta()
+
+                                                }}
+                                            />
+                                            <Button fullWidth
+                                                onClick={e => { addCart('PrecioVentaContadoMayorista') }}>
+                                                + </Button>
+                                        </div>
+
+                                    </Card>
+
                                 </Grid>
                             }
 
@@ -707,20 +763,19 @@ const Ventas = (props) => {
                         fullWidth
                         variant="outlined"
                         style={{ flexGrow: "1" }}
-                        value={pagado}
+                        value={pagado === 0 || pagado.toString().length === 0 ? '' : formater.format(pagado)}
                         margin='normal'
                         onChange={(e) => {
-                            let texto = e.target.value.replace(/[^(?:Gs. )?.\d]/g, '')
+                            let texto = e.target.value.replace(/\D/g, '')
 
                             setPagado(texto)
                         }}
-                        InputProps={{
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                    <AttachMoneyIcon />
-                                </InputAdornment>
-                            ),
+                        onKeyDown={k => {
+                            if (k.key === "Enter" && parseInt(pagado) > importeTotal)
+                                pagarCuenta()
+
                         }}
+
                     />
 
 
@@ -740,13 +795,13 @@ const Ventas = (props) => {
                     <hr />
                     <div className={classes.numberCliente}>
                         <div> Cambio : </div>
-                        <div>{isNaN(parseInt(pagado)) ? '' : formater.format(parseInt(pagado) - importeTotal)} </div>
+                        <div>{isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal ? '' : formater.format(parseInt(pagado) - importeTotal)} </div>
                     </div>
 
                 </div>
                 <div>
                     <Button variant='contained' fullWidth
-                        disabled={carritoProductos.length === 0}
+                        disabled={carritoProductos.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal}
                         color='secondary' onClick={() => { pagarCuenta() }}>Pagar</Button>
                 </div>
             </div>
@@ -786,6 +841,6 @@ const Ventas = (props) => {
             //#endregion Form Add Cliente ----------------------------------------------
         }
 
-    </Grid>
+    </Grid >
 }
 export default Ventas

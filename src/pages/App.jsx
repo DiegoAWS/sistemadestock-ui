@@ -25,8 +25,6 @@ import Ventas from './Ventas/Ventas'
 
 import Stock from './Stock/Stock'
 
-import Productos from './Productos/Productos'
-
 import Clientes from './Clientes/Clientes'
 
 import Proveedores from './Proveedores/Proveedores'
@@ -56,7 +54,6 @@ export default function App() {
           <SecureRoute path='/ventas' component={Ventas} />
           <SecureRoute path='/stock' component={Stock} />
 
-          <SecureRoute path='/productos' component={Productos} />
           <SecureRoute path='/proveedores' component={Proveedores} />
           <SecureRoute path='/clientes' component={Clientes} />
 

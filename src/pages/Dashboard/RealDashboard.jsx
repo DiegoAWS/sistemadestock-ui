@@ -40,53 +40,52 @@ const data = [
         "amt": 2000
     },
     {
-        "name": "5",
+        "name": "Mayo",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
     },
     {
-        "name": "6",
+        "name": "Junio",
         "Inversiones": 2390,
         "Ganancia Neta": 3800,
         "amt": 2500
     },
     {
-        "name": "7",
+        "name": "Julio",
         "Inversiones": 3490,
         "Ganancia Neta": 4300,
         "amt": 2100
     }, {
-        "name": "8",
+        "name": "Agosto",
         "Inversiones": 4000,
         "Ganancia Neta": 2400,
         "amt": 2400
     },
     {
-        "name": "9",
+        "name": "Septiembre",
         "Inversiones": 3000,
         "Ganancia Neta": 1398,
         "amt": 2210
     },
     {
-        "name": "10",
+        "name": "Octubre",
         "Inversiones": 2000,
         "Ganancia Neta": 9800,
         "amt": 2290
     },
     {
-        "name": "11",
+        "name": "Noviembre",
         "Inversiones": 2780,
         "Ganancia Neta": 3908,
         "amt": 2000
     },
     {
-        "name": "12",
+        "name": "Diciembre",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
-    },
-    {
+    }, {
         "name": "Enero",
         "Inversiones": 4000,
         "Ganancia Neta": 2400,
@@ -111,53 +110,52 @@ const data = [
         "amt": 2000
     },
     {
-        "name": "5",
+        "name": "Mayo",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
     },
     {
-        "name": "6",
+        "name": "Junio",
         "Inversiones": 2390,
         "Ganancia Neta": 3800,
         "amt": 2500
     },
     {
-        "name": "7",
+        "name": "Julio",
         "Inversiones": 3490,
         "Ganancia Neta": 4300,
         "amt": 2100
     }, {
-        "name": "8",
+        "name": "Agosto",
         "Inversiones": 4000,
         "Ganancia Neta": 2400,
         "amt": 2400
     },
     {
-        "name": "9",
+        "name": "Septiembre",
         "Inversiones": 3000,
         "Ganancia Neta": 1398,
         "amt": 2210
     },
     {
-        "name": "10",
+        "name": "Octubre",
         "Inversiones": 2000,
         "Ganancia Neta": 9800,
         "amt": 2290
     },
     {
-        "name": "11",
+        "name": "Noviembre",
         "Inversiones": 2780,
         "Ganancia Neta": 3908,
         "amt": 2000
     },
     {
-        "name": "12",
+        "name": "Diciembre",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
-    },
-    {
+    }, {
         "name": "Enero",
         "Inversiones": 4000,
         "Ganancia Neta": 2400,
@@ -182,48 +180,188 @@ const data = [
         "amt": 2000
     },
     {
-        "name": "5",
+        "name": "Mayo",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
     },
     {
-        "name": "6",
+        "name": "Junio",
         "Inversiones": 2390,
         "Ganancia Neta": 3800,
         "amt": 2500
     },
     {
-        "name": "7",
+        "name": "Julio",
         "Inversiones": 3490,
         "Ganancia Neta": 4300,
         "amt": 2100
     }, {
-        "name": "8",
+        "name": "Agosto",
         "Inversiones": 4000,
         "Ganancia Neta": 2400,
         "amt": 2400
     },
     {
-        "name": "9",
+        "name": "Septiembre",
         "Inversiones": 3000,
         "Ganancia Neta": 1398,
         "amt": 2210
     },
     {
-        "name": "10",
+        "name": "Octubre",
         "Inversiones": 2000,
         "Ganancia Neta": 9800,
         "amt": 2290
     },
     {
-        "name": "11",
+        "name": "Noviembre",
         "Inversiones": 2780,
         "Ganancia Neta": 3908,
         "amt": 2000
     },
     {
-        "name": "12",
+        "name": "Diciembre",
+        "Inversiones": 1890,
+        "Ganancia Neta": 4800,
+        "amt": 2181
+    }, {
+        "name": "Enero",
+        "Inversiones": 4000,
+        "Ganancia Neta": 2400,
+        "amt": 2400
+    },
+    {
+        "name": "Febrero",
+        "Inversiones": 3000,
+        "Ganancia Neta": 1398,
+        "amt": 2210
+    },
+    {
+        "name": "Marzo",
+        "Inversiones": 2000,
+        "Ganancia Neta": 6800,
+        "amt": 2290
+    },
+    {
+        "name": "Abril",
+        "Inversiones": 2780,
+        "Ganancia Neta": 3908,
+        "amt": 2000
+    },
+    {
+        "name": "Mayo",
+        "Inversiones": 1890,
+        "Ganancia Neta": 4800,
+        "amt": 2181
+    },
+    {
+        "name": "Junio",
+        "Inversiones": 2390,
+        "Ganancia Neta": 3800,
+        "amt": 2500
+    },
+    {
+        "name": "Julio",
+        "Inversiones": 3490,
+        "Ganancia Neta": 4300,
+        "amt": 2100
+    }, {
+        "name": "Agosto",
+        "Inversiones": 4000,
+        "Ganancia Neta": 2400,
+        "amt": 2400
+    },
+    {
+        "name": "Septiembre",
+        "Inversiones": 3000,
+        "Ganancia Neta": 1398,
+        "amt": 2210
+    },
+    {
+        "name": "Octubre",
+        "Inversiones": 2000,
+        "Ganancia Neta": 9800,
+        "amt": 2290
+    },
+    {
+        "name": "Noviembre",
+        "Inversiones": 2780,
+        "Ganancia Neta": 3908,
+        "amt": 2000
+    },
+    {
+        "name": "Diciembre",
+        "Inversiones": 1890,
+        "Ganancia Neta": 4800,
+        "amt": 2181
+    }, {
+        "name": "Enero",
+        "Inversiones": 4000,
+        "Ganancia Neta": 2400,
+        "amt": 2400
+    },
+    {
+        "name": "Febrero",
+        "Inversiones": 3000,
+        "Ganancia Neta": 1398,
+        "amt": 2210
+    },
+    {
+        "name": "Marzo",
+        "Inversiones": 2000,
+        "Ganancia Neta": 6800,
+        "amt": 2290
+    },
+    {
+        "name": "Abril",
+        "Inversiones": 2780,
+        "Ganancia Neta": 3908,
+        "amt": 2000
+    },
+    {
+        "name": "Mayo",
+        "Inversiones": 1890,
+        "Ganancia Neta": 4800,
+        "amt": 2181
+    },
+    {
+        "name": "Junio",
+        "Inversiones": 2390,
+        "Ganancia Neta": 3800,
+        "amt": 2500
+    },
+    {
+        "name": "Julio",
+        "Inversiones": 3490,
+        "Ganancia Neta": 4300,
+        "amt": 2100
+    }, {
+        "name": "Agosto",
+        "Inversiones": 4000,
+        "Ganancia Neta": 2400,
+        "amt": 2400
+    },
+    {
+        "name": "Septiembre",
+        "Inversiones": 3000,
+        "Ganancia Neta": 1398,
+        "amt": 2210
+    },
+    {
+        "name": "Octubre",
+        "Inversiones": 2000,
+        "Ganancia Neta": 9800,
+        "amt": 2290
+    },
+    {
+        "name": "Noviembre",
+        "Inversiones": 2780,
+        "Ganancia Neta": 3908,
+        "amt": 2000
+    },
+    {
+        "name": "Diciembre",
         "Inversiones": 1890,
         "Ganancia Neta": 4800,
         "amt": 2181
@@ -421,7 +559,7 @@ const RealDashboard = () => {
 
     return (
         <>
-            <Grid container direction="column">
+            <Grid container direction="column" spacing={3}>
                 {
                     //#region Tarjetas
                 }
