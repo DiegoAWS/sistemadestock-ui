@@ -1,15 +1,15 @@
 import axios from "axios";
 
-var localhost = true;
+var localhost = false;
 
 // import axiosCancel from 'axios-cancel';
 
 // axiosCancel(axios, {
 //   debug: false // default
-// });
+// });"http://192.168.137.1"
 
 var HOST = localhost
-  ? "http://192.168.137.1"
+  ? "http://localhost"
   : "https://sistemadestock.herokuapp.com";
 
 //#region  SECURITY ----------------------------------
