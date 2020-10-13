@@ -6,10 +6,11 @@ var localhost = false;
 
 // axiosCancel(axios, {
 //   debug: false // default
-// });"http://192.168.137.1"
+// });
+//"http://localhost"
 
 var HOST = localhost
-  ? "http://localhost"
+  ? "http://192.168.137.1"
   : "https://sistemadestock.herokuapp.com";
 
 //#region  SECURITY ----------------------------------

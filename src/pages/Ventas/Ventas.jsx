@@ -33,7 +33,7 @@ const useStyle = makeStyles((theme) => ({
         flexDirection: 'column',
         padding: '0 12px'
     },
-    seccionProductos: {
+    seccionStockStock: {
         border: '1px solid black',
         padding: '10px 5px',
         marginBottom: '10px',
@@ -50,7 +50,10 @@ const useStyle = makeStyles((theme) => ({
     },
     preciosCard: {
         width: '100%',
-        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);'
+        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);',
+        textAlign: 'center',
+        fontWeigth: '500',
+        textTransform: 'uppercase'
     },
 
     textoCliente: {
@@ -118,16 +121,21 @@ const Ventas = (props) => {
     //#endregion
 
 
-    //#region  campos  ----------------------------------
 
-    //  campos Producto
-    const camposProducto = [
+    //#region  campos Stock ----------------------------------
 
-        ['Producto', 'Producto', 'varcharX'],
-        ['Categoria', 'Categoría', 'categSelector'],
+
+    const camposStock = [
         ['Codigo', 'Código', 'varchar'],
+        ['Categoria', 'Categoría', 'categSelector'],
+        ['Producto', 'Producto', 'varcharX'],
         ['Marca', 'Marca', 'varchar'],
         ['Color', 'Color', 'varchar'],
+        ['Cantidad', 'Cantidad', 'double'],
+        ['Proveedor', 'Proveedor', 'varchar'],
+        ['Factura', 'Factura de Compra', 'varchar'],
+        ['FechaCompra', 'Fecha de Compra', 'datetime'],
+        ['CostoUnitario', 'Costo Unitario', 'double'],
         ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
         ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
         ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
@@ -135,11 +143,12 @@ const Ventas = (props) => {
         ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
         ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double'],
         ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
-
     ]
 
+    //#endregion campos Stock
 
-    //  campos Cliente 
+    //#region  campos  Cliente----------------------------------
+
     const camposCliente = [
 
         ['Nombre', 'Nombre', 'varchar'],
@@ -149,7 +158,7 @@ const Ventas = (props) => {
         ['OtrosDatos', 'Otros', 'varchar']
 
     ]
-    //#endregion campos 
+    //#endregion campos Cliente
 
 
     //#endregion
@@ -176,7 +185,7 @@ const Ventas = (props) => {
 
     const [formDataAddClient, setFormDataAddCliente] = useState(initFormAddCliente)
 
-    const [carritoProductos, setCarritoProductos] = useState([])
+    const [carritoList, setCarritoList] = useState([])
 
 
     const [importeTotal, setImporteTotal] = useState(0)
@@ -184,7 +193,7 @@ const Ventas = (props) => {
 
 
     const [dataClientes, setDataClientes] = useState([])
-    const [dataProductos, setDataProductos] = useState([])
+    const [dataStock, setDataStock] = useState([])
     // const [ dataVentas, setDataVentas ] = useState( [] )
 
 
@@ -199,19 +208,18 @@ const Ventas = (props) => {
     //#region UseEffect
 
 
-
     // eslint-disable-next-line 
     useEffect(() => { cargaData() }, [])
 
 
     useEffect(() => {
-        if (carritoProductos.length === 0)
+        if (carritoList.length === 0)
             setImporteTotal(0)
         else {
 
 
             let t = 0
-            carritoProductos.forEach(item => {
+            carritoList.forEach(item => {
                 if (!isNaN(parseInt(item.subTotal)))
                     t = t + parseInt(item.subTotal)
             })
@@ -219,7 +227,7 @@ const Ventas = (props) => {
             if (t > 0)
                 setImporteTotal(t)
         }
-    }, [carritoProductos])
+    }, [carritoList])
 
 
     //#endregion
@@ -227,25 +235,26 @@ const Ventas = (props) => {
     //#region Carga Data
     const cargaData = () => {
 
-
         getRequest('/ventas')
             .then(resp => {
-                if (resp && resp.statusText && resp.statusText === "OK" && resp.data && resp.data.Productos && resp.data.Clientes) {
 
-                    //#region Productos
 
-                    if (Array.isArray(resp.data.Productos)) {
-                        const dataProductos = resp.data.Productos.map(dataRequested => {
+                if (resp && resp.statusText && resp.statusText === "OK" && resp.data && resp.data.Clientes && resp.data.Stock && resp.data.Ventas) {
+
+                    //#region Stock
+
+                    if (Array.isArray(resp.data.Stock)) {
+                        const dataStock = resp.data.Stock.map(dataRequested => {
 
                             let instantData = {}
 
-                            camposProducto.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+                            camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
                             return { ...instantData, id: dataRequested.id }
 
                         })
 
-                        setDataProductos(dataProductos)
+                        setDataStock(dataStock)
 
 
                     }
@@ -290,19 +299,19 @@ const Ventas = (props) => {
     const addCart = key => {
         let produtoSel = { ...productoSeleccionado }
         if (!isNaN(parseInt(produtoSel[key]))) {
-            setCarritoProductos(carritoProductos.concat({
+            setCarritoList(carritoList.concat({
                 ...produtoSel,
                 Pago: key,
-                cantidad: cantidad,
+                cantidadComprada: cantidad,
                 subTotal: parseInt(produtoSel[key]) * cantidad,
-                idProducto: produtoSel.id,
+                idStock: produtoSel.id,
                 id: Date.now()
             }))
 
             setTimeout(() => {
                 setCantidad(1)
                 setProductoSeleccionado(null)
-            }, 2000)
+            }, 200)
 
 
         }
@@ -310,11 +319,11 @@ const Ventas = (props) => {
 
     //Baja del carrito
     const handleBajaCarrito = row => {
-        //setCarritoProductos
+        //setCarritoList
         if (window.confirm('Seguro que desea quitar de la lista de la compra ' + row.Producto + '...?')) {
 
-            let tempCarrito = carritoProductos.filter(item => item.id.toString() !== row.id.toString())
-            setCarritoProductos(tempCarrito)
+            let tempCarrito = carritoList.filter(item => item.id.toString() !== row.id.toString())
+            setCarritoList(tempCarrito)
 
         }
 
@@ -326,7 +335,7 @@ const Ventas = (props) => {
     const pagarCuenta = () => {
         console.log()
 
-        postRequest('/ventas', { productos: carritoProductos, clientes: clienteSeleccionado })
+        postRequest('/ventas', { productos: carritoList, cliente: clienteSeleccionado })
             .then(response => {
                 console.log(response)
             })
@@ -512,7 +521,7 @@ const Ventas = (props) => {
 
             </div>
 
-            <div className={classes.seccionProductos} >
+            <div className={classes.seccionStockStock} >
 
                 {
                     //#region Search Producto
@@ -527,7 +536,7 @@ const Ventas = (props) => {
                     clearOnEscape
                     noOptionsText=''
                     clearText='Limpiar Producto'
-                    options={dataProductos}
+                    options={dataStock}
                     filterOptions={(options, params) => {
                         let filtered = filterProducto(options, params)
 
@@ -576,17 +585,18 @@ const Ventas = (props) => {
                                 <Grid item sm={6} lg={4} >
                                     <Card className={classes.preciosCard}>
                                         <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
-                                        <div style={{ fontSize: '1rem' }}>
-                                            {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
+                                        <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
 
 
-                                        <div>
+                                        <div style={{ display: 'flex', padding: '5px', justifyContent: 'space-evenly' }}>
                                             <TextField
+
                                                 label="Cantidad"
-                                                fullWidth
+
                                                 variant="outlined"
                                                 type='number'
-                                                inputProps={{ min: 1, max: 10000 }}
+                                                inputProps={{ min: 1, max: 10000, style: { padding: '5px' } }}
+
                                                 value={cantidad}
                                                 margin='none'
                                                 size='small'
@@ -603,9 +613,8 @@ const Ventas = (props) => {
 
                                                 }}
                                             />
-                                            <Button fullWidth
-                                                onClick={e => { addCart('PrecioVentaContadoMayorista') }}>
-                                                + </Button>
+                                            <Button variant='contained' color='secondary' style={{ padding: '0px 5px', minWidth: '30px' }}
+                                                onClick={e => { addCart('PrecioVentaContadoMayorista') }}>Añadir</Button>
                                         </div>
 
                                     </Card>
@@ -727,7 +736,7 @@ const Ventas = (props) => {
 
 
             {
-                //#region Listado de Productos Comprados ----------------------------------------------
+                //#region Listado de StockStock Comprados ----------------------------------------------
             }
 
 
@@ -737,7 +746,7 @@ const Ventas = (props) => {
                     style={{ borderRadius: '10px', overflowX: 'hidden' }}
                     columns={cols}
                     noDataComponent={<AddShoppingCartIcon color='primary' />}
-                    data={carritoProductos}
+                    data={carritoList}
                     highlightOnHover
                     noHeader
                     noTableHead
@@ -748,7 +757,7 @@ const Ventas = (props) => {
             </div>
 
             {
-                //#endregion Listado de Productos Comprados
+                //#endregion Listado de StockStock Comprados
             }
 
 
@@ -801,7 +810,7 @@ const Ventas = (props) => {
                 </div>
                 <div>
                     <Button variant='contained' fullWidth
-                        disabled={carritoProductos.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal}
+                        disabled={carritoList.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal}
                         color='secondary' onClick={() => { pagarCuenta() }}>Pagar</Button>
                 </div>
             </div>

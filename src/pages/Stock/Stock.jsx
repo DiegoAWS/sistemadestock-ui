@@ -76,10 +76,10 @@ const Stock = props => {
     ]
     //#endregion campos Proveedores
 
-    //#region  campos datFull ----------------------------------
+    //#region  campos Stock ----------------------------------
 
 
-    const camposDataFull = [
+    const camposStock = [
         ['Codigo', 'Código', 'varchar'],
         ['Categoria', 'Categoría', 'categSelector'],
         ['Producto', 'Producto', 'varcharX'],
@@ -99,7 +99,7 @@ const Stock = props => {
         ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
     ]
 
-    //#endregion campos datFull
+    //#endregion campos Stock
 
     //#region   Form Stock ----------------------------------
 
@@ -171,7 +171,7 @@ const Stock = props => {
 
                     let instantData = {}
 
-                    camposDataFull.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+                    camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
                     return { ...instantData }
 
@@ -345,7 +345,7 @@ const Stock = props => {
                                 alert('Ningun elemento seleccionado')
                                 return
                             }
-                            exportToXLSX(seleccion ? elementosSeleccionados : dataStock, fileName, camposDataFull)
+                            exportToXLSX(seleccion ? elementosSeleccionados : dataStock, fileName, camposStock)
                         }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
 
                 </div>
@@ -359,7 +359,7 @@ const Stock = props => {
                 seleccion={seleccion}
                 sinDatos={sinDatos}
                 SetSinDatos={SetSinDatos}
-                campos={camposDataFull}
+                campos={camposStock}
 
                 clearSelection={clearSelection}
                 Seleccion={Seleccion}

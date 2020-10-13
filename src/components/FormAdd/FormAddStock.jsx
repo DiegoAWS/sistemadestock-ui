@@ -41,9 +41,9 @@ const FormAddStock = (
 
 
 
-    //Diseable 18 y 24 Cuotas
-    const [diseable18, setDiseable18] = useState(true)
-    const [diseable24, setDiseable24] = useState(true)
+    //disabled 18 y 24 Cuotas
+    const [disabled18, setdisabled18] = useState(true)
+    const [disabled24, setdisabled24] = useState(true)
 
 
     const refCategorias = useRef([])
@@ -146,20 +146,24 @@ const FormAddStock = (
     //#region  Auto Fill Money ----------------------------------
 
     const AutoFillMoney = () => {
-        let precioBase = parseInt(formStock.PrecioVentaContadoMayorista)
+
+        let precioBase = parseInt(formStock.CostoUnitario)
 
         if (isNaN(precioBase))
             return
 
+        let precio18 = disabled18 ? null : Math.ceil((ajustesPrecios.p18cuotas * precioBase) / 180000) * 100
+        let precio24 = disabled24 ? null : Math.ceil((ajustesPrecios.p24cuotas * precioBase) / 240000) * 100
 
         setFormStock({
             ...formStock,
+            PrecioVentaContadoMayorista: Math.ceil((ajustesPrecios.pMayorista * precioBase) / 10000) * 100,
             PrecioVentaContadoMinorista: Math.ceil((ajustesPrecios.pMinorista * precioBase) / 10000) * 100,
             PrecioVenta3Cuotas: Math.ceil((ajustesPrecios.p3cuotas * precioBase) / 30000) * 100,
             PrecioVenta6Cuotas: Math.ceil((ajustesPrecios.p6cuotas * precioBase) / 60000) * 100,
             PrecioVenta12Cuotas: Math.ceil((ajustesPrecios.p12cuotas * precioBase) / 120000) * 100,
-            PrecioVenta18Cuotas: Math.ceil((ajustesPrecios.p18cuotas * precioBase) / 180000) * 100,
-            PrecioVenta24Cuotas: Math.ceil((ajustesPrecios.p24cuotas * precioBase) / 240000) * 100
+            PrecioVenta18Cuotas: precio18,
+            PrecioVenta24Cuotas: precio24
         })
 
     }
@@ -173,7 +177,7 @@ const FormAddStock = (
     const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
 
         <TextField ref={ref} label='Fecha de Compra' variant="outlined" margin='normal' size="small"
-            value={value} onClick={onClick} fullWidth
+            value={value} fullWidth onClick={onClick}
         />
     ))
 
@@ -231,9 +235,9 @@ const FormAddStock = (
                     </Grid>
                 </Grid>
 
-                <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', paddingTop: '10px' }}>
+                <Grid container style={{ justifyContent: 'space-around', border: '1px solid black', borderRadius: '10px', marginBottom: '10px', paddingTop: '10px' }}>
 
-                    <Grid item xs={12} sm={4} md={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} sm={4} md={3} style={{ padding: '0 10px' }}>
                         <Autocomplete
                             freeSolo
                             value={formStock.Categoria}
@@ -251,7 +255,7 @@ const FormAddStock = (
                             onChange={e => { setFormStock({ ...formStock, Producto: e.target.value }) }} />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} sm={6} md={3} style={{ padding: '0 10px' }}>
                         <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth
                             value={formStock.Codigo} onChange={e => { setFormStock({ ...formStock, Codigo: e.target.value }) }} />
                     </Grid>
@@ -265,7 +269,7 @@ const FormAddStock = (
                     </Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <Autocomplete
                             freeSolo
                             value={formStock.Marca}
@@ -276,7 +280,7 @@ const FormAddStock = (
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <Autocomplete
                             freeSolo
                             value={formStock.Color}
@@ -287,7 +291,7 @@ const FormAddStock = (
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4}  >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth error={costoUniError}
                             value={EstilizaString(formStock.CostoUnitario)}
                             InputProps={{
@@ -298,21 +302,21 @@ const FormAddStock = (
                             onChange={e => { setFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Mayorista' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVentaContadoMayorista)}
 
                             onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMayorista: e.target.value.replace(/\D/g, '').replace(' ', '') }) }} />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVentaContadoMinorista)}
 
                             onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMinorista: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta3Cuotas)}
 
@@ -323,32 +327,32 @@ const FormAddStock = (
 
 
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta6Cuotas)}
                             InputProps={{ startAdornment: <InputAdornment position="start">6x </InputAdornment > }}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta 12 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta12Cuotas)}
                             InputProps={{ startAdornment: <InputAdornment position="start">12x </InputAdornment > }}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta12Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }} /></Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4} >
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
 
-                        <TextField label={diseable18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={diseable18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
-                            disabled={diseable18}
+                        <TextField label={disabled18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                            value={disabled18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
+                            disabled={disabled18}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta18Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">18x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
-                                    <Checkbox checked={!diseable18}
-                                        onChange={e => { setDiseable18(!diseable18) }}
-                                        title={diseable18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
+                                    <Checkbox checked={!disabled18}
+                                        onChange={e => { setdisabled18(!disabled18) }}
+                                        title={disabled18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
                                     />
                                 </InputAdornment>
                             }}
@@ -356,17 +360,17 @@ const FormAddStock = (
                     </Grid>
 
 
-                    <Grid item xs={12} sm={6} md={4}>
-                        <TextField label={diseable24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={diseable24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
-                            disabled={diseable24}
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
+                        <TextField label={disabled24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                            value={disabled24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
+                            disabled={disabled24}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta24Cuotas: e.target.value.replace(/\D/, '').replace(' ', '') }) }}
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">24x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
-                                    <Checkbox checked={!diseable24}
-                                        onChange={e => { setDiseable24(!diseable24) }}
-                                        title={diseable24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
+                                    <Checkbox checked={!disabled24}
+                                        onChange={e => { setdisabled24(!disabled24) }}
+                                        title={disabled24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
                                     /></InputAdornment>
                             }}
                         />
