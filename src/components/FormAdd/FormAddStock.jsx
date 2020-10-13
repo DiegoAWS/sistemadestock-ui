@@ -126,7 +126,10 @@ const FormAddStock = (
     }
 
     //#endregion
-
+    const formater = new Intl.NumberFormat("es-PY", {
+        style: "currency",
+        currency: "PYG",
+    });
 
 
     //#region  Estiliza como money String ----------------------------------
@@ -135,8 +138,7 @@ const FormAddStock = (
         if (!s)
             return ""
 
-        var re = '\\d(?=(\\d{3})+$)'
-        return s.toString().replace(new RegExp(re, 'g'), '$& ')
+        return formater.format(s)
     }
 
     //#endregion Estiliza como money String

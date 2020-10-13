@@ -129,8 +129,8 @@ const Ajustes = props => {
 
             postRequest('/ajustes', dataSend).then(response => {
                 if (response && response.data)
-                    console.log('POST', response.data)
-                leerInfo()
+
+                    leerInfo()
             })
 
 

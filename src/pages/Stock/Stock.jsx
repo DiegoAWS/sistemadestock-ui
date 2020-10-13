@@ -196,7 +196,7 @@ const Stock = props => {
 
                 //#region  Ajuste Precio ----------------------------------
 
-                if (request.data.Ajuste) {
+                if (request.data.Ajuste && request.data.Ajuste.length === 7) {
 
                     let dataRequested = request.data.Ajuste
 
