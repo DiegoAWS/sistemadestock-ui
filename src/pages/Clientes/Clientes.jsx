@@ -29,21 +29,19 @@ const Clientes = props => {
     const [filterData, setFilterData] = useState([])
 
 
-    //#region  campos Cliente ----------------------------------
+    //#region  campos  Cliente----------------------------------
 
-    const campos = [
-
+    const camposCliente = [
 
         ['Nombre', 'Nombre', 'varchar'],
-
         ['Email', 'Email', 'varchar'],
-        ['Telefono', 'Id', 'varchar'],
+        ['Cedula', 'Cédula de Identidad', 'varchar'],
         ['Direccion', 'Dirección', 'varchar'],
         ['OtrosDatos', 'Otros', 'varchar']
 
-
     ]
-    //#endregion campos Producto
+    //#endregion campos Cliente
+
 
 
     //#region  Inicializing the Form ----------------------------------
@@ -86,7 +84,7 @@ const Clientes = props => {
 
                         let instantData = {}
 
-                        campos.forEach(item => {
+                        camposCliente.forEach(item => {
                             instantData[item[0]] = (!dataRequested[item[0]]) ? "" : dataRequested[item[0]]
                         })
 
@@ -157,7 +155,7 @@ const Clientes = props => {
         let dataFilter = data.filter(item => {
             let resp = false
 
-            campos.forEach(camp => {
+            camposCliente.forEach(camp => {
                 if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
                     resp = true
 
@@ -222,7 +220,7 @@ const Clientes = props => {
             <Datatable data={(search.length === 0) ? data : filterData}
 
                 sinDatos={sinDatos}
-                campos={campos}
+                campos={camposCliente}
                 responsive
                 handleDelete={deleteData}
                 handleEdit={editData} />

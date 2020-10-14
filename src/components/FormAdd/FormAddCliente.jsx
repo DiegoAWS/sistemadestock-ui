@@ -64,9 +64,9 @@ const FormAddCliente = ({
                 </Grid>
                 <Grid item xs={12} sm={6} lg={4}>
 
-                    <TextField label={'Id'} variant="outlined" margin='normal' size="small"
-                        value={formData.Telefono || ''} fullWidth
-                        onChange={e => { SetFormData({ ...formData, Telefono: e.target.value }) }} />
+                    <TextField label={'Cédula de Identidad'} variant="outlined" margin='normal' size="small"
+                        value={formData.Cedula || ''} fullWidth
+                        onChange={e => { SetFormData({ ...formData, Cedula: e.target.value }) }} />
 
                 </Grid>
                 <Grid item xs={12} sm={6} lg={4}>

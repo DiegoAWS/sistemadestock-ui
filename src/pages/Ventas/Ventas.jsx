@@ -4,7 +4,8 @@ import DataTable from 'react-data-table-component'
 import { makeStyles, Grid, Card, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
-
+import { jsPDF } from "jspdf"
+import Canvg from 'canvg'
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle"
 import AddIcon from "@material-ui/icons/Add"
@@ -15,10 +16,12 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'
 import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import WarningIcon from '@material-ui/icons/Warning'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
-
+import Barcode from 'react-barcode'
 
 import { getRequest, postRequest } from '../../API/apiFunctions'
 import FormAddCliente from '../../components/FormAdd/FormAddCliente'
+
+import logoEtiqueta from '../../assets/images/logoEtiqueta.png'
 
 //#region JSS
 const useStyle = makeStyles((theme) => ({
@@ -153,7 +156,7 @@ const Ventas = (props) => {
 
         ['Nombre', 'Nombre', 'varchar'],
         ['Email', 'Email', 'varchar'],
-        ['Telefono', 'Teléfono', 'varchar'],
+        ['Cedula', 'Cédula de Identidad', 'varchar'],
         ['Direccion', 'Dirección', 'varchar'],
         ['OtrosDatos', 'Otros', 'varchar']
 
@@ -178,7 +181,7 @@ const Ventas = (props) => {
     const initFormAddCliente = {
         Nombre: '',
         Email: '',
-        Telefono: '',
+        Cedula: '',
         Direccion: '',
         OtrosDatos: ''
     }
@@ -391,8 +394,8 @@ const Ventas = (props) => {
 
                                 if (response && response.data) {
                                     console.log(response.data)//IMPRIMIR COMPROBANTES
-
-                                    ImprimirComprobante()
+                                    if (response.data.print)
+                                        ImprimirComprobante()
 
                                 }
 
@@ -419,6 +422,55 @@ const Ventas = (props) => {
     //#region Comprobante
 
     const ImprimirComprobante = () => {
+        var doc = new jsPDF({
+            orientation: "landscape",
+            unit: "mm",
+            format: [80, 180]
+        })
+
+
+        let svg = document.getElementsByClassName('CODEBAR')[0].innerHTML
+
+        if (svg)
+            svg = svg.replace(/\r?\n|\r/g, '').trim()
+
+        let canvas = document.createElement('canvas')
+
+
+        let ctx = canvas.getContext('2d')
+
+        let v = Canvg.fromString(ctx, svg)
+
+        v.start()
+
+
+        let imgData = canvas.toDataURL('image/png')
+
+
+
+
+
+        // Generate PDF
+
+
+
+
+
+
+        doc.addImage(logoEtiqueta, 'PNG', 12, 15, 20, 10, null, null, 90)
+
+        doc.addImage(imgData, 'PNG', 15, 15, 20, 10)
+
+        doc.setFontSize(11)
+        doc.text('TEXTO', 48, 5, null, null, "center")
+
+
+
+
+
+        doc.autoPrint()
+        doc.save('Imprimir.pdf')
+
 
     }
 
@@ -606,6 +658,7 @@ const Ventas = (props) => {
                     clearOnBlur
                     fullWidth
                     clearOnEscape
+                    size='small'
                     noOptionsText=''
                     clearText='Limpiar Producto'
                     options={dataStock}
@@ -943,7 +996,10 @@ const Ventas = (props) => {
         {
             //#endregion Form Add Cliente ----------------------------------------------
         }
-
+        {/* carritoList.length > 0 && */}
+        {<div style={{ display: 'none' }} className={'CODEBAR'}>
+            <Barcode value={"12345678"} />
+        </div>}
     </Grid >
 }
 export default Ventas
