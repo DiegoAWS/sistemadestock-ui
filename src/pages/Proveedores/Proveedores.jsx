@@ -130,7 +130,7 @@ const Proveedores = props => {
 
         clearform()
 
-        deleteRequest('/proveedores/' + itemDelete.id, formData)
+        deleteRequest('/proveedores/' + itemDelete.id)
             .then(() => {
                 cargaData()
 

@@ -14,7 +14,8 @@ import loading from '../../assets/images/loading.gif'
 
 
 
-function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEdit, seleccion = false, clearSelection = false, Seleccion, buscar = true }) {
+function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEdit, seleccion = false,
+  clearSelection = false, Seleccion, buscar = true, conditionalRowStyles = [] }) {
 
   //#region CreaTheme
   createTheme('tableTheme', {
@@ -90,7 +91,7 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
     <div style={{ display: 'flex' }}>
 
       <IconButton
-        style={{ margin: '0 5px' }}
+        style={{ margin: '0 5px', backgroundColor: 'white' }}
         size="small"
         title='Borrar datos' color="secondary"
         variant="contained"
@@ -106,7 +107,7 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
       <IconButton
         title='Editar datos' color="primary"
         size="small"
-        style={{ margin: '0 5px' }}
+        style={{ margin: '0 5px', backgroundColor: 'white' }}
         variant="contained"
         onClick={(e) => {
           if (window.confirm("¿Seguro que desea Editar este ítem?"))
@@ -204,6 +205,7 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
         noHeader
         onRowClicked={useCallback(handleShow, [handleShow])}
         responsive
+        conditionalRowStyles={conditionalRowStyles}
         selectableRowsVisibleOnly
         selectableRowsHighlight
         clearSelectedRows={clearSelection}

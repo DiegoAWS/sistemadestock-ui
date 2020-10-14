@@ -173,7 +173,7 @@ const Stock = props => {
 
                     camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
-                    return { ...instantData }
+                    return { ...instantData, id: dataRequested.id }
 
                 }))
 
@@ -249,13 +249,13 @@ const Stock = props => {
 
     const deleteData = (itemDelete) => {
 
-
+        clearform()
 
         setDataStock(dataStock.filter(it => it.id !== itemDelete.id))
 
-        clearform()
 
-        deleteRequest('/stocks/' + itemDelete.id, formStock)
+
+        deleteRequest('/stocks/' + itemDelete.id)
             .then(() => {
                 cargaData()
 
@@ -306,6 +306,20 @@ const Stock = props => {
 
     }
 
+
+    const conditionalRowStyles = [
+        {
+            when: row => row.Cantidad < 1,
+            style: {
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                    backgroundColor: 'red',
+                    color: 'white',
+                }
+            }
+        }
+    ]
     //#endregion Others Functions
 
 
@@ -363,7 +377,7 @@ const Stock = props => {
 
                 clearSelection={clearSelection}
                 Seleccion={Seleccion}
-
+                conditionalRowStyles={conditionalRowStyles}
                 handleDelete={deleteData}
                 handleEdit={editData}
             />

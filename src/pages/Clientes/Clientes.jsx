@@ -126,7 +126,7 @@ const Clientes = props => {
 
         clearform()
 
-        deleteRequest('/clientes/' + itemDelete.id, formData)
+        deleteRequest('/clientes/' + itemDelete.id)
             .then(() => {
                 cargaData()
 

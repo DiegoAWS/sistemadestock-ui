@@ -43,7 +43,6 @@ const SecureRoute = ({ path, component: Component, history }) => {
 
 
 
-
     return (
         <Route exact path={path} component={Component} />
     )

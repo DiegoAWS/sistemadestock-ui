@@ -1,6 +1,6 @@
 import axios from "axios";
 
-var localhost = false;
+var localhost = true;
 
 // import axiosCancel from 'axios-cancel';
 
@@ -54,6 +54,12 @@ export const getProfile = (path) => {
     })
     .catch((err) => {
       console.log(err);
+      localStorage.removeItem("usertoken");
+      localStorage.removeItem("UserOficialName");
+      localStorage.removeItem("UserRole");
+      setTimeout(() => {
+        window.location.replace(HOST);
+      }, 1000);
     });
 };
 

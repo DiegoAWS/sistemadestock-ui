@@ -201,6 +201,9 @@ const Ventas = (props) => {
 
     const [pagado, setPagado] = useState('')
 
+    const [pagando, setPagando] = useState(false)
+    const [cantidadError, setCantidadError] = useState(false)
+
     //#endregion State
 
     const refFijarValue = useRef(false)
@@ -244,13 +247,18 @@ const Ventas = (props) => {
                     //#region Stock
 
                     if (Array.isArray(resp.data.Stock)) {
-                        const dataStock = resp.data.Stock.map(dataRequested => {
+                        const dataStock = []
 
-                            let instantData = {}
+                        resp.data.Stock.forEach(dataRequested => {
+                            if (dataRequested.Cantidad > 0) {
 
-                            camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+                                let instantData = {}
 
-                            return { ...instantData, id: dataRequested.id }
+                                camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+
+                                dataStock.push({ ...instantData, id: dataRequested.id })
+
+                            }
 
                         })
 
@@ -298,6 +306,7 @@ const Ventas = (props) => {
     //Monta en el carrito
     const addCart = key => {
         let produtoSel = { ...productoSeleccionado }
+
         if (!isNaN(parseInt(produtoSel[key]))) {
             setCarritoList(carritoList.concat({
                 ...produtoSel,
@@ -333,12 +342,73 @@ const Ventas = (props) => {
 
     //#region PAGAR
     const pagarCuenta = () => {
-        console.log()
+        setPagando(true)
+        getRequest('/ventasonlystock')
+            .then(responseStock => {
+                if (responseStock && responseStock.data) {
 
-        postRequest('/ventas', { productos: carritoList, cliente: clienteSeleccionado })
-            .then(response => {
-                console.log(response)
+                    let stockFull = responseStock.data
+
+                    carritoList.forEach(item => {
+
+                        let Prod = stockFull.filter(st => st.id === item.idStock)
+
+                        if (Prod.length !== 1) {
+                            alert('ERROR')
+                            return
+                        }
+                        let newProducto = { ...Prod[0], Cantidad: Prod[0].Cantidad - item.cantidadComprada }
+                        stockFull = stockFull.map(st => {
+                            if (st.id === item.idStock)
+                                return newProducto
+                            else
+                                return st
+                        })
+                    })
+                    let errorCantidad = ''
+                    stockFull.forEach(item => {
+                        if (item.Cantidad < 0)
+                            errorCantidad = errorCantidad + item.Producto + '\n'
+                    })
+
+
+                    if (errorCantidad.length > 0) {
+                        alert('ERROR \n No hay suficiente en Stock de \n \n' + errorCantidad)
+                        setCarritoList([])
+                        setPagando(false)
+                    }
+                    else {
+
+
+                        let clienteNombre = 'Cliente de Contado'
+                        if (clienteSeleccionado && clienteSeleccionado.Nombre)
+                            clienteNombre = clienteSeleccionado.Nombre
+
+
+                        postRequest('/ventas', { productos: carritoList, cliente: clienteNombre })
+                            .then(response => {
+                                setPagando(false)
+
+                                if (response && response.data) {
+                                    console.log(response.data)//IMPRIMIR COMPROBANTES
+
+                                    ImprimirComprobante()
+
+                                }
+
+
+                            })
+
+                    }
+
+
+
+                }
             })
+
+
+
+
 
 
     }
@@ -348,7 +418,9 @@ const Ventas = (props) => {
 
     //#region Comprobante
 
+    const ImprimirComprobante = () => {
 
+    }
 
     //#endregion
 
@@ -588,33 +660,52 @@ const Ventas = (props) => {
                                         <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
 
 
-                                        <div style={{ display: 'flex', padding: '5px', justifyContent: 'space-evenly' }}>
+                                        <div style={{ display: 'flex', padding: '5px', justifyContent: 'space-around' }}>
                                             <TextField
 
                                                 label="Cantidad"
 
                                                 variant="outlined"
-                                                type='number'
-                                                inputProps={{ min: 1, max: 10000, style: { padding: '5px' } }}
+
+                                                inputProps={{ min: 1, max: productoSeleccionado.Cantidad, style: { padding: '5px' } }}
 
                                                 value={cantidad}
                                                 margin='none'
                                                 size='small'
-                                                onClick={e => { e.stopPropagation() }}
+                                                error={cantidadError}
                                                 onChange={(e) => {
-                                                    if (e.target.value.length === 0)
-                                                        setCantidad(1)
-                                                    else
-                                                        setCantidad(e.target.value.replace(/\D/g, ''))
-                                                }}
-                                                onKeyDown={k => {
-                                                    if (k.key === "Enter" && parseInt(pagado) > importeTotal)
-                                                        pagarCuenta()
+                                                    let cant = parseInt(e.target.value.replace(/\D/g, ''))
 
+                                                    if (isNaN(cant) || cant === 0 || cant < 0)
+
+                                                        setCantidad('')
+                                                    else if (cant > productoSeleccionado.Cantidad) {
+                                                        setCantidadError(true)
+                                                        setTimeout(() => {
+                                                            setCantidadError(false)
+                                                            setCantidad(productoSeleccionado.Cantidad)
+                                                        }, 1000)
+                                                    }
+
+
+                                                    else
+                                                        setCantidad(cant)
                                                 }}
+
                                             />
                                             <Button variant='contained' color='secondary' style={{ padding: '0px 5px', minWidth: '30px' }}
-                                                onClick={e => { addCart('PrecioVentaContadoMayorista') }}>Añadir</Button>
+                                                onClick={e => {
+                                                    if (cantidad && !isNaN(parseInt(cantidad)))
+                                                        addCart('PrecioVentaContadoMayorista')
+                                                    else {
+                                                        setCantidadError(true)
+                                                        setTimeout(() => {
+                                                            setCantidadError(false)
+                                                            setCantidad(1)
+                                                        }, 1000)
+                                                    }
+
+                                                }}>Añadir</Button>
                                         </div>
 
                                     </Card>
@@ -811,7 +902,10 @@ const Ventas = (props) => {
                 <div>
                     <Button variant='contained' fullWidth
                         disabled={carritoList.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal}
-                        color='secondary' onClick={() => { pagarCuenta() }}>Pagar</Button>
+                        color='secondary' onClick={() => {
+                            if (!pagando)
+                                pagarCuenta()
+                        }}>{pagando ? 'Pagando...' : 'Pagar'}</Button>
                 </div>
             </div>
             {
