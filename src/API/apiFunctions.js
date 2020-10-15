@@ -1,6 +1,6 @@
 import axios from "axios";
 
-var localhost = false;
+var localhost = true;
 
 // import axiosCancel from 'axios-cancel';
 
@@ -58,7 +58,11 @@ export const getProfile = (path) => {
       localStorage.removeItem("UserOficialName");
       localStorage.removeItem("UserRole");
       setTimeout(() => {
-        window.location.replace(HOST + localhost ? ":3000" : "");
+        window.location.replace(
+          localhost
+            ? "http://192.168.137.1:3000"
+            : "https://sistemadestock-ui.herokuapp.com"
+        );
       }, 1000);
     });
 };

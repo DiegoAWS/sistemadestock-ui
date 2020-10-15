@@ -108,6 +108,7 @@ const Ventas = (props) => {
         }
 
     ]
+    //#endregion
 
     //#region useBlur :)
     const useBlur = () => {
@@ -136,6 +137,7 @@ const Ventas = (props) => {
         ['Color', 'Color', 'varchar'],
         ['Cantidad', 'Cantidad', 'double'],
         ['Proveedor', 'Proveedor', 'varchar'],
+        ['Garantia', 'Garantía', 'varchar'],
         ['Factura', 'Factura de Compra', 'varchar'],
         ['FechaCompra', 'Fecha de Compra', 'datetime'],
         ['CostoUnitario', 'Costo Unitario', 'double'],
@@ -164,7 +166,7 @@ const Ventas = (props) => {
     //#endregion campos Cliente
 
 
-    //#endregion
+
 
     //#region  State ----------------------------------
 

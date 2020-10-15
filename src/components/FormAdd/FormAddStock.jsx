@@ -77,7 +77,6 @@ const FormAddStock = (
         refColors.current = dataStock.map(item => item.Color).filter((item, index, data) => data.indexOf(item) === index)
         refProveedores.current = proveedores.map(item => item.Proveedor).filter((item, index, data) => data.indexOf(item) === index)
 
-
     }, [dataStock, proveedores])
 
     //#endregion 

@@ -152,7 +152,7 @@ const Stock = props => {
     useEffect(() => {
         if (dataStock.length > 0) {
 
-            console.log(dataStock)
+
             garantiaEs.current = dataStock.map(item => {
                 let G = item.Garantia.split(' ')
                 if (G.length === 2 && !isNaN(parseInt(G[0]))) {
