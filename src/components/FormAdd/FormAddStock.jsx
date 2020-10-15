@@ -72,10 +72,10 @@ const FormAddStock = (
 
     useEffect(() => {
 
-        refCategorias.current = dataStock.map(item => item.Categoria)
-        refMarcas.current = dataStock.map(item => item.Marca)
-        refColors.current = dataStock.map(item => item.Color)
-        refProveedores.current = proveedores.map(item => item.Proveedor)
+        refCategorias.current = dataStock.map(item => item.Categoria).filter((item, index, data) => data.indexOf(item) === index)
+        refMarcas.current = dataStock.map(item => item.Marca).filter((item, index, data) => data.indexOf(item) === index)
+        refColors.current = dataStock.map(item => item.Color).filter((item, index, data) => data.indexOf(item) === index)
+        refProveedores.current = proveedores.map(item => item.Proveedor).filter((item, index, data) => data.indexOf(item) === index)
 
 
     }, [dataStock, proveedores])
