@@ -58,7 +58,7 @@ export const getProfile = (path) => {
       localStorage.removeItem("UserOficialName");
       localStorage.removeItem("UserRole");
       setTimeout(() => {
-        window.location.replace(HOST);
+        window.location.replace(HOST + localhost ? ":3000" : "");
       }, 1000);
     });
 };

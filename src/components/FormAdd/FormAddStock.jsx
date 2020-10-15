@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { TextField, Grid, Button, InputAdornment, IconButton, Checkbox } from '@material-ui/core'
+import { TextField, Grid, Button, InputAdornment, IconButton, Checkbox, MenuItem } from '@material-ui/core'
 import Autocomplete from '@material-ui/lab/Autocomplete'
 
 import { postRequest } from '../../API/apiFunctions'
@@ -46,26 +46,41 @@ const FormAddStock = (
     const [disabled24, setdisabled24] = useState(true)
 
 
+
+    //GARANTIA    
+
+    const [cantidadGarantia, setCantidadGarantia] = useState(formStock.Garantia.split(' ')[0])
+    const [periodoGarantia, setPeriodoGarantia] = useState(formStock.Garantia.split(' ')[1])
+
+    const singularOpcGarantia = [['dia', 'day'], ['mes', 'month'], ['año', 'year']]
+    const pluralOpcGarantia = [['dias', 'day'], ['meses', 'month'], ['años', 'year']]
+    const [opcGarantia, setOpcGarantia] = useState(singularOpcGarantia)
+
+
+    //useRef--------
+
     const refCategorias = useRef([])
     const refMarcas = useRef([])
     const refColors = useRef([])
     const refProveedores = useRef([])
 
+
     //#endregion CONST
 
 
-
-    //#region useEffect CNRM
+    //#region useEffect Campos con MEMORIA :)
 
     useEffect(() => {
 
+        refCategorias.current = dataStock.map(item => item.Categoria)
+        refMarcas.current = dataStock.map(item => item.Marca)
+        refColors.current = dataStock.map(item => item.Color)
         refProveedores.current = proveedores.map(item => item.Proveedor)
 
-    }, [proveedores])
 
+    }, [dataStock, proveedores])
 
-
-    //#endregion CNRM
+    //#endregion 
 
     //#region  saveData ----------------------------------
 
@@ -94,7 +109,7 @@ const FormAddStock = (
 
 
         var uri = '/stocks'
-        let formDataOK = { ...formStock }
+        let formDataOK = { ...formStock, Garantia: `${cantidadGarantia} ${periodoGarantia}` }
 
 
 
@@ -104,6 +119,9 @@ const FormAddStock = (
 
 
         postRequest(uri, formDataOK).then(() => {
+            setCantidadGarantia(1)
+            setPeriodoGarantia('month')
+            setOpcGarantia(singularOpcGarantia)
             cargaData()
 
         })
@@ -126,13 +144,16 @@ const FormAddStock = (
     }
 
     //#endregion
+
+
+
+    //#region  Estiliza como money String ----------------------------------
+
     const formater = new Intl.NumberFormat("es-PY", {
         style: "currency",
         currency: "PYG",
     });
 
-
-    //#region  Estiliza como money String ----------------------------------
 
     const EstilizaString = (s) => {
         if (!s)
@@ -291,6 +312,58 @@ const FormAddStock = (
                             options={refColors.current}
                             renderInput={(params) => <TextField {...params} label="Color" variant="outlined" margin="normal" size="small" fullWidth />}
                         />
+                    </Grid>
+
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '8px 10px 0px', display: 'flex', alignItems: 'center' }}>
+
+                        <TextField
+                            fullWidth
+                            label="Garantia"
+                            variant="outlined"
+                            inputProps={{ min: 1, max: 100 }}
+                            value={cantidadGarantia}
+                            margin='none'
+                            size='small'
+                            onChange={(e) => {
+                                let cant = parseInt(e.target.value.replace(/\D/g, ''))
+
+                                if (isNaN(cant) || cant === 0 || cant < 0)
+
+                                    setCantidadGarantia('')
+                                else if (cant > 100) {
+                                    setCantidadGarantia(1)
+                                    setOpcGarantia(singularOpcGarantia)
+                                }
+                                else
+                                    setCantidadGarantia(cant)
+
+                                if (cant > 1)
+                                    setOpcGarantia(pluralOpcGarantia)
+                                else
+                                    setOpcGarantia(singularOpcGarantia)
+                            }}
+
+                        />
+
+                        <TextField
+                            select
+                            disabled={cantidadGarantia.toString().length === 0}
+                            fullWidth
+                            margin='none'
+                            size='small'
+                            value={periodoGarantia}
+                            onChange={e => { setPeriodoGarantia(e.target.value) }}
+
+                            variant="outlined"
+                        >
+                            {opcGarantia.map((option) => (
+                                <MenuItem key={option[1]} value={option[1]}>
+                                    {option[0]}
+                                </MenuItem>
+                            ))}
+                        </TextField>
+
+
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>

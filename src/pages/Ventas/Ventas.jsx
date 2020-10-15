@@ -396,7 +396,8 @@ const Ventas = (props) => {
                                     console.log(response.data)//IMPRIMIR COMPROBANTES
                                     if (response.data.print)
                                         ImprimirComprobante()
-
+                                    // alert('Pagado')
+                                    console.log(response.data)
                                 }
 
 

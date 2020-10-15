@@ -86,6 +86,7 @@ const Stock = props => {
         ['Marca', 'Marca', 'varchar'],
         ['Color', 'Color', 'varchar'],
         ['Cantidad', 'Cantidad', 'double'],
+        ['Garantia', 'Garantía', 'varchar'],
         ['Proveedor', 'Proveedor', 'varchar'],
         ['Factura', 'Factura de Compra', 'varchar'],
         ['FechaCompra', 'Fecha de Compra', 'datetime'],
@@ -111,6 +112,7 @@ const Stock = props => {
         Factura: '',
         FechaCompra: dateToString(new Date()),
         Codigo: "",
+        Garantia: ' month',
         Categoria: "",
         Producto: "",
         Marca: "",
@@ -139,6 +141,7 @@ const Stock = props => {
 
     const editingValue = useRef({})
 
+    const garantiaEs = useRef([])
 
 
     //#region  use Effect ----------------------------------
@@ -146,7 +149,38 @@ const Stock = props => {
     // eslint-disable-next-line
     useEffect(() => { cargaData() }, [])
 
+    useEffect(() => {
+        if (dataStock.length > 0) {
 
+            console.log(dataStock)
+            garantiaEs.current = dataStock.map(item => {
+                let G = item.Garantia.split(' ')
+                if (G.length === 2 && !isNaN(parseInt(G[0]))) {
+                    let num = G[0]
+                    let per = ''
+                    switch (G[1]) {
+                        case 'day':
+                            per = num > 1 ? 'dias' : 'dia'
+                            break
+                        case 'month':
+                            per = num > 1 ? 'meses' : 'mes'
+                            break
+                        case 'year':
+                            per = num > 1 ? 'años' : 'año'
+                            break
+
+
+                        default:
+                            break
+                    }
+
+                    return { ...item, Garantia: num + ' ' + per }
+                }
+                else
+                    return { ...item, Garantia: 'SIN GARANTIA' }
+            })
+        }
+    }, [dataStock])
 
     //#endregion use Effect
 
@@ -172,6 +206,9 @@ const Stock = props => {
                     let instantData = {}
 
                     camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+
+
+
 
                     return { ...instantData, id: dataRequested.id }
 
@@ -225,6 +262,10 @@ const Stock = props => {
 
     //#endregion Carga Data
 
+    //#region Españolizando GARANTIA
+
+
+    //#endregion
 
 
     //#region  Edit Delete----------------------------------
@@ -323,6 +364,7 @@ const Stock = props => {
     //#endregion Others Functions
 
 
+
     //#region  Return ----------------------------------
 
 
@@ -368,7 +410,7 @@ const Stock = props => {
 
             </div>
 
-            <Datatable data={dataStock}
+            <Datatable data={garantiaEs.current}
                 buscar={buscar}
                 seleccion={seleccion}
                 sinDatos={sinDatos}
