@@ -562,7 +562,7 @@ const RealDashboard = () => {
 
     return (
         <>
-            <Grid container direction="column" spacing={3}>
+            <Grid container direction="column">
                 {
                     //#region Tarjetas
                 }
@@ -596,6 +596,13 @@ const RealDashboard = () => {
                             <div className={classes.numericValue} style={{ backgroundColor: '#5bc0de' }}>{formater.format(valorStock)}</div>
 
                             <div className={classes.textCard} style={{ color: 'rgb(0 74 71)' }}> <MonetizationOnIcon /> Valor base de Stock </div>
+                        </Card>
+                    </Grid>
+                    <Grid item xs={12} sm={6} md={3}>
+                        <Card className={classes.root}>
+                            <div className={classes.numericValue} style={{ backgroundColor: '#cbc0de' }}>{dataVentas.length}</div>
+
+                            <div className={classes.textCard} style={{ color: 'rgb(0 174 71)' }}> <MonetizationOnIcon /> Total de Ventas </div>
                         </Card>
                     </Grid>
                 </Grid>
