@@ -22,6 +22,14 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
 import { dateToString } from '../../API/timeFunctions'
 import { exportToXLSX } from '../../components/exportImport/exportToXLSX'
+
+import { jsPDF } from "jspdf"
+import Canvg from 'canvg'
+import Barcode from 'react-barcode'
+
+import PrintIcon from '@material-ui/icons/Print'
+import logoEtiqueta from '../../assets/images/logoEtiqueta.png'
+
 const Stock = props => {
 
 
@@ -301,7 +309,8 @@ const Stock = props => {
     const deleteData = (itemDelete) => {
 
         clearform()
-
+        console.log(itemDelete)
+        console.log(dataStock)
         setDataStock(dataStock.filter(it => it.id !== itemDelete.id))
 
 
@@ -318,6 +327,123 @@ const Stock = props => {
     //#endregion Edit Delete
 
 
+
+
+    //#region Crear PDF
+    const formater = new Intl.NumberFormat("es-PY", {
+        style: "currency",
+        currency: "PYG",
+    });
+
+
+    const precio = (s) => formater.format(s)
+
+    const crearPDF = (data) => {
+        var doc = new jsPDF({
+            orientation: "landscape",
+            unit: "mm",
+            format: [90, 29],
+            title: "PDF Diego"
+        })
+
+
+        data.forEach((prod, i) => {
+
+
+
+
+            // Generate PDF
+            for (let ind = 0; ind < prod.Cantidad; ind++) {
+
+                let svg = document.getElementsByClassName('b-' + i)[0].innerHTML
+
+                if (svg)
+                    svg = svg.replace(/\r?\n|\r/g, '').trim()
+
+                let canvas = document.createElement('canvas')
+
+
+                let ctx = canvas.getContext('2d')
+
+                let v = Canvg.fromString(ctx, svg)
+
+                v.start()
+
+
+                let imgData = canvas.toDataURL('image/png')
+
+
+
+                doc.rect(1, 1, 88, 27)
+                doc.addImage(logoEtiqueta, 'PNG', 12, 15, 20, 10, null, null, 90)
+
+                doc.addImage(imgData, 'PNG', 15, 15, 20, 10)
+
+                doc.setFontSize(11)
+
+                doc.text(prod.Producto.substring(0, 32), 48, 5, null, null, "center")
+
+                doc.setFontSize(9)
+                doc.text('CONTADO', 25, 10, null, null, "center")
+
+                doc.setFontSize(8)
+                doc.text(precio(prod.PrecioVentaContadoMinorista), 25, 14, null, null, "center")
+
+                doc.rect(40, 8, 46, 18)
+                doc.line(40, 17, 86, 17)
+                doc.line(63, 8, 63, 26)
+
+
+                doc.text('3x ' + precio(prod.PrecioVenta3Cuotas), 51, 13.5, null, null, "center")
+                doc.text('6x ' + precio(prod.PrecioVenta6Cuotas), 51, 22.5, null, null, "center")
+
+                doc.text('12x ' + precio(prod.PrecioVenta12Cuotas), 74, 13.5, null, null, "center")
+
+                if (!isNaN(parseInt(prod.PrecioVenta18Cuotas)) && parseInt(prod.PrecioVenta18Cuotas) > 1000 && isNaN(parseInt(prod.PrecioVenta24Cuotas)))
+                    doc.text('18x ' + precio(prod.PrecioVenta18Cuotas), 74, 22.5, null, null, "center")
+
+                else if (!isNaN(parseInt(prod.PrecioVenta24Cuotas)) && parseInt(prod.PrecioVenta24Cuotas) > 1000 && isNaN(parseInt(prod.PrecioVenta18Cuotas)))
+                    doc.text('24x ' + precio(prod.PrecioVenta24Cuotas), 74, 22.5, null, null, "center")
+                else if (!isNaN(parseInt(prod.PrecioVenta18Cuotas)) && !isNaN(parseInt(prod.PrecioVenta24Cuotas))
+                    && parseInt(prod.PrecioVenta18Cuotas) > 1000 && parseInt(prod.PrecioVenta24Cuotas) > 1000) {
+                    doc.text('18x ' + precio(prod.PrecioVenta18Cuotas), 74, 21, null, null, "center")
+                    doc.text('24x ' + precio(prod.PrecioVenta24Cuotas), 74, 25, null, null, "center")
+                }
+
+
+
+
+                if (!(i + 1 === data.length && ind + 1 === prod.Cantidad))
+                    doc.addPage([90, 29], "landscape")
+
+            }
+
+
+
+
+        })
+        doc.autoPrint({ variant: 'non-conform' })
+        // doc.save('Imprimir.pdf')
+        let x = window.open(URL.createObjectURL(doc.output("blob")), 'PRINT')
+
+        x.onload = e => {
+
+            // setTimeout(() => {
+            //     x.close()
+            // }, 20000)
+        }
+        x.onafterprint = e => {
+            alert('AFTERPRINT')
+        }
+        x.onbeforeprint = e => {
+            alert('Before')
+        }
+
+    }
+
+
+
+    //#endregion
 
     //#region  Others Functions ----------------------------------
 
@@ -414,6 +540,18 @@ const Stock = props => {
                             exportToXLSX(seleccion ? elementosSeleccionados : dataStock, fileName, camposStock)
                         }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
 
+                    <Button variant='contained' color='secondary' size='small'
+                        disabled={loading}
+                        onClick={e => {
+                            if (seleccion && cantidadSeleccionados === 0) {
+                                alert('Ningun elemento seleccionado')
+                                return
+                            }
+
+                            crearPDF(seleccion ? elementosSeleccionados : dataStock)
+                        }}>{seleccion ? 'Imprimir selección' : 'Imprimir Etiquetas'}<PrintIcon /> </Button>
+
+
                 </div>
 
 
@@ -446,6 +584,22 @@ const Stock = props => {
                 formProveedores={formProveedores} SetFormProveedores={SetFormProveedores}
             />
 
+
+
+            {
+
+
+                dataStock.map((item, i) => (
+
+                    <div key={item.id} style={{ display: 'none' }}>
+                        <div className={'b-' + i}>
+                            <Barcode value={item.Codigo && item.Codigo.toString().length > 0 ? item.Codigo.toString() : 'SIN CODIGO'} />
+                        </div>
+
+                    </div>
+
+                ))
+            }
 
         </>
     )

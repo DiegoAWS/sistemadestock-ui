@@ -46,9 +46,10 @@ const FormAddStock = (
 
     //#region  CONST ----------------------------------
 
+    //Error
     const [costoUniError, setCostoUniError] = useState(false)
     const [cantidadError, setCantidadError] = useState(false)
-
+    const [codigoError, setCodigoError] = useState(false)
 
 
     //disabled 18 y 24 Cuotas
@@ -101,6 +102,15 @@ const FormAddStock = (
     //#region  saveData ----------------------------------
 
     const saveData = () => {
+
+        if (!formStock.Codigo || formStock.Codigo.length === 0) {
+            setCodigoError(true)
+
+            setTimeout(() => { setCodigoError(false) }, 1000)
+            return
+
+        }
+
 
         if (!formStock.CostoUnitario || formStock.CostoUnitario.length === 0) {
             setCostoUniError(true)
@@ -308,7 +318,7 @@ const FormAddStock = (
                     </Grid>
 
                     <Grid item xs={12} sm={6} md={3} style={{ padding: '0 10px' }}>
-                        <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth
+                        <TextField label='Código' variant="outlined" margin='normal' size="small" fullWidth error={codigoError}
                             value={formStock.Codigo} onChange={e => { setFormStock({ ...formStock, Codigo: e.target.value }) }} />
                     </Grid>
 
