@@ -31,11 +31,14 @@ const Stock = props => {
     const [buscar, setBuscar] = useState(false)
 
     const [openPopup, setOpenPopup] = useState(false)
+    const [openProveedorPopup, setOpenProveedorPopup] = useState(false)
 
     const [sinDatos, SetSinDatos] = useState(false)
 
 
     const [dataStock, setDataStock] = useState([])
+
+
 
     let initAjuste = {
         pMayorista: 102,
@@ -128,10 +131,15 @@ const Stock = props => {
 
     const [formStock, setFormStock] = useState(initFormStock)
 
-
-
+    const formInitProveedores = {
+        Proveedor: '',
+        Telefono: '',
+        Email: '',
+        Direccion: '',
+        OtrosDatos: ''
+    }
+    const [formProveedores, SetFormProveedores] = useState(formInitProveedores)
     //#endregion Inicializing the Form
-
 
 
 
@@ -194,8 +202,10 @@ const Stock = props => {
 
             setLoading(false)
 
-
-            setOpenPopup(false)
+            if (openProveedorPopup)
+                setOpenProveedorPopup(false)
+            else
+                setOpenPopup(false)
 
             if (request && request.statusText === 'OK' && request.data && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
 
@@ -432,6 +442,8 @@ const Stock = props => {
                 proveedores={proveedores}
                 cargaData={cargaData} recolocaEditItem={recolocaEditItem}
                 ajustesPrecios={ajustesPrecios} dataStock={dataStock}
+                openProveedorPopup={openProveedorPopup} setOpenProveedorPopup={setOpenProveedorPopup}
+                formProveedores={formProveedores} SetFormProveedores={SetFormProveedores}
             />
 
 

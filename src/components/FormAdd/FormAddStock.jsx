@@ -6,10 +6,17 @@ import { postRequest } from '../../API/apiFunctions'
 
 
 import MoneyOffIcon from '@material-ui/icons/MoneyOff'
+import AddIcon from "@material-ui/icons/Add"
+
 import Popup from './Popup'
+import FormAddProveedor from '../../components/FormAdd/FormAddProveedor'
 
 import loadingGif from '../../assets/images/loading.gif'
+
+
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
+
+
 
 import 'react-datepicker/dist/react-datepicker.css'
 
@@ -26,7 +33,10 @@ const FormAddStock = (
     {
 
         openPopup, setOpenPopup,
+        openProveedorPopup, setOpenProveedorPopup,
         formStock, setFormStock,
+        formProveedores, SetFormProveedores,
+
         dataStock, proveedores,
         loading, setLoading,
         cargaData, recolocaEditItem, ajustesPrecios
@@ -59,12 +69,19 @@ const FormAddStock = (
 
     //useRef--------
 
+
     const refCategorias = useRef([])
     const refMarcas = useRef([])
     const refColors = useRef([])
     const refProveedores = useRef([])
 
-
+    const formInitProveedores = {
+        Proveedor: '',
+        Telefono: '',
+        Email: '',
+        Direccion: '',
+        OtrosDatos: ''
+    }
     //#endregion CONST
 
 
@@ -174,16 +191,16 @@ const FormAddStock = (
         if (isNaN(precioBase))
             return
 
-        let precio18 = disabled18 ? null : Math.ceil((ajustesPrecios.p18cuotas * precioBase) / 180000) * 100
-        let precio24 = disabled24 ? null : Math.ceil((ajustesPrecios.p24cuotas * precioBase) / 240000) * 100
+        let precio18 = disabled18 ? null : Math.ceil((ajustesPrecios.p18cuotas * precioBase) / 900000) * 500
+        let precio24 = disabled24 ? null : Math.ceil((ajustesPrecios.p24cuotas * precioBase) / 1200000) * 500
 
         setFormStock({
             ...formStock,
-            PrecioVentaContadoMayorista: Math.ceil((ajustesPrecios.pMayorista * precioBase) / 10000) * 100,
-            PrecioVentaContadoMinorista: Math.ceil((ajustesPrecios.pMinorista * precioBase) / 10000) * 100,
-            PrecioVenta3Cuotas: Math.ceil((ajustesPrecios.p3cuotas * precioBase) / 30000) * 100,
-            PrecioVenta6Cuotas: Math.ceil((ajustesPrecios.p6cuotas * precioBase) / 60000) * 100,
-            PrecioVenta12Cuotas: Math.ceil((ajustesPrecios.p12cuotas * precioBase) / 120000) * 100,
+            PrecioVentaContadoMayorista: Math.ceil((ajustesPrecios.pMayorista * precioBase) / 50000) * 500,
+            PrecioVentaContadoMinorista: Math.ceil((ajustesPrecios.pMinorista * precioBase) / 50000) * 500,
+            PrecioVenta3Cuotas: Math.ceil((ajustesPrecios.p3cuotas * precioBase) / 150000) * 500,
+            PrecioVenta6Cuotas: Math.ceil((ajustesPrecios.p6cuotas * precioBase) / 300000) * 500,
+            PrecioVenta12Cuotas: Math.ceil((ajustesPrecios.p12cuotas * precioBase) / 600000) * 500,
             PrecioVenta18Cuotas: precio18,
             PrecioVenta24Cuotas: precio24
         })
@@ -193,7 +210,6 @@ const FormAddStock = (
     //#endregion Auto Fill Money
 
 
-    //#region  Return ----------------------------------
 
 
     const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (
@@ -213,24 +229,38 @@ const FormAddStock = (
             recolocaEditItem={recolocaEditItem}
             saveData={saveData}>
             <>
+
+                {
+                    //#region Add 
+                }
+
                 <Button hidden={dataStock && dataStock.length > 0} variant='contained'
                     color='primary' size='small' onClick={() => { autorrellena() }} style={{ float: 'right' }} >
                     Ultimo
                 </Button>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
-                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px', display: 'flex', alignItems: 'center' }} >
 
                         <Autocomplete
                             fullWidth
                             freeSolo
                             options={refProveedores.current}
-                            value={formStock.Proveedor}
-                            onChange={(event, newInputValue) => { setFormStock({ ...formStock, Proveedor: newInputValue ? newInputValue : '' }) }}
-                            inputValue={formStock.Proveedor}
-                            onInputChange={(event, newInputValue) => { setFormStock({ ...formStock, Proveedor: newInputValue }) }}
-                            renderInput={(params) => <TextField {...params} label="Proveedor" variant="outlined" margin="normal" size="small" fullWidth />}
+                            value={formStock.Proveedor && formStock.Proveedor.length > 0 ? formStock.Proveedor : null}
+                            noOptionsText={'Proveedor no encontrado'}
+                            onChange={(event, newInputValue) => { setFormStock({ ...formStock, Proveedor: newInputValue }) }}
+                            renderInput={(params) => <TextField {...params} label="Proveedor" variant="outlined" margin="normal" size="small" />}
                         />
+                        <IconButton onClick={() => {
+                            SetFormProveedores(formInitProveedores)
+                            setOpenProveedorPopup(true)
+                        }}
+
+                            size='small'
+                            title='Añadir Proveedor Nuevo'>
+
+                            <AddIcon color='primary' />
+                        </IconButton>
 
                     </Grid>
 
@@ -454,16 +484,55 @@ const FormAddStock = (
 
 
                 <div style={{
-                    position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw',
+                    position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw', zIndex: '100',
                     backgroundColor: 'rgba(0,0,0,0.6)', display: loading ? 'flex' : 'none',
                     justifyContent: 'center', alignItems: 'center'
                 }}>
                     <img src={loadingGif} alt="" height='30px' /></div>
+                {
+                    //#endregion
+                }
+
+                {
+                    //#region Add Proveedor
+                }
+
+                <FormAddProveedor
+                    openPopup={openProveedorPopup}
+                    setOpenPopup={setOpenProveedorPopup}
+
+                    formData={formProveedores}
+                    SetFormData={SetFormProveedores}
+
+                    data={proveedores}
+                    setData={(data) => {
+
+                        let newVal = data[data.length - 1]
+                        if (newVal) {
+                            refProveedores.current = refProveedores.current.concat(newVal.Proveedor)
+                            setFormStock({ ...formStock, Proveedor: newVal.Proveedor })
+                        }
+
+                        setLoading(true)
+                    }}
+
+
+                    recolocaEditItem={recolocaEditItem}
+                    cargaData={cargaData}
+
+                />
+
+
+                {
+                    //#endregion
+                }
+
+
             </>
 
 
         </Popup >
     )
-    //#endregion Return
+
 }
 export default FormAddStock
