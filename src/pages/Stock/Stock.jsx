@@ -157,8 +157,8 @@ const Stock = props => {
 
     const editingValue = useRef({})
 
-    const garantiaEs = useRef([])
 
+    const [dataMostrar, setDataMostrar] = useState([])
 
     //#region  use Effect ----------------------------------
 
@@ -169,7 +169,7 @@ const Stock = props => {
         if (dataStock.length > 0) {
 
 
-            garantiaEs.current = dataStock.map(item => {
+            setDataMostrar(dataStock.map(item => {
                 let G = item.Garantia.split(' ')
                 if (G.length === 2 && !isNaN(parseInt(G[0]))) {
                     let num = G[0]
@@ -194,7 +194,7 @@ const Stock = props => {
                 }
                 else
                     return { ...item, Garantia: 'SIN GARANTIA' }
-            })
+            }))
         }
     }, [dataStock])
 
@@ -309,8 +309,7 @@ const Stock = props => {
     const deleteData = (itemDelete) => {
 
         clearform()
-        console.log(itemDelete)
-        console.log(dataStock)
+
         setDataStock(dataStock.filter(it => it.id !== itemDelete.id))
 
 
@@ -540,7 +539,7 @@ const Stock = props => {
                             exportToXLSX(seleccion ? elementosSeleccionados : dataStock, fileName, camposStock)
                         }}>{seleccion ? 'Exportar Selección' : 'Exportar a Excel'}</Button>
 
-                    <Button variant='contained' color='secondary' size='small'
+                    <Button style={{ margin: '10px' }} variant='contained' color='secondary' size='small'
                         disabled={loading}
                         onClick={e => {
                             if (seleccion && cantidadSeleccionados === 0) {
@@ -558,7 +557,7 @@ const Stock = props => {
 
             </div>
 
-            <Datatable data={garantiaEs.current}
+            <Datatable data={dataMostrar}
                 buscar={buscar}
                 seleccion={seleccion}
                 sinDatos={sinDatos}

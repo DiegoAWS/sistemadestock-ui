@@ -422,46 +422,53 @@ const RealDashboard = () => {
 
 
 
+    const [dataStock, setDataStock] = useState([])
 
+    const [dataVentas, setDataVentas] = useState([])
 
     //#endregion
 
-    //#region  campos Producto ----------------------------------
-
-    const camposProducto = [
-        ["Producto", "Producto", "varcharX"],
-        ["Categoria", "Categoría", "categSelector"],
-
-        ["Codigo", "Código", "varchar"],
-        ["Marca", "Marca", "varchar"],
-
-        ["Color", "Color", "varchar"],
-
-        ["PrecioVentaContadoMayorista", "Precio Venta Mayorista", "autoRellenar"],
-
-        ["PrecioVentaContadoMinorista", "Precio Venta Minorista", "double"],
-
-        ["PrecioVenta3Cuotas", "Precio Venta 3 Cuotas", "double"],
-        ["PrecioVenta6Cuotas", "Precio Venta 6 Cuotas", "double"],
-        ["PrecioVenta12Cuotas", "Precio Venta 12 Cuotas", "double"],
-        ["PrecioVenta18Cuotas", "Precio Venta 18 Cuotas", "double"],
-        ["PrecioVenta24Cuotas", "Precio Venta 24 Cuotas", "double"],
-    ];
-    //#endregion campos Producto
 
     //#region  campos Stock ----------------------------------
 
+
     const camposStock = [
-        ["id"],
-        ["Producto_id"],
-        ["Proveedor"],
-        ["CostoUnitario"],
-        ["Cantidad"],
-        ["FechaCompra"],
-        ["Factura"],
-    ];
+        ['Codigo', 'Código', 'varchar'],
+        ['Categoria', 'Categoría', 'categSelector'],
+        ['Producto', 'Producto', 'varcharX'],
+        ['Marca', 'Marca', 'varchar'],
+        ['Color', 'Color', 'varchar'],
+        ['Cantidad', 'Cantidad', 'double'],
+        ['Garantia', 'Garantía', 'varchar'],
+        ['Proveedor', 'Proveedor', 'varchar'],
+        ['Factura', 'Factura de Compra', 'varchar'],
+        ['FechaCompra', 'Fecha de Compra', 'datetime'],
+        ['CostoUnitario', 'Costo Unitario', 'double'],
+        ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
+        ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
+        ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
+        ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
+        ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
+        ['PrecioVenta18Cuotas', 'Precio Venta 18 Cuotas', 'double'],
+        ['PrecioVenta24Cuotas', 'Precio Venta 24 Cuotas', 'double']
+    ]
 
     //#endregion campos Stock
+
+
+    //#region campos Ventas
+
+    const camposVentas = [
+        'vendedor',
+        'fechaVenta',
+        'Stock_id',
+        'Cliente_id',
+        'Garantia',
+        'Pago',
+    ]
+
+    //#endregion
+
 
     // eslint-disable-next-line
     useEffect(() => { cargaData(); }, []);
@@ -472,72 +479,68 @@ const RealDashboard = () => {
     //#region Carga Data
 
     const cargaData = () => {
-        getRequest("/stocks").then((request) => {
+        getRequest("/ventas").then((request) => {
             if (
                 request &&
                 request.statusText === "OK" &&
                 request.data &&
-                request.data.Productos &&
+
                 request.data.Stock &&
-                request.data.Ajuste
+                request.data.Ventas &&
+                request.data.Clientes
             ) {
-                //#region  Productos ----------------------------------
-
-                let dataProductos = request.data.Productos.map((dataRequested) => {
-                    let instantData = {};
-
-                    camposProducto.forEach((item) => {
-                        instantData[item[0]] = !dataRequested[item[0]]
-                            ? ""
-                            : dataRequested[item[0]];
-                    });
-
-                    return { ...instantData, id: dataRequested.id };
-                })
 
 
-                //#endregion Productos
+
 
                 //#region  Stock ----------------------------------
 
-                let dataStock = request.data.Stock.map((dataRequested) => {
-                    let instantData = {};
+                let newDataStock = request.data.Stock.map(dataRequested => {
 
-                    camposStock.forEach((item) => {
-                        instantData[item[0]] = !dataRequested[item[0]]
-                            ? ""
-                            : dataRequested[item[0]];
-                    });
+                    let instantData = {}
 
-                    return { ...instantData };
-                });
+                    camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
 
 
+
+                    return { ...instantData, id: dataRequested.id }
+
+                })
 
                 //#endregion Stock
 
-                //#region DataFull
-                let fullData = dataStock.map((item) => {
-                    let newProducto = dataProductos.filter((itemProducto) =>
-                        itemProducto.id
-                            ? itemProducto.id.toString() === item.Producto_id
-                            : false
-                    )[0];
 
-                    return { ...item, ...newProducto, id: item.id };
+                setDataStock(newDataStock)
+
+
+                //#region  Ventas ----------------------------------
+
+                let newDataVentas = request.data.Ventas.map(dataRequested => {
+
+                    let instantData = {}
+
+                    camposVentas.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+
+
+
+
+                    return { ...instantData, id: dataRequested.id }
+
                 })
-                //#endregion 
+
+                //#endregion Ventas
 
 
+                setDataVentas(newDataVentas)
 
                 //#region Calculando Datos
-                let faltantesP = dataStock.filter((item) => item.Cantidad === 0).length;
+                let faltantesP = newDataStock.filter((item) => item.Cantidad === 0).length;
 
 
                 let inversion = 0;
                 let valorSt = 0;
-                fullData.forEach(item => {
+                newDataStock.forEach(item => {
                     inversion = inversion + item.CostoUnitario * item.Cantidad;
                     valorSt = valorSt + item.PrecioVentaContadoMinorista * item.Cantidad
                 })
