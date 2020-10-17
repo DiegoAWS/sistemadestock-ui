@@ -474,15 +474,15 @@ const Ventas = (props) => {
 
         var texto = `
 ************RECIBO DE PAGO************
-RECIBO DE NUMERO:123456789
+NUMERO DE RECIBO : ????????
 FECHA: ${d.getDate() + '/' + (1 + 1 * d.getMonth()) + '/' + d.getFullYear() + ' HORA: ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds()}
 USUARIO: ${localStorage.getItem('UserOficialName')}
 
 ***********************************************
 CEDULA DE IDENTIDAD: ${clienteSeleccionado && clienteSeleccionado.Cedula ? clienteSeleccionado.Cedula : '---'}
 CLIENTE: ${clienteSeleccionado && clienteSeleccionado.Nombre ? clienteSeleccionado.Nombre : '---'}
-N° DE FACTURA: 001-00004321
-N° DE VENTA: VENT000000001
+N° DE FACTURA: ????????
+N° DE VENTA: ????????
 
 PRODUCTO
 ${listaDeProductos()}***********************************************
@@ -495,7 +495,7 @@ SALDO ACTUAL: ${formater.format((parseInt(pagado) - parseInt(importeTotal)).toSt
 ***********************************************
 ¡GRACIAS POR SU COMPRA!
 ***********************************************
-1WE21E32RFG4541
+????????
 NUMERO DE REFERENCIA DE PAGO
 ESTE ES SU COMPROBANTE DE PAGO 
 CONSERVELO
