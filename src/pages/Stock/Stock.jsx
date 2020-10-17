@@ -423,7 +423,7 @@ const Stock = props => {
         })
         doc.autoPrint({ variant: 'non-conform' })
         // doc.save('Imprimir.pdf')
-        let x = window.open(URL.createObjectURL(doc.output("blob")), 'PRINT')
+        let x = window.open(URL.createObjectURL(doc.output("blob", 'PRINT')))
 
         x.onload = e => {
 

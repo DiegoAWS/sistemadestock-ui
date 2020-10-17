@@ -357,7 +357,7 @@ const FormAddStock = (
 
                         <TextField
                             fullWidth
-                            label="Garantia"
+                            label="Garantía"
                             variant="outlined"
                             inputProps={{ min: 1, max: 100 }}
                             value={cantidadGarantia}

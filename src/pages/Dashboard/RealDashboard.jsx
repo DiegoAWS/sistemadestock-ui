@@ -535,7 +535,7 @@ const RealDashboard = () => {
                 setDataVentas(newDataVentas)
 
                 //#region Calculando Datos
-                let faltantesP = newDataStock.filter((item) => item.Cantidad === 0).length;
+                let faltantesP = newDataStock.filter((item) => item.Cantidad === 0 || item.Cantidad === '0' || !item.Cantidad).length;
 
 
                 let inversion = 0;
@@ -548,7 +548,7 @@ const RealDashboard = () => {
 
 
                 setProductosFaltantes(faltantesP);
-                setCantidadProductos(dataStock.length - faltantesP);
+                setCantidadProductos(newDataStock.length - faltantesP);
                 setInversionStock(inversion);
                 setValorStock(valorSt)
                 //#endregion
@@ -574,7 +574,7 @@ const RealDashboard = () => {
 
 
 
-                            <div className={classes.textCard} style={{ color: 'rgb(11 49 234)' }}>  <ImportantDevicesIcon /> Cantidad de Productos en Stock </div>
+                            <div className={classes.textCard} style={{ color: 'rgb(11 49 234)' }}>  <ImportantDevicesIcon />{' Productos en Stock (Total :' + dataStock.length + ')'}</div>
                         </Card>
                     </Grid>
                     <Grid item xs={12} sm={6} md={3}>
