@@ -352,6 +352,7 @@ const Ventas = (props) => {
             .then(responseStock => {
                 if (responseStock && responseStock.data) {
 
+
                     let stockFull = responseStock.data
 
                     carritoList.forEach(item => {
