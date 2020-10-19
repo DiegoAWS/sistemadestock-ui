@@ -143,6 +143,7 @@ const Ventas = (props) => {
         ['CostoUnitario', 'Costo Unitario', 'double'],
         ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
         ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
+        ['EntradaInicial', 'Entrada Inicial', 'double'],
         ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
         ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
         ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
@@ -672,7 +673,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                 setTimeout(() => {
                                     setInputBlurCliente()
                                     setClienteSeleccionado(filtered[0])
-                                }, 50)
+                                }, 2000)
 
 
                             }
@@ -828,7 +829,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                 setTimeout(() => {
                                     setInputBlur()
                                     setProductoSeleccionado(filtered[0])
-                                }, 50)
+                                }, 2000)
 
 
                             }

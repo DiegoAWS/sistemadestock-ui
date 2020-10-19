@@ -36,7 +36,6 @@ const FormAddStock = (
         openProveedorPopup, setOpenProveedorPopup,
         formStock, setFormStock,
         formProveedores, SetFormProveedores,
-
         dataStock, proveedores,
         loading, setLoading,
         cargaData, recolocaEditItem, ajustesPrecios
@@ -46,18 +45,21 @@ const FormAddStock = (
 
     //#region  CONST ----------------------------------
 
+
+
+
+
     //Error
     const [costoUniError, setCostoUniError] = useState(false)
     const [cantidadError, setCantidadError] = useState(false)
     const [codigoError, setCodigoError] = useState(false)
 
-
+    //Entrada
+    const [aplicaEntrada, setAplicaEntrada] = useState(!isNaN(parseInt(formStock.EntradaInicial)) && parseInt(formStock.EntradaInicial) > 0)
     //disabled 12 18 y 24 Cuotas
-    const [disabled12, setdisabled12] = useState(false)
-    const [disabled18, setdisabled18] = useState(true)
-    const [disabled24, setdisabled24] = useState(true)
-
-
+    const [disabled12, setdisabled12] = useState(formStock.PrecioVenta12Cuotas.toString().length === 0 || (isNaN(parseInt(formStock.PrecioVenta12Cuotas)) && formStock.PrecioVenta12Cuotas !== "X"))
+    const [disabled18, setdisabled18] = useState(formStock.PrecioVenta18Cuotas.toString().length === 0 || isNaN(parseInt(formStock.PrecioVenta18Cuotas)))
+    const [disabled24, setdisabled24] = useState(formStock.PrecioVenta24Cuotas.toString().length === 0 || isNaN(parseInt(formStock.PrecioVenta24Cuotas)))
 
     //GARANTIA    
 
@@ -67,6 +69,7 @@ const FormAddStock = (
     const singularOpcGarantia = [['dia', 'day'], ['mes', 'month'], ['año', 'year']]
     const pluralOpcGarantia = [['dias', 'day'], ['meses', 'month'], ['años', 'year']]
     const [opcGarantia, setOpcGarantia] = useState(singularOpcGarantia)
+
 
 
     //useRef--------
@@ -99,6 +102,10 @@ const FormAddStock = (
     }, [dataStock, proveedores])
 
     //#endregion 
+
+    //#region useEffect precio Base
+    //#endregion
+
 
     //#region  saveData ----------------------------------
 
@@ -136,14 +143,21 @@ const FormAddStock = (
 
 
         var uri = '/stocks'
-        let formDataOK = { ...formStock, Garantia: `${cantidadGarantia} ${periodoGarantia}` }
+        let formDataOK = {
+            ...formStock,
+            Garantia: `${cantidadGarantia} ${periodoGarantia}`,
+            EntradaInicial: aplicaEntrada ? "" : formStock.EntradaInicial,
+            PrecioVenta12Cuotas: disabled12 ? "" : formStock.PrecioVenta12Cuotas,
+            PrecioVenta18Cuotas: disabled18 ? "" : formStock.PrecioVenta18Cuotas,
+            PrecioVenta24Cuotas: disabled24 ? "" : formStock.PrecioVenta24Cuotas
+        }
 
-
+        console.log(formStock, formDataOK)
 
         if (formStock.id)// Editing....
             uri = uri + '/' + formStock.id
 
-
+        // disabled12
 
         postRequest(uri, formDataOK).then(() => {
             setCantidadGarantia(1)
@@ -184,9 +198,14 @@ const FormAddStock = (
 
     const EstilizaString = (s) => {
         if (!s)
-            return ""
+            return ''
 
-        return formater.format(s)
+        let d = s.toString().replace(/\D/g, '')
+
+        if (isNaN(parseInt(d)) || parseInt(d) === 0)
+            return ''
+
+        return formater.format(d)
     }
 
     //#endregion Estiliza como money String
@@ -195,19 +214,26 @@ const FormAddStock = (
 
     //#region  Auto Fill Money ----------------------------------
 
-    const AutoFillMoney = () => {
+    const AutoFillMoney = (d) => {
 
-        let precioBase = parseInt(formStock.CostoUnitario)
 
-        if (isNaN(precioBase))
+
+        if (isNaN(parseInt(formStock.CostoUnitario)))
             return
 
+        let entrada = parseInt(d)
+        if (!aplicaEntrada || isNaN(entrada))
+            entrada = 0
+
+
+        let precioBase = parseInt(formStock.CostoUnitario) - entrada
 
 
         setFormStock({
             ...formStock,
             PrecioVentaContadoMayorista: Math.ceil((ajustesPrecios.pMayorista * precioBase) / 50000) * 500,
             PrecioVentaContadoMinorista: Math.ceil((ajustesPrecios.pMinorista * precioBase) / 50000) * 500,
+            EntradaInicial: entrada === 0 ? '' : d,
             PrecioVenta3Cuotas: Math.ceil((ajustesPrecios.p3cuotas * precioBase) / 150000) * 500,
             PrecioVenta6Cuotas: Math.ceil((ajustesPrecios.p6cuotas * precioBase) / 300000) * 500,
             PrecioVenta12Cuotas: Math.ceil((ajustesPrecios.p12cuotas * precioBase) / 600000) * 500,
@@ -231,19 +257,12 @@ const FormAddStock = (
 
     return (
         <Popup
-            openPopup={openPopup}
-            setOpenPopup={setOpenPopup}
-
-            title={(formStock.id) ? 'Editar Stock' : 'COMPRA'}
-
-            recolocaEditItem={recolocaEditItem}
-            saveData={saveData}>
-            <>
+            openPopup={openPopup} setOpenPopup={setOpenPopup} saveData={saveData}
+            title={(formStock.id) ? 'Editar Stock' : 'COMPRA'} recolocaEditItem={recolocaEditItem}      >      <>
 
                 {
-                    //#region Add 
+                    //#region Proveedor Info
                 }
-
                 <Button hidden={dataStock && dataStock.length > 0} variant='contained'
                     color='primary' size='small' onClick={() => { autorrellena() }} style={{ float: 'right' }} >
                     Ultimo
@@ -296,8 +315,18 @@ const FormAddStock = (
                             value={formStock.Factura} onChange={e => { setFormStock({ ...formStock, Factura: e.target.value }) }} />
                     </Grid>
                 </Grid>
+                {
+                    //#endregion
+                }
+                {
+                    //#region Producto
+                }
 
                 <Grid container style={{ justifyContent: 'space-around', border: '1px solid black', borderRadius: '10px', marginBottom: '10px', paddingTop: '10px' }}>
+                    {
+                        //#region Detalles del Producto
+                    }
+
 
                     <Grid item xs={12} sm={4} md={3} style={{ padding: '0 10px' }}>
                         <Autocomplete
@@ -404,15 +433,27 @@ const FormAddStock = (
 
 
                     </Grid>
-
+                    {
+                        //#endregion
+                    }
+                    {
+                        //#region Costo y Precios  Simples
+                    }
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Costo Unitario' variant="outlined" margin='normal' size="small" fullWidth error={costoUniError}
                             value={EstilizaString(formStock.CostoUnitario)}
-                            onChange={e => { setFormStock({ ...formStock, CostoUnitario: e.target.value.replace(/\D/g, '') }) }}
+                            onChange={e => {
+                                let d = e.target.value.replace(/\D/g, '')
+                                if (d.length === 0 || parseInt(d) === 0)
+                                    setAplicaEntrada(false)
+
+                                setFormStock({ ...formStock, CostoUnitario: parseInt(d) === 0 ? '' : d })
+
+                            }}
 
                             InputProps={{
                                 endAdornment: <InputAdornment position="end">
-                                    <IconButton onClick={e => { AutoFillMoney() }}
+                                    <IconButton onClick={e => { AutoFillMoney(formStock.EntradaInicial) }}
                                         disabled={isNaN(parseInt(formStock.CostoUnitario))}
                                         color='secondary' title='Autorellenar Precios'>
                                         <MoneyOffIcon />  </IconButton>  </InputAdornment >
@@ -430,10 +471,48 @@ const FormAddStock = (
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVentaContadoMinorista)}
+                            onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMinorista: e.target.value.replace(/\D/g, '') }) }} />
+                    </Grid>
+                    {
+                        //#endregion
+                    }
+                    {
+                        //#region Ventas Por Cuotas
+                    }
 
-                            onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMinorista: e.target.value.replace(/\D/g, '') }) }} /></Grid>
+                    {/* EntradaInicial */}
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
+                        <TextField label={aplicaEntrada ? 'Entrada Inicial' : 'Entrada Inicial Deshabilitado'} variant="outlined" margin='normal' size="small" fullWidth
+                            value={aplicaEntrada ? EstilizaString(formStock.EntradaInicial) : ''}
+                            disabled={!aplicaEntrada}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">
+                                    <Checkbox checked={aplicaEntrada}
+                                        onChange={() => {
+                                            if (!aplicaEntrada && isNaN(parseInt(formStock.CostoUnitario))) {
+                                                alert('Debe Establecer primero un COSTO UNITARIO')
+                                                return
+                                            }
+                                            if (aplicaEntrada)
+                                                AutoFillMoney(0)
+                                            setAplicaEntrada(!aplicaEntrada)
 
 
+                                        }}
+                                        title={aplicaEntrada ? 'Deshabilitar' : 'Activar Entrada Inicial'}
+                                    />  </InputAdornment>
+                            }}
+
+                            onChange={e => {
+                                let d = parseInt(e.target.value.replace(/\D/g, ''))
+
+                                if (d < formStock.CostoUnitario)
+                                    AutoFillMoney(d)
+                                else
+                                    AutoFillMoney(formStock.CostoUnitario)
+                            }} /></Grid>
+
+                    {/* Precio 3 Cuotas */}
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta3Cuotas)}
@@ -444,14 +523,14 @@ const FormAddStock = (
 
 
 
-
+                    {/* Precio 6 Cuotas */}
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta6Cuotas)}
                             InputProps={{ startAdornment: <InputAdornment position="start">6x </InputAdornment > }}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/g, '') }) }} /></Grid>
 
-
+                    {/* Precio 12 Cuotas */}
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label={disabled12 ? 'Deshabilitado' : 'Precio Venta 12 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
                             value={disabled12 ? '' : EstilizaString(formStock.PrecioVenta12Cuotas)}
@@ -468,7 +547,7 @@ const FormAddStock = (
                             }}
                         /></Grid>
 
-
+                    {/* Precio 18 Cuotas */}
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
 
                         <TextField label={disabled18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
@@ -487,7 +566,7 @@ const FormAddStock = (
                         />
                     </Grid>
 
-
+                    {/* Precio 24 Cuotas */}
                     <Grid item xs={12} sm={6} md={4} style={{ padding: '0 10px' }}>
                         <TextField label={disabled24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
                             value={disabled24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
@@ -503,10 +582,16 @@ const FormAddStock = (
                             }}
                         />
                     </Grid>
-
+                    {
+                        //#endregion 
+                    }
                 </Grid>
-
-
+                {
+                    //#endregion 
+                }
+                {
+                    //#region Loading 
+                }
                 <div style={{
                     position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw', zIndex: '100',
                     backgroundColor: 'rgba(0,0,0,0.6)', display: loading ? 'flex' : 'none',

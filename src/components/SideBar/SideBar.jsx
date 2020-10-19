@@ -41,9 +41,9 @@ const SideBar = ({ history }) => {
             icon: AssessmentIcon,
             texto: 'Dashboard'
         }, {
-            ruta: '/ventas',
+            ruta: '/facturacion',
             icon: MonetizationOnIcon,
-            texto: 'Ventas'
+            texto: 'Facturación'
         },
         {
             ruta: '/stock',

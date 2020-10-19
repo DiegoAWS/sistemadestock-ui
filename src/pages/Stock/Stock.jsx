@@ -104,6 +104,7 @@ const Stock = props => {
         ['CostoUnitario', 'Costo Unitario', 'double'],
         ['PrecioVentaContadoMayorista', 'Precio Venta Mayorista', 'autoRellenar'],
         ['PrecioVentaContadoMinorista', 'Precio Venta Minorista', 'double'],
+        ['EntradaInicial', 'Entrada Inicial', 'double'],
         ['PrecioVenta3Cuotas', 'Precio Venta 3 Cuotas', 'double'],
         ['PrecioVenta6Cuotas', 'Precio Venta 6 Cuotas', 'double'],
         ['PrecioVenta12Cuotas', 'Precio Venta 12 Cuotas', 'double'],
@@ -130,9 +131,10 @@ const Stock = props => {
         Color: "",
         PrecioVentaContadoMayorista: "",
         PrecioVentaContadoMinorista: "",
+        EntradaInicial: "",
         PrecioVenta3Cuotas: "",
         PrecioVenta6Cuotas: "",
-        PrecioVenta12Cuotas: "",
+        PrecioVenta12Cuotas: "X",
         PrecioVenta18Cuotas: "",
         PrecioVenta24Cuotas: ""
     }

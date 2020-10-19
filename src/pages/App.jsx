@@ -51,7 +51,7 @@ export default function App() {
 
           <SecureRoute path='/dashboard' component={RealDashboard} />
 
-          <SecureRoute path='/ventas' component={Ventas} />
+          <SecureRoute path='/facturacion' component={Ventas} />
           <SecureRoute path='/stock' component={Stock} />
 
           <SecureRoute path='/proveedores' component={Proveedores} />
