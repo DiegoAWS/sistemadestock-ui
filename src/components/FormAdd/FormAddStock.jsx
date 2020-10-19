@@ -222,7 +222,6 @@ const FormAddStock = (
     //#endregion Estiliza como money String
 
 
-
     //#region  Auto Fill Money ----------------------------------
 
     const AutoFillMoney = (d) => {
@@ -239,32 +238,30 @@ const FormAddStock = (
 
         let precioBase = parseInt(formStock.CostoUnitario) - entrada
 
+        const ceiling = (value, cuotas) => {
+            let parc = parseInt(value)
+            let sec = (100 + parc) * precioBase
+            let ceil = Math.ceil(sec / (cuotas * 50000))
+
+            return ceil * 500
+        }
 
 
         setFormStock({
             ...formStock,
+            PrecioVentaContadoMayorista: ceiling(ajustesPrecios.pMayorista, 1),
+            PrecioVentaContadoMinorista: ceiling(ajustesPrecios.pMinorista, 1),
             EntradaInicial: entrada === 0 ? '' : d,
-            PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-            PrecioVentaContadoMayorista: Math.ceil(((100 + parseInt(ajustesPrecios.pMayorista) * precioBase) / 50000) * 500,
-                PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-                PrecioVentaContadoMinorista: Math.ceil(((100 + parseInt(ajustesPrecios.pMinorista) * precioBase) / 50000) * 500,
-
-                    PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-                    PrecioVenta3Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p3cuotas) * precioBase) / 150000) * 500,
-                        PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-                        PrecioVenta6Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p6cuotas) * precioBase) / 300000) * 500,
-                            PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-                            PrecioVenta12Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p12cuotas) * precioBase) / 600000) * 500,
-                                PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
-                                PrecioVenta18Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p18cuotas) * precioBase) / 900000) * 500,
-                                    PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+            PrecioVenta3Cuotas: ceiling(ajustesPrecios.p3cuotas, 3),
+            PrecioVenta6Cuotas: ceiling(ajustesPrecios.p6cuotas, 6),
+            PrecioVenta12Cuotas: ceiling(ajustesPrecios.p12cuotas, 12),
+            PrecioVenta18Cuotas: ceiling(ajustesPrecios.p18cuotas, 18),
+            PrecioVenta24Cuotas: ceiling(ajustesPrecios.p24cuotas, 24),
         })
 
     }
 
     //#endregion Auto Fill Money
-
-
 
 
     const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (<TextField ref={ref} label='Fecha de Compra' variant="outlined" margin='normal' size="small" value={value} fullWidth onClick={onClick} />))
