@@ -163,7 +163,7 @@ const FormAddStock = (
             PrecioVenta24Cuotas: disabled24 ? "" : formStock.PrecioVenta24Cuotas
         }
 
-        console.log(formStock, formDataOK)
+
 
         if (formStock.id)// Editing....
             uri = uri + '/' + formStock.id
@@ -280,7 +280,7 @@ const FormAddStock = (
                 </Button>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
-                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px', display: 'flex', alignItems: 'center' }} >
+                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }} >
 
                         <Autocomplete
                             fullWidth
@@ -393,7 +393,7 @@ const FormAddStock = (
                         />
                     </Grid>
 
-                    <Grid item xs={12} sm={6} md={4} style={{ padding: '8px 10px 0px', display: 'flex', alignItems: 'center' }}>
+                    <Grid item xs={12} sm={6} md={4} style={{ padding: '8px 10px 0px', display: 'flex', alignItems: 'baseline' }}>
 
                         <TextField
                             fullWidth
@@ -471,56 +471,47 @@ const FormAddStock = (
                             }}
                         />
                     </Grid>
-
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    {/* Venta Mayorista */}
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
 
                         <TextField label='Precio Mayorista' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVentaContadoMayorista)}
 
                             onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMayorista: e.target.value.replace(/\D/g, '') }) }}
 
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end">
-
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.pMayorista + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
-
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, pMayorista: d })
-                                        }} />
-
-                                </InputAdornment>
+                         
                             }}
                         />
+                                    <TextField variant="outlined" value={'+' + ajustesPrecios.pMayorista + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, pMayorista: d })
+                            }} />
                     </Grid>
-
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    {/* Venta Minorista */}
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
                         <TextField label='Precio Venta Contado' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVentaContadoMinorista)}
                             onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMinorista: e.target.value.replace(/\D/g, '') }) }}
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end">
 
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.pMinorista + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
-
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, pMinorista: d })
-                                        }} />
-
-                                </InputAdornment>
-                            }}
                         />
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.pMinorista + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, pMinorista: d })
+                            }} />
                     </Grid>
                     {
                         //#endregion
@@ -562,59 +553,54 @@ const FormAddStock = (
                             }} /></Grid>
 
                     {/* Precio 3 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
                         <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta3Cuotas)}
 
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta3Cuotas: e.target.value.replace(/\D/g, '') }) }}
                             InputProps={{
-                                startAdornment: <InputAdornment position="start">3x </InputAdornment >,
-                                endAdornment: <InputAdornment position="end">
-
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.p3cuotas + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
-
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, p3cuotas: d })
-                                        }} />
-
-                                </InputAdornment>
+                                startAdornment: <InputAdornment position="start">3x </InputAdornment >
                             }}
-                        /></Grid>
+                        />
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.p3cuotas + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, p3cuotas: d })
+                            }} />
+                    </Grid>
 
 
 
                     {/* Precio 6 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
                         <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
                             value={EstilizaString(formStock.PrecioVenta6Cuotas)}
                             InputProps={{
-                                startAdornment: <InputAdornment position="start">6x </InputAdornment >,
-                                endAdornment: <InputAdornment position="end">
+                                startAdornment: <InputAdornment position="start">6x </InputAdornment >
 
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.p6cuotas + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
-
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, p6cuotas: d })
-                                        }} />
-
-                                </InputAdornment>
                             }}
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/g, '') }) }} /></Grid>
+                            onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/g, '') }) }} />
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.p6cuotas + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, p6cuotas: d })
+                            }} />
+                    </Grid>
 
                     {/* Precio 12 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
                         <TextField label={disabled12 ? 'Deshabilitado' : 'Precio Venta 12 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
                             value={disabled12 ? '' : EstilizaString(formStock.PrecioVenta12Cuotas)}
                             onChange={e => { setFormStock({ ...formStock, PrecioVenta12Cuotas: e.target.value.replace(/\D/g, '') }) }}
@@ -631,8 +617,8 @@ const FormAddStock = (
                             }}
                         />
                         <TextField variant="outlined" value={'+' + ajustesPrecios.p12cuotas + '%'}
-                            inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
-
+                            inputProps={{ style: { width: '5rem', textAlign: 'baseline' } }}
+                            size='small'
                             onChange={e => {
                                 let d = e.target.value.replace(/[^0-9.]/g, '')
                                 if (d < 0)
@@ -644,7 +630,7 @@ const FormAddStock = (
                     </Grid>
 
                     {/* Precio 18 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
 
                         <TextField label={disabled18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
                             value={disabled18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
@@ -653,17 +639,7 @@ const FormAddStock = (
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">18x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.p18cuotas + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
 
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, p18cuotas: d })
-                                        }} />
                                     <Checkbox checked={!disabled18}
                                         onChange={e => { setdisabled18(!disabled18) }}
                                         title={disabled18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
@@ -671,10 +647,21 @@ const FormAddStock = (
                                 </InputAdornment>
                             }}
                         />
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.p18cuotas + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, p18cuotas: d })
+                            }} />
                     </Grid>
 
                     {/* Precio 24 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
                         <TextField label={disabled24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
                             value={disabled24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
                             disabled={disabled24}
@@ -682,23 +669,24 @@ const FormAddStock = (
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">24x </InputAdornment >,
                                 endAdornment: <InputAdornment position="end">
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.p24cuotas + '%'}
-                                        inputProps={{ style: { padding: '2px', width: '5rem', textAlign: 'center' } }}
 
-                                        onChange={e => {
-                                            let d = e.target.value.replace(/[^0-9.]/g, '')
-                                            if (d < 0)
-                                                d = 0
-                                            if (d > 500)
-                                                d = 500
-                                            setAjustesPrecio({ ...ajustesPrecios, p24cuotas: d })
-                                        }} />
                                     <Checkbox checked={!disabled24}
                                         onChange={e => { setdisabled24(!disabled24) }}
                                         title={disabled24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
                                     /></InputAdornment>
                             }}
                         />
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.p24cuotas + '%'}
+                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                            size='small'
+                            onChange={e => {
+                                let d = e.target.value.replace(/[^0-9.]/g, '')
+                                if (d < 0)
+                                    d = 0
+                                if (d > 500)
+                                    d = 500
+                                setAjustesPrecio({ ...ajustesPrecios, p24cuotas: d })
+                            }} />
                     </Grid>
                     {
                         //#endregion 
