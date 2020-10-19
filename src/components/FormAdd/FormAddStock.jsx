@@ -240,16 +240,24 @@ const FormAddStock = (
         let precioBase = parseInt(formStock.CostoUnitario) - entrada
 
 
+
         setFormStock({
             ...formStock,
-            PrecioVentaContadoMayorista: Math.ceil(((100 + ajustesPrecios.pMayorista) * precioBase) / 50000) * 500,
-            PrecioVentaContadoMinorista: Math.ceil(((100 + ajustesPrecios.pMinorista) * precioBase) / 50000) * 500,
             EntradaInicial: entrada === 0 ? '' : d,
-            PrecioVenta3Cuotas: Math.ceil(((100 + ajustesPrecios.p3cuotas) * precioBase) / 150000) * 500,
-            PrecioVenta6Cuotas: Math.ceil(((100 + ajustesPrecios.p6cuotas) * precioBase) / 300000) * 500,
-            PrecioVenta12Cuotas: Math.ceil(((100 + ajustesPrecios.p12cuotas) * precioBase) / 600000) * 500,
-            PrecioVenta18Cuotas: Math.ceil(((100 + ajustesPrecios.p18cuotas) * precioBase) / 900000) * 500,
-            PrecioVenta24Cuotas: Math.ceil(((100 + ajustesPrecios.p24cuotas) * precioBase) / 1200000) * 500
+            PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+            PrecioVentaContadoMayorista: Math.ceil(((100 + parseInt(ajustesPrecios.pMayorista) * precioBase) / 50000) * 500,
+                PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+                PrecioVentaContadoMinorista: Math.ceil(((100 + parseInt(ajustesPrecios.pMinorista) * precioBase) / 50000) * 500,
+
+                    PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+                    PrecioVenta3Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p3cuotas) * precioBase) / 150000) * 500,
+                        PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+                        PrecioVenta6Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p6cuotas) * precioBase) / 300000) * 500,
+                            PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+                            PrecioVenta12Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p12cuotas) * precioBase) / 600000) * 500,
+                                PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
+                                PrecioVenta18Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p18cuotas) * precioBase) / 900000) * 500,
+                                    PrecioVenta24Cuotas: Math.ceil(((100 + parseInt(ajustesPrecios.p24cuotas)) * precioBase) / 1200000) * 500,
         })
 
     }
