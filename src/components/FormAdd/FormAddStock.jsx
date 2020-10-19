@@ -479,10 +479,10 @@ const FormAddStock = (
 
                             onChange={e => { setFormStock({ ...formStock, PrecioVentaContadoMayorista: e.target.value.replace(/\D/g, '') }) }}
 
-                         
-                            }}
+
+
                         />
-                                    <TextField variant="outlined" value={'+' + ajustesPrecios.pMayorista + '%'}
+                        <TextField variant="outlined" value={'+' + ajustesPrecios.pMayorista + '%'}
                             inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
                             size='small'
                             onChange={e => {
