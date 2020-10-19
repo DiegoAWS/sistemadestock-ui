@@ -28,14 +28,14 @@ const Ajustes = props => {
     const classes = useStyle()
 
     //#region  State ----------------------------------
-    const [pMayorista, setPMayorista] = useState(102.00)
-    const [pMinorista, setPMinorista] = useState(106.25)
-    const [p3cuotas, setP3cuotas] = useState(112.50)
-    const [p6cuotas, setP6cuotas] = useState(130)
-    const [p12cuotas, setP12cuotas] = useState(150)
+    const [pMayorista, setPMayorista] = useState(2.00)
+    const [pMinorista, setPMinorista] = useState(6.25)
+    const [p3cuotas, setP3cuotas] = useState(12.50)
+    const [p6cuotas, setP6cuotas] = useState(30)
+    const [p12cuotas, setP12cuotas] = useState(50)
 
-    const [p18cuotas, setP18cuotas] = useState(180)
-    const [p24cuotas, setP24cuotas] = useState(200)
+    const [p18cuotas, setP18cuotas] = useState(80)
+    const [p24cuotas, setP24cuotas] = useState(100)
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
@@ -47,7 +47,7 @@ const Ajustes = props => {
     // eslint-disable-next-line
     useEffect(() => { leerInfo() }, [])
 
-    const parseNumber = entr => entr.replace(/[^\d.]/, '')
+    const parseNumber = entr => entr.replace(/[^\d.]/g, '')
 
     //#region  Info SAVE & LOAD ----------------------------------
 
@@ -110,12 +110,13 @@ const Ajustes = props => {
         setLoading(true)
 
 
-        if (50 < pMinorista && pMinorista < 500 &&
-            50 < p3cuotas && p3cuotas < 500 &&
-            50 < p6cuotas && p6cuotas < 500 &&
-            50 < p12cuotas && p12cuotas < 500 &&
-            50 < p18cuotas && p18cuotas < 500 &&
-            50 < p24cuotas && p24cuotas < 500) {
+        if (0 <= pMayorista && pMayorista < 500 &&
+            0 <= pMinorista && pMinorista < 500 &&
+            0 <= p3cuotas && p3cuotas < 500 &&
+            0 <= p6cuotas && p6cuotas < 500 &&
+            0 <= p12cuotas && p12cuotas < 500 &&
+            0 <= p18cuotas && p18cuotas < 500 &&
+            0 <= p24cuotas && p24cuotas < 500) {
 
             let dataSend = {
                 "pMayorista": pMayorista,
@@ -141,13 +142,13 @@ const Ajustes = props => {
 
 
             setTimeout(() => {
-                setPMayorista(102)
-                setPMinorista(106.25)
-                setP3cuotas(112.50)
-                setP6cuotas(130)
-                setP12cuotas(150)
-                setP18cuotas(180)
-                setP24cuotas(200)
+                setPMayorista(2)
+                setPMinorista(6.25)
+                setP3cuotas(12.50)
+                setP6cuotas(30)
+                setP12cuotas(50)
+                setP18cuotas(80)
+                setP24cuotas(100)
                 setError(false)
             }, 2000)
 
@@ -188,14 +189,7 @@ const Ajustes = props => {
                 </Grid>
             </Grid>
             {!loading && <>
-                <Grid item>
-                    <TextField label={'Precio de Compra'}
 
-                        InputProps={{ endAdornment: <InputAdornment position="end">%</InputAdornment> }}
-                        size='small' variant="outlined" error={error}
-                        value={'100'} />
-
-                </Grid>
                 <Grid item>
                     <TextField label={'Precio Contado Mayorista'}
 

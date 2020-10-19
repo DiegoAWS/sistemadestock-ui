@@ -49,13 +49,13 @@ const Stock = props => {
 
 
     let initAjuste = {
-        pMayorista: 102,
-        pMinorista: 106.25,
-        p3cuotas: 112.50,
-        p6cuotas: 130,
-        p12cuotas: 150,
-        p18cuotas: 180,
-        p24cuotas: 200
+        pMayorista: 2,
+        pMinorista: 6.25,
+        p3cuotas: 12.50,
+        p6cuotas: 30,
+        p12cuotas: 50,
+        p18cuotas: 80,
+        p24cuotas: 100
     }
 
     const [ajustesPrecios, setAjustesPrecio] = useState(initAjuste)
@@ -580,7 +580,7 @@ const Stock = props => {
                 loading={loading} setLoading={setLoading}
                 proveedores={proveedores}
                 cargaData={cargaData} recolocaEditItem={recolocaEditItem}
-                ajustesPrecios={ajustesPrecios} dataStock={dataStock}
+                ajustesPrecios={ajustesPrecios} setAjustesPrecio={setAjustesPrecio} dataStock={dataStock}
                 openProveedorPopup={openProveedorPopup} setOpenProveedorPopup={setOpenProveedorPopup}
                 formProveedores={formProveedores} SetFormProveedores={SetFormProveedores}
             />

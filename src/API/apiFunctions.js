@@ -1,7 +1,5 @@
 import axios from "axios";
 
-var localhost = true;
-
 // import axiosCancel from 'axios-cancel';
 
 // axiosCancel(axios, {
@@ -9,7 +7,7 @@ var localhost = true;
 // });
 //"http://localhost"
 
-var HOST = localhost
+var HOST = !window.location.href.toString().includes(".com")
   ? "http://192.168.137.1"
   : "https://sistemadestock.herokuapp.com";
 
@@ -58,11 +56,7 @@ export const getProfile = (path) => {
       localStorage.removeItem("UserOficialName");
       localStorage.removeItem("UserRole");
       setTimeout(() => {
-        window.location.replace(
-          localhost
-            ? "http://192.168.137.1:3000"
-            : "https://sistemadestock-ui.herokuapp.com"
-        );
+        window.location.replace(window.location.origin);
       }, 1000);
     });
 };
