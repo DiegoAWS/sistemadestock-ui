@@ -873,165 +873,108 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                     //#region PRECIOS
                 }
                 <Grid container direction="column" spacing={1} >
-                    {productoSeleccionado && <>
+                    {
+                        productoSeleccionado && <>
 
 
 
-                        <Grid item container style={{ justifyContent: 'space-evenly' }}>
+                            <Grid item container style={{ justifyContent: 'space-evenly' }}>
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
+                                {/* Venta Mayorista */}
+                                {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
 
-                                <Grid item sm={6} lg={4} >
-                                    <Card className={classes.preciosCard} >
-                                        <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
-                                        <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
-
-
-                                        <div style={{ display: 'flex', padding: '5px', justifyContent: 'space-around' }}>
-                                            <TextField
-                                                disabled
-                                                label="Cantidad"
-
-                                                variant="outlined"
-
-                                                inputProps={{ min: 1, max: productoSeleccionado.Cantidad, style: { padding: '5px' } }}
-
-                                                value={cantidad}
-                                                margin='none'
-                                                size='small'
-                                                error={cantidadError}
-                                                onChange={(e) => {
-                                                    let cant = parseInt(e.target.value.replace(/\D/g, ''))
-
-                                                    if (isNaN(cant) || cant === 0 || cant < 0)
-
-                                                        setCantidad('')
-                                                    else if (cant > productoSeleccionado.Cantidad) {
-                                                        setCantidadError(true)
-                                                        setTimeout(() => {
-                                                            setCantidadError(false)
-                                                            setCantidad(productoSeleccionado.Cantidad)
-                                                        }, 1000)
-                                                    }
+                                    <Grid item xs={12} sm={4}  >
+                                        <Card className={classes.preciosCard} >
+                                            <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
+                                            <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
 
 
-                                                    else
-                                                        setCantidad(cant)
-                                                }}
+                                            <div style={{ display: 'flex', padding: '5px', justifyContent: 'space-around' }}>
+                                                <TextField
+                                                    disabled
+                                                    label="Cantidad"
 
-                                            />
-                                            <Button variant='contained' color='secondary' style={{ padding: '0px 5px', minWidth: '30px' }}
-                                                disabled
-                                                onClick={e => {
-                                                    if (cantidad && !isNaN(parseInt(cantidad)))
-                                                        addCart('PrecioVentaContadoMayorista')
-                                                    else {
-                                                        setCantidadError(true)
-                                                        setTimeout(() => {
-                                                            setCantidadError(false)
-                                                            setCantidad(1)
-                                                        }, 1000)
-                                                    }
+                                                    variant="outlined"
 
-                                                }}>Añadir</Button>
-                                        </div>
+                                                    inputProps={{ min: 1, max: productoSeleccionado.Cantidad, style: { padding: '5px' } }}
 
-                                    </Card>
+                                                    value={cantidad}
+                                                    margin='none'
+                                                    size='small'
+                                                    error={cantidadError}
+                                                    onChange={(e) => {
+                                                        let cant = parseInt(e.target.value.replace(/\D/g, ''))
 
-                                </Grid>
-                            }
+                                                        if (isNaN(cant) || cant === 0 || cant < 0)
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMinorista)) &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMinorista') }} >
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio al Contado</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVentaContadoMinorista)}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}> Pago único</div>
+                                                            setCantidad('')
+                                                        else if (cant > productoSeleccionado.Cantidad) {
+                                                            setCantidadError(true)
+                                                            setTimeout(() => {
+                                                                setCantidadError(false)
+                                                                setCantidad(productoSeleccionado.Cantidad)
+                                                            }, 1000)
+                                                        }
+
+
+                                                        else
+                                                            setCantidad(cant)
+                                                    }}
+
+                                                />
+                                                <Button variant='contained' color='secondary' style={{ padding: '0px 5px', minWidth: '30px' }}
+                                                    disabled
+                                                    onClick={e => {
+                                                        if (cantidad && !isNaN(parseInt(cantidad)))
+                                                            addCart('PrecioVentaContadoMayorista')
+                                                        else {
+                                                            setCantidadError(true)
+                                                            setTimeout(() => {
+                                                                setCantidadError(false)
+                                                                setCantidad(1)
+                                                            }, 1000)
+                                                        }
+
+                                                    }}>Añadir</Button>
+                                            </div>
+
                                         </Card>
-                                    </Button>
-                                </Grid>
-                            }
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta3Cuotas)) && clienteSeleccionado &&
-                                <Grid item sm={6} lg={4}>
-                                    <Button fullWidth
-                                        disabled
-                                        onClick={e => { addCart('PrecioVenta3Cuotas') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio 3 cuotas</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVenta3Cuotas) + ' x 3'}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>
-                                                {formater.format((3 * parseInt(productoSeleccionado.PrecioVenta3Cuotas)))}</div>
-                                        </Card>
-                                    </Button>
-                                </Grid>}
+                                    </Grid>
+                                }
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta6Cuotas)) && clienteSeleccionado &&
-                                <Grid item sm={6} lg={4} >
-                                    <Button fullWidth
-                                        disabled
-                                        onClick={e => { addCart('PrecioVenta6Cuotas') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio 6 cuotas</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVenta6Cuotas) + ' x 6'}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>
-                                                {formater.format((6 * parseInt(productoSeleccionado.PrecioVenta6Cuotas)))}</div>
-                                        </Card>
-                                    </Button>
-                                </Grid>}
+                                {/* Venta Minorista */}
+                                {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMinorista)) &&
+                                    <Grid item xs={12} sm={4} >
+                                        <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMinorista') }} >
+                                            <Card className={classes.preciosCard}>
+                                                <div style={{ fontSize: '0.8rem' }}>Precio al Contado</div>
+                                                <div style={{ fontSize: '1rem' }}>
+                                                    {formater.format(productoSeleccionado.PrecioVentaContadoMinorista)}  </div>
+                                                <div style={{ fontSize: '0.8rem' }}> Pago único</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid>
+                                }
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta12Cuotas)) && clienteSeleccionado &&
-                                <Grid item sm={6} lg={4} >
-                                    <Button fullWidth
-                                        disabled
-                                        onClick={e => { addCart('PrecioVenta12Cuotas') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio 12 cuotas</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVenta12Cuotas) + ' x 12'}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>
-                                                {formater.format((12 * parseInt(productoSeleccionado.PrecioVenta12Cuotas)))}</div>
-                                        </Card>
-                                    </Button>
-                                </Grid>}
+                                {/* Venta por Cuotas */}
+                                {clienteSeleccionado &&
+                                    <Grid item xs={12} sm={4} >
+                                        <Button fullWidth
+                                            disabled
+                                            onClick={e => { addCart('PrecioVenta3Cuotas') }}>
+                                            <Card className={classes.preciosCard}>
+                                                <div style={{ fontSize: '0.8rem' }}>Precio 3 cuotas</div>
+                                                <div style={{ fontSize: '1rem' }}>
+                                                    {formater.format(productoSeleccionado.PrecioVenta3Cuotas) + ' x 3'}  </div>
+                                                <div style={{ fontSize: '0.8rem' }}>
+                                                    {formater.format((3 * parseInt(productoSeleccionado.PrecioVenta3Cuotas)))}</div>
+                                            </Card>
+                                        </Button>
+                                    </Grid>}
 
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta18Cuotas)) && clienteSeleccionado &&
-                                <Grid item sm={6} lg={4} >
-                                    <Button fullWidth
-                                        disabled
-                                        onClick={e => { addCart('PrecioVenta18Cuotas') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio 18 cuotas</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVenta18Cuotas) + ' x 18'}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>
-                                                {formater.format((18 * parseInt(productoSeleccionado.PrecioVenta18Cuotas)))}</div>
-                                        </Card>
-                                    </Button>
-                                </Grid>}
-
-
-                            {!isNaN(parseInt(productoSeleccionado.PrecioVenta24Cuotas)) && clienteSeleccionado &&
-                                <Grid item sm={6} lg={4} >
-                                    <Button fullWidth
-                                        disabled
-                                        onClick={e => { addCart('PrecioVenta24Cuotas') }}>
-                                        <Card className={classes.preciosCard}>
-                                            <div style={{ fontSize: '0.8rem' }}>Precio 24 cuotas</div>
-                                            <div style={{ fontSize: '1rem' }}>
-                                                {formater.format(productoSeleccionado.PrecioVenta24Cuotas) + ' x 24'}  </div>
-                                            <div style={{ fontSize: '0.8rem' }}>
-                                                {formater.format((24 * parseInt(productoSeleccionado.PrecioVenta24Cuotas)))}</div>
-                                        </Card>
-                                    </Button>
-                                </Grid>}
-                        </Grid>
-
-                    </>
+                            </Grid>
+                        </>
                     }
 
                 </Grid>

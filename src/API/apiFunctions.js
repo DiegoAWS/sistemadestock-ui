@@ -7,9 +7,7 @@ import axios from "axios";
 // });
 //"http://localhost"
 
-var HOST = !window.location.href.toString().includes(".com")
-  ? "http://192.168.137.1"
-  : "https://sistemadestock.herokuapp.com";
+var HOST = window.location.protocol + "//" + window.location.hostname;
 
 //#region  SECURITY ----------------------------------
 
