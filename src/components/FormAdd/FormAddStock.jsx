@@ -19,12 +19,12 @@ import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 
 
 
-import 'react-datepicker/dist/react-datepicker.css'
-
-import es from 'date-fns/locale/es'
 
 import { dateToString, stringToDate } from '../../API/timeFunctions'
 
+import 'react-datepicker/dist/react-datepicker.css'
+
+import es from 'date-fns/locale/es'
 registerLocale('es', es)
 setDefaultLocale('es')
 
@@ -312,6 +312,8 @@ const FormAddStock = (
                             showTimeInput
                             timeInputLabel="Hora:"
                             withPortal
+                            fixedHeight
+                            showMonthDropdown
                             showYearDropdown
                             dateFormat="dd/MM/yyyy"
                             todayButton="Hoy"
