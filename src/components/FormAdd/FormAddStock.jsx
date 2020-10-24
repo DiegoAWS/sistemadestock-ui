@@ -312,7 +312,7 @@ const FormAddStock = (
                             showTimeInput
                             timeInputLabel="Hora:"
                             withPortal
-                            fixedHeight
+                            
                             showMonthDropdown
                             showYearDropdown
                             dateFormat="dd/MM/yyyy"

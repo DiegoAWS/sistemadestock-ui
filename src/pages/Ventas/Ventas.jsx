@@ -100,7 +100,19 @@ const useStyle = makeStyles((theme) => ({
     mayoristaHeader: {
         display: 'flex',
         justifyContent: 'space-around',
-            fontWeight: 'bold'
+        fontWeight: 'bold'
+    },
+    preciosCuotas: {
+        margin: '5px',
+        padding: '5px',
+        borderRadius: '10px',
+        backgroundImage: 'linear-gradient(40deg, #9f93ff 0%, #b5d8ff 74%);',
+    },
+    entrada: {
+        margin: '5px',
+        padding: '5px',
+        borderRadius: '10px',
+        backgroundImage: 'linear-gradient(50deg, #ff4444 0%, #ffcfce 74%);',
     }
 
 }))
@@ -358,6 +370,11 @@ const Ventas = (props) => {
 
 
         }
+    }
+
+    const addCartCUOTAS = (listaDeDiasDePago) => {
+        setProductoSeleccionado(null)
+        console.log(listaDeDiasDePago)
     }
 
     //Baja del carrito
@@ -877,7 +894,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                         renderInput={params => <TextField autoFocus className={classes.nombreProducto} inputRef={inputRef}  {...params} label='Producto' variant="outlined" />}
                     />
 
-                
+
                 </div>
 
 
@@ -889,7 +906,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                     //#region PRECIOS
                 }
                 <Grid container direction="column" spacing={1} >
-                    <FormVentasCuotas />
+
                     {
                         productoSeleccionado && <>
 
@@ -908,7 +925,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                     {
                                         ventaCuotas ?
                                             <h3>
-                                                <FormVentasCuotas/>
+                                                <FormVentasCuotas productoSeleccionado={productoSeleccionado} addCartCUOTAS={addCartCUOTAS} />
 
                                             </h3>
                                             : < Card className={classes.preciosCard} >
@@ -949,12 +966,11 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                                     />
                                                     <Button variant='contained' color='secondary' style={{ padding: '0px 5px', minWidth: '30px' }}
                                                         onClick={e => {
-                                                            
-                                                            if (cantidad && !isNaN(parseInt(cantidad)))
-                                                            {
-                                                                    addCart('PrecioVentaContadoMayorista')
-                                                                    setFormDetails(false) 
-                                                        }
+
+                                                            if (cantidad && !isNaN(parseInt(cantidad))) {
+                                                                addCart('PrecioVentaContadoMayorista')
+                                                                setFormDetails(false)
+                                                            }
                                                             else {
                                                                 setCantidadError(true)
                                                                 setTimeout(() => {
@@ -1019,7 +1035,19 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
                                             </Button>
                                         </Grid>}
-
+                                    {clienteSeleccionado &&
+                                        <Grid item xs={12}  >
+                                            <div style={{ textAlign: 'center', backgroundColor: '#bfffff', borderRadius: '5px', margin: '10px 0px 0px' }}>Precios ventas por CUOTAS</div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
+                                                {productoSeleccionado.EntradaInicial && <div className={classes.entrada}>{'ENTRADA: ' + formater.format(productoSeleccionado.EntradaInicial)}</div>}
+                                                {productoSeleccionado.PrecioVenta3Cuotas && <div className={classes.preciosCuotas}>{'3x ' + formater.format(productoSeleccionado.PrecioVenta3Cuotas)}</div>}
+                                                {productoSeleccionado.PrecioVenta6Cuotas && <div className={classes.preciosCuotas}>{'6x ' + formater.format(productoSeleccionado.PrecioVenta6Cuotas)}</div>}
+                                                {productoSeleccionado.PrecioVenta12Cuotas && <div className={classes.preciosCuotas}>{'12x ' + formater.format(productoSeleccionado.PrecioVenta12Cuotas)}</div>}
+                                                {productoSeleccionado.PrecioVenta18Cuotas && <div className={classes.preciosCuotas}>{'18x ' + formater.format(productoSeleccionado.PrecioVenta18Cuotas)}</div>}
+                                                {productoSeleccionado.PrecioVenta24Cuotas && <div className={classes.preciosCuotas}>{'24x ' + formater.format(productoSeleccionado.PrecioVenta24Cuotas)}</div>}
+                                            </div>
+                                        </Grid>
+                                    }
                                 </Grid>}
                         </>
                     }

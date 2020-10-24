@@ -1,12 +1,15 @@
 import React from 'react'
-import {  FormGroup, FormControlLabel, Checkbox } from "@material-ui/core"
+import { FormGroup, FormControlLabel, Checkbox } from "@material-ui/core"
 
 
-function RadioDiaSemana({ weekDay, setWeekDay}) {
+function RadioDiaSemana({ weekDay, setWeekDay, semanal }) {
+
+    const dias = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado']
+ 
+const texto =semanal? 'Todos los ' + dias[weekDay] + ' de cada semana': 'Todos los ' + dias[weekDay] + ' semanas alternas'
    
+    return (<>
 
-
-    return (
         <FormGroup aria-label="position" row style={{ justifyContent: 'space-around' }}>
             <FormControlLabel
                 style={{ margin: '0px' }}
@@ -80,7 +83,8 @@ function RadioDiaSemana({ weekDay, setWeekDay}) {
             />
 
         </FormGroup>
-    )
+        <h4 style={{ margin: '2px', textAlign: 'center' }}> {texto}</h4>
+    </>)
 }
 
 export default RadioDiaSemana
