@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useRef } from "react"
 import DataTable from 'react-data-table-component'
 
+import { jsPDF } from "jspdf"
+// import Canvg from 'canvg'
+
+import Barcode from 'react-barcode'
+
+import format from 'date-fns/format'
+
+import swal from 'sweetalert';
+
+// MUI--------------------
 import { makeStyles, Grid, Card, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
-import { jsPDF } from "jspdf"
-// import Canvg from 'canvg'
 
 import AccountCircleIcon from "@material-ui/icons/AccountCircle"
 import AddIcon from "@material-ui/icons/Add"
@@ -18,13 +26,18 @@ import WarningIcon from '@material-ui/icons/Warning'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 
-import Barcode from 'react-barcode'
+
+//MUI---------------------
 
 import { getRequest, postRequest } from '../../API/apiFunctions'
 import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 import FormVentasCuotas from './FormVentasCuotas/FormVentasCuotas'
 
 import loadingGif from '../../assets/images/loading.gif'
+
+import shortid from 'shortid'
+
+
 
 const formater = new Intl.NumberFormat("es-PY", {
     style: "currency",
@@ -208,8 +221,6 @@ const Ventas = (props) => {
 
     //#region  State ----------------------------------
 
-
-
     const [productoSeleccionado, setProductoSeleccionado] = useState(null)
     const [productoSearchText, setProductoSearchText] = useState('')
 
@@ -250,6 +261,11 @@ const Ventas = (props) => {
     const [ventaCuotas, setVentaCuotas] = useState(false)
 
     const [cantidadError, setCantidadError] = useState(false)
+
+    const [compraSinPago, setCompraSinPago] = useState(false)
+
+    const [cuotas, setCuotas] = useState(3)
+
     //#endregion State
 
     const refFijarValue = useRef(false)
@@ -262,19 +278,28 @@ const Ventas = (props) => {
 
 
     useEffect(() => {
-        if (carritoList.length === 0)
+        let t = 0
+        carritoList.forEach(item => {
+            if (!isNaN(parseInt(item.subTotal)))
+                t = t + parseInt(item.subTotal)
+        })
+
+
+        if (carritoList.length === 0) {
             setImporteTotal(0)
+            setCompraSinPago(false)
+        }
         else {
 
-
-            let t = 0
-            carritoList.forEach(item => {
-                if (!isNaN(parseInt(item.subTotal)))
-                    t = t + parseInt(item.subTotal)
-            })
-
-            if (t > 0)
+            if (t > 0) {
                 setImporteTotal(t)
+                setCompraSinPago(false)
+            }
+            else {
+                setImporteTotal(0)
+                setCompraSinPago(true)
+
+            }
         }
     }, [carritoList])
 
@@ -351,6 +376,9 @@ const Ventas = (props) => {
 
     //Monta en el carrito
     const addCart = key => {
+
+
+
         let produtoSel = { ...productoSeleccionado }
 
         if (!isNaN(parseInt(produtoSel[key]))) {
@@ -360,11 +388,10 @@ const Ventas = (props) => {
                 cantidadComprada: cantidad,
                 subTotal: parseInt(produtoSel[key]) * cantidad,
                 idStock: produtoSel.id,
-                id: Date.now()
+                id: shortid.generate()
             }))
 
             setTimeout(() => {
-                setCantidad(1)
                 setProductoSeleccionado(null)
             }, 200)
 
@@ -372,10 +399,84 @@ const Ventas = (props) => {
         }
     }
 
-    const addCartCUOTAS = (listaDeDiasDePago) => {
-        setProductoSeleccionado(null)
-        console.log(listaDeDiasDePago)
+    const addCartCUOTAS = (listaDeDiasDePago, diaPrimerPago) => {
+
+        let key = ''
+
+        switch (listaDeDiasDePago.length) {
+            case 3:
+                key = 'PrecioVenta3Cuotas'
+                break
+            case 6:
+                key = 'PrecioVenta6Cuotas'
+                break
+            case 12:
+                key = 'PrecioVenta12Cuotas'
+                break
+            case 18:
+                key = 'PrecioVenta18Cuotas'
+                break
+            case 24:
+                key = 'PrecioVenta24Cuotas'
+                break
+
+            default:
+                throw new Error("Error Cantidada de CUOTAS")
+        }
+
+        let d = new Date()
+
+
+        let Texto = key
+        let produtoSel = { ...productoSeleccionado }
+        let debePagar = parseInt(produtoSel[key])
+
+        let pagar = 0
+
+
+
+        // Serilizacion  key | fecha de pago $ debe pagar $ Fecha que realmente pago $ Cantidad que realmente pago|... x Veces, por cada Cuota
+        //HOY
+        // Ej PrecioVenta3Cuotas|2020-10-25$50000$2020-10-25|2020-10-26$50000$|2020-10-27$50000$|
+        listaDeDiasDePago.forEach((item, i) => {
+
+            if (productoSeleccionado.EntradaInicial && i === 0)
+                Texto = Texto + '|' + format(item, "yyyy-M-d") + '$' + productoSeleccionado.EntradaInicial + '$'
+            else
+                Texto = Texto + '|' + format(item, "yyyy-M-d") + '$' + debePagar + '$'
+
+            if (i === 0 && diaPrimerPago.getDate() === d.getDate() && diaPrimerPago.getMonth() === d.getMonth() && diaPrimerPago.getYear() === d.getYear()) {
+                // SI el dia de Pago es HOY 
+
+                Texto = Texto + format(d, "yyyy-M-d")
+
+            }
+
+        })
+
+        if (diaPrimerPago.getDate() === d.getDate() && diaPrimerPago.getMonth() === d.getMonth() && diaPrimerPago.getYear() === d.getYear()) {
+
+            if (productoSeleccionado.EntradaInicial)
+                pagar = productoSeleccionado.EntradaInicial
+            else
+                pagar = parseInt(produtoSel[key])
+        }
+
+        setCarritoList(carritoList.concat({
+            ...produtoSel,
+            Pago: Texto,
+            cantidadComprada: 1,
+            subTotal: pagar,
+            idStock: produtoSel.id,
+            id: shortid.generate()
+        }))
+        setTimeout(() => {
+            setFormDetails(false)
+            setProductoSeleccionado(null)
+        }, 200)
+
     }
+
 
     //Baja del carrito
     const handleBajaCarrito = row => {
@@ -384,6 +485,7 @@ const Ventas = (props) => {
 
             let tempCarrito = carritoList.filter(item => item.id.toString() !== row.id.toString())
             setCarritoList(tempCarrito)
+
 
         }
 
@@ -394,6 +496,8 @@ const Ventas = (props) => {
     //#region PAGAR
     const pagarCuenta = () => {
         setPagando(true)
+
+        //#region Comprobacion de Cantidad en Stock
         getRequest('/ventasonlystock')
             .then(responseStock => {
                 if (responseStock && responseStock.data) {
@@ -406,7 +510,7 @@ const Ventas = (props) => {
                         let Prod = stockFull.filter(st => st.id === item.idStock)
 
                         if (Prod.length !== 1) {
-                            alert('ERROR')
+                            swal('ERROR')
                             return
                         }
                         let newProducto = { ...Prod[0], Cantidad: Prod[0].Cantidad - item.cantidadComprada }
@@ -422,10 +526,10 @@ const Ventas = (props) => {
                         if (item.Cantidad < 0)
                             errorCantidad = errorCantidad + item.Producto + '\n'
                     })
-
+                    //#endregion
 
                     if (errorCantidad.length > 0) {
-                        alert('ERROR \n No hay suficiente en Stock de \n \n' + errorCantidad)
+                        swal('ERROR \n No hay suficiente en Stock de \n \n' + errorCantidad)
                         setCarritoList([])
                         setPagando(false)
                     }
@@ -433,8 +537,9 @@ const Ventas = (props) => {
 
 
                         let clienteNombre = 'Cliente de Contado'
-                        if (clienteSeleccionado && clienteSeleccionado.Nombre)
-                            clienteNombre = clienteSeleccionado.Nombre
+                        if (clienteSeleccionado && clienteSeleccionado.id)
+
+                            clienteNombre = clienteSeleccionado.id
 
 
                         postRequest('/ventas', { productos: carritoList, cliente: clienteNombre })
@@ -446,9 +551,9 @@ const Ventas = (props) => {
                                     console.log(response.data.Ventas)//IMPRIMIR COMPROBANTES
 
 
-                                    ImprimirComprobante()
+                                    // ImprimirComprobante()
 
-                                    ImprimirGarantia(clienteNombre)
+                                    // ImprimirGarantia(clienteNombre)
                                     setCarritoList([])
                                     setPagando(false)
                                     setPagado('')
@@ -508,7 +613,7 @@ const Ventas = (props) => {
         return sal
     }
 
-
+    // eslint-disable-next-line
     const ImprimirComprobante = () => {
         // let imgData = getCodebarURI(0)
 
@@ -566,6 +671,7 @@ COMO PROXIMO DIA DE OFERTAS O SIMILARES`
 
     //#region Imprimir Garantia
 
+    // eslint-disable-next-line
     const ImprimirGarantia = (cliente) => {
 
         let d = new Date()
@@ -802,7 +908,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                             <div>
                                 <IconButton
                                     onClick={e => {
-                                        alert('Historial de Compras del Cliente')
+                                        swal('Historial de Compras del Cliente')
 
                                     }}
                                     title="Historial del Cliente"
@@ -925,7 +1031,12 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                     {
                                         ventaCuotas ?
                                             <h3>
-                                                <FormVentasCuotas productoSeleccionado={productoSeleccionado} addCartCUOTAS={addCartCUOTAS} />
+                                                <FormVentasCuotas
+                                                    productoSeleccionado={productoSeleccionado}
+                                                    addCartCUOTAS={addCartCUOTAS}
+                                                    cuotas={cuotas}
+                                                    setCuotas={setCuotas}
+                                                />
 
                                             </h3>
                                             : < Card className={classes.preciosCard} >
@@ -946,9 +1057,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                                         size='small' error={cantidadError}
                                                         onChange={(e) => {
                                                             let cant = parseInt(e.target.value.replace(/\D/g, ''))
-
-                                                            if (isNaN(cant) || cant === 0 || cant < 0)
-
+                                                            if (isNaN(cant) || cant === 0)
                                                                 setCantidad('')
                                                             else if (cant > productoSeleccionado.Cantidad) {
                                                                 setCantidadError(true)
@@ -957,10 +1066,14 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                                                     setCantidad(productoSeleccionado.Cantidad)
                                                                 }, 1000)
                                                             }
-
-
                                                             else
                                                                 setCantidad(cant)
+                                                        }}
+                                                        onBlur={e => {
+
+                                                            if (e.target.value.toString().length === 0)
+
+                                                                setCantidad(1)
                                                         }}
 
                                                     />
@@ -990,7 +1103,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
                                 </>
 
-                                : <Grid item container style={{ justifyContent: 'space-evenly' }}>
+                                : <Grid item container style={{ justifyContent: 'space-around' }}>
 
                                     {/* Venta Mayorista */}
                                     {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
@@ -1023,28 +1136,27 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                             </Button>
                                         </Grid>
                                     }
-                                    {/* Venta por Cuotas */}
-                                    {clienteSeleccionado &&
-                                        <Grid item xs={12} sm={4} >
-                                            <Button fullWidth className={classes.buttonCard}
-                                                onClick={() => {
-                                                    setFormDetails(true)
-                                                    setVentaCuotas(true)
-                                                }}>
-                                                <div style={{ fontSize: '0.8rem' }}>Venta en CUOTAS</div>
 
-                                            </Button>
-                                        </Grid>}
                                     {clienteSeleccionado &&
                                         <Grid item xs={12}  >
-                                            <div style={{ textAlign: 'center', backgroundColor: '#bfffff', borderRadius: '5px', margin: '10px 0px 0px' }}>Precios ventas por CUOTAS</div>
-                                            <div style={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
+                                            <div style={{
+                                                textAlign: 'center', backgroundColor: '#bfffff', margin: '10px 0px 0px',
+                                                border: '1px solid black', borderBottom: 'none', borderRadius: '10px 10px 0px 0px'
+                                            }}>Precios por CUOTAS</div>
+
+                                            <div style={{
+                                                display: 'flex', justifyContent: 'space-evenly',
+                                                flexWrap: 'wrap', border: '1px solid black',
+                                                borderTop: 'none', borderRadius: '0px 0px 10px 10px'
+                                            }}>
+
                                                 {productoSeleccionado.EntradaInicial && <div className={classes.entrada}>{'ENTRADA: ' + formater.format(productoSeleccionado.EntradaInicial)}</div>}
-                                                {productoSeleccionado.PrecioVenta3Cuotas && <div className={classes.preciosCuotas}>{'3x ' + formater.format(productoSeleccionado.PrecioVenta3Cuotas)}</div>}
-                                                {productoSeleccionado.PrecioVenta6Cuotas && <div className={classes.preciosCuotas}>{'6x ' + formater.format(productoSeleccionado.PrecioVenta6Cuotas)}</div>}
-                                                {productoSeleccionado.PrecioVenta12Cuotas && <div className={classes.preciosCuotas}>{'12x ' + formater.format(productoSeleccionado.PrecioVenta12Cuotas)}</div>}
-                                                {productoSeleccionado.PrecioVenta18Cuotas && <div className={classes.preciosCuotas}>{'18x ' + formater.format(productoSeleccionado.PrecioVenta18Cuotas)}</div>}
-                                                {productoSeleccionado.PrecioVenta24Cuotas && <div className={classes.preciosCuotas}>{'24x ' + formater.format(productoSeleccionado.PrecioVenta24Cuotas)}</div>}
+                                                {productoSeleccionado.PrecioVenta3Cuotas && <Button onClick={() => { setCuotas(3); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 3 ? '2px solid red' : '' }}>3 x<br />{formater.format(productoSeleccionado.PrecioVenta3Cuotas)}</Button>}
+                                                {productoSeleccionado.PrecioVenta6Cuotas && <Button onClick={() => { setCuotas(6); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 6 ? '2px solid red' : '' }}>6 x<br />{formater.format(productoSeleccionado.PrecioVenta6Cuotas)}</Button>}
+                                                {productoSeleccionado.PrecioVenta12Cuotas && <Button onClick={() => { setCuotas(12); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 12 ? '2px solid red' : '' }}>12 x<br />{formater.format(productoSeleccionado.PrecioVenta12Cuotas)}</Button>}
+                                                {productoSeleccionado.PrecioVenta18Cuotas && <Button onClick={() => { setCuotas(18); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 18 ? '2px solid red' : '' }}>18 x<br />{formater.format(productoSeleccionado.PrecioVenta18Cuotas)}</Button>}
+                                                {productoSeleccionado.PrecioVenta24Cuotas && <Button onClick={() => { setCuotas(24); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 24 ? '2px solid red' : '' }}>24 x<br />{formater.format(productoSeleccionado.PrecioVenta24Cuotas)}</Button>}
+
                                             </div>
                                         </Grid>
                                     }
@@ -1118,7 +1230,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                             setPagado(texto)
                         }}
                         onKeyDown={k => {
-                            if (k.key === "Enter" && parseInt(pagado) > importeTotal)
+                            if (k.key === "Enter" && parseInt(pagado) > importeTotal && !pagando)
                                 pagarCuenta()
 
                         }}
@@ -1148,11 +1260,11 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                 </div>
                 <div>
                     <Button variant='contained' fullWidth
-                        disabled={carritoList.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal}
+                        disabled={!compraSinPago && (carritoList.length === 0 || isNaN(parseInt(pagado)) || parseInt(pagado) < importeTotal)}
                         color='secondary' onClick={() => {
                             if (!pagando)
                                 pagarCuenta()
-                        }}>{pagando ? 'Pagando...' : 'Pagar'} {pagando && < img src={loadingGif} alt="" height='20px' />}</Button>
+                        }}>{compraSinPago ? 'Efectuar VENTA' : (pagando ? 'Pagando...' : 'Pagar')} {pagando && < img src={loadingGif} alt="" height='20px' />}</Button>
                 </div>
             </div>
             {

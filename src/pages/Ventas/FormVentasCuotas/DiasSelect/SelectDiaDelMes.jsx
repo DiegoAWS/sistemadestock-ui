@@ -17,7 +17,7 @@ function SelectDiaDelMes({ diaDelMes, setDiaDelMes }) {
     const classes = useStyle()
     const dias = new Array(31).fill('x', 0, 31)
     return (<div>
-      
+
         <TextField
             fullWidth
             variant='outlined'
@@ -26,15 +26,10 @@ function SelectDiaDelMes({ diaDelMes, setDiaDelMes }) {
             select
             SelectProps={{ classes: { root: classes.inputLittle } }}
             onChange={e => {
-                let dia = e.target.value.toString().replace(/\D/, '')
-                if (dia.length === 0 || (dia > 0 && dia < 32))
-                    setDiaDelMes(dia)
+                let dia = parseInt(e.target.value)
+                setDiaDelMes(dia)
             }}
-            onBlur={e => {
 
-                if (e.target.value.toString().length === 0)
-                    setDiaDelMes(1)
-            }}
         >
             {dias.map((i, option) => (
                 <MenuItem key={option} value={option + 1}>
@@ -42,7 +37,7 @@ function SelectDiaDelMes({ diaDelMes, setDiaDelMes }) {
                 </MenuItem>
             ))}
         </TextField>
-        <h4 style={{ margin: '2px',textAlign:'center' }}> {'Todos los dias ' + diaDelMes + ' de cada mes'}</h4>
+        <h4 style={{ margin: '2px', textAlign: 'center' }}> {'Todos los dias ' + diaDelMes + ' de cada mes'}</h4>
     </div>
     )
 }
