@@ -31,6 +31,7 @@ import Proveedores from './Proveedores/Proveedores'
 
 
 import Ajustes from './Ajustes/Ajustes'
+import Creditos from './Creditos/Creditos'
 
 
 
@@ -52,6 +53,7 @@ export default function App() {
           <SecureRoute path='/dashboard' component={RealDashboard} />
 
           <SecureRoute path='/facturacion' component={Ventas} />
+          <SecureRoute path='/creditos' component={Creditos} />
           <SecureRoute path='/stock' component={Stock} />
 
           <SecureRoute path='/proveedores' component={Proveedores} />

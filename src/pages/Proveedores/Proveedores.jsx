@@ -6,9 +6,7 @@ import FormAddProveedor from '../../components/FormAdd/FormAddProveedor'
 import Datatable from '../../components/Dashboard/Datatable'
 
 
-import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import SearchIcon from '@material-ui/icons/Search'
+import { Button } from '@material-ui/core'
 
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import AddIcon from '@material-ui/icons/Add'
@@ -25,8 +23,6 @@ const Proveedores = props => {
     const [sinDatos, SetSinDatos] = useState(false)
     const [data, setData] = useState([]) //Data de la tabla
 
-    const [search, setSearch] = useState('')
-    const [filterData, setFilterData] = useState([])
 
 
     //#region  campos Proveedores ----------------------------------
@@ -155,32 +151,8 @@ const Proveedores = props => {
         setData(data.concat(editingValue.current))
     }
 
-    const handleSearch = text => {
 
-
-        let dataFilter = data.filter(item => {
-            let resp = false
-
-            camposProveedores.forEach(camp => {
-                if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
-                    resp = true
-
-            })
-
-            return resp
-
-        })
-
-        if (dataFilter.length === 0)
-            SetSinDatos(true)
-        else
-            SetSinDatos(false)
-
-        setFilterData(dataFilter)
-    }
     //#endregion Others Functions
-
-
 
 
     //#region  Return ----------------------------------
@@ -202,29 +174,11 @@ const Proveedores = props => {
 
 
                 </div>
-                <div>
-                    <TextField
-                        value={search || ''}
-                        margin="dense"
-                        color={(search.length === 0) ? "primary" : "secondary"}
-                        size="small"
 
-                        onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
-                        variant={(search.length === 0) ? "outlined" : "filled"}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
-                            endAdornment: <InputAdornment position="end">
-                                <IconButton
-                                    onClick={e => { setSearch(''); handleSearch('') }}                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </InputAdornment>,
-                        }} />
-                </div>
 
             </div>
 
-            <Datatable data={(search.length === 0) ? data : filterData}
+            <Datatable data={data}
 
                 sinDatos={sinDatos}
                 campos={camposProveedores}

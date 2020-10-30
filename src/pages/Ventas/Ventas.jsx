@@ -441,14 +441,14 @@ const Ventas = (props) => {
         listaDeDiasDePago.forEach((item, i) => {
 
             if (productoSeleccionado.EntradaInicial && i === 0)
-                Texto = Texto + '|' + format(item, "yyyy-M-d") + '$' + productoSeleccionado.EntradaInicial + '$'
+                Texto = Texto + '|' + format(item, "yyyy-MM-dd") + '$' + productoSeleccionado.EntradaInicial + '$'
             else
-                Texto = Texto + '|' + format(item, "yyyy-M-d") + '$' + debePagar + '$'
+                Texto = Texto + '|' + format(item, "yyyy-MM-dd") + '$' + debePagar + '$'
 
             if (i === 0 && diaPrimerPago.getDate() === d.getDate() && diaPrimerPago.getMonth() === d.getMonth() && diaPrimerPago.getYear() === d.getYear()) {
                 // SI el dia de Pago es HOY 
 
-                Texto = Texto + format(d, "yyyy-M-d")
+                Texto = Texto + format(d, "yyyy-MM-dd")
 
             }
 
