@@ -29,14 +29,11 @@ const Proveedores = props => {
 
     const camposProveedores = [
 
-
-        ['Proveedor', 'Proveedor', 'varchar'],
-        ['Telefono', 'Teléfono', 'varchar'],
-        ['Email', 'Email', 'varchar'],
-        ['Direccion', 'Dirección', 'varchar'],
-        ['OtrosDatos', 'Otros', 'varchar']
-
-
+        ['Proveedor', 'Nombre o Denominación'],
+        ['Ruc', 'Número de RUC'],
+        ['Categoria', 'Categoría'],
+        ['Telefono', 'Teléfono'],
+        ['Direccion', 'Dirección']
     ]
     //#endregion campos Proveedores
 
@@ -48,10 +45,10 @@ const Proveedores = props => {
 
     var formInit = {
         Proveedor: '',
-        Telefono: '',
-        Email: '',
+        Ruc: '',
+        Categoria: '',
         Direccion: '',
-        OtrosDatos: ''
+        Telefono: ''
     }
 
 

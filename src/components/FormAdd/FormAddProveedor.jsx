@@ -57,9 +57,23 @@ const FormAddProveedor = ({
 
                 <Grid item xs={12} sm={6} lg={4}>
 
-                    <TextField label={'Proveedor'} variant="outlined" margin='normal' size="small"
+                    <TextField label={'Nombre o denominación'} variant="outlined" margin='normal' size="small"
                         value={formData.Proveedor || ''} fullWidth
                         onChange={e => { SetFormData({ ...formData, Proveedor: e.target.value }) }} />
+
+                </Grid>
+                <Grid item xs={12} sm={6} lg={4}>
+
+                    <TextField label={'Numero de RUC'} variant="outlined" margin='normal' size="small"
+                        value={formData.Ruc || ''} fullWidth
+                        onChange={e => { SetFormData({ ...formData, Ruc: e.target.value }) }} />
+
+                </Grid>
+                <Grid item xs={12} sm={6} lg={4}>
+
+                    <TextField label={'Categoría'} variant="outlined" margin='normal' size="small"
+                        value={formData.Categoria || ''} fullWidth
+                        onChange={e => { SetFormData({ ...formData, Categoria: e.target.value }) }} />
 
                 </Grid>
                 <Grid item xs={12} sm={6} lg={4}>
@@ -69,13 +83,7 @@ const FormAddProveedor = ({
                         onChange={e => { SetFormData({ ...formData, Telefono: e.target.value }) }} />
 
                 </Grid>
-                <Grid item xs={12} sm={6} lg={4}>
 
-                    <TextField label={'Email'} variant="outlined" margin='normal' size="small"
-                        value={formData.Email || ''} fullWidth
-                        onChange={e => { SetFormData({ ...formData, Email: e.target.value }) }} />
-
-                </Grid>
                 <Grid item xs={12} >
 
                     <TextField label={'Direccion'} variant="outlined" margin='normal' size="small"
@@ -83,15 +91,6 @@ const FormAddProveedor = ({
                         onChange={e => { SetFormData({ ...formData, Direccion: e.target.value }) }} />
 
                 </Grid>
-                <Grid item xs={12} >
-
-                    <TextField label={'Otros Datos'} variant="outlined" margin='normal' size="small"
-                        value={formData.OtrosDatos || ''} fullWidth
-                        onChange={e => { SetFormData({ ...formData, OtrosDatos: e.target.value }) }} />
-
-                </Grid>
-
-
 
             </Grid>
 

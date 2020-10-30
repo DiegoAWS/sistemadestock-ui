@@ -18,6 +18,8 @@ import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 import AssessmentIcon from '@material-ui/icons/Assessment'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 import ReceiptIcon from '@material-ui/icons/Receipt';
+import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
+
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
 import PeopleIcon from '@material-ui/icons/People'
@@ -45,7 +47,13 @@ const SideBar = ({ history }) => {
             ruta: '/facturacion',
             icon: MonetizationOnIcon,
             texto: 'Facturación'
-        }, {
+        },
+        {
+            ruta: '/cobrar',
+            icon: AssignmentTurnedInIcon,
+            texto: 'Cobrar'
+        },
+        {
             ruta: '/creditos',
             icon: ReceiptIcon,
             texto: 'Créditos'

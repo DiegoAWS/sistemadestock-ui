@@ -98,8 +98,11 @@ const Skeleton = ({ children, history, location }) => {
   if (title.length > 0)
     title = title[0].toUpperCase() + title.substring(1)
 
-  if (title === 'Ventas')
+  if (title === 'Facturacion')
     title = 'Facturación'
+
+  if (title === 'Creditos')
+    title = 'Créditos'
 
   useEffect(() => {
     setShow(localStorage.getItem('usertoken') ? true : false)
