@@ -47,7 +47,7 @@ const FormAddCliente = ({
     }
 
     //#region return
-    const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (<TextField ref={ref} label='Fecha de Compra' variant="outlined" margin='normal' size="small" value={value} fullWidth onClick={onClick} />))
+    const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (<TextField ref={ref} label='Fecha de Nacimiento' variant="outlined" margin='normal' size="small" value={value} fullWidth onClick={onClick} />))
 
 
     return (

@@ -551,9 +551,9 @@ const Ventas = (props) => {
                                     console.log(response.data.Ventas)//IMPRIMIR COMPROBANTES
 
 
-                                    // ImprimirComprobante()
+                                     ImprimirComprobante()
 
-                                    // ImprimirGarantia(clienteNombre)
+                                     ImprimirGarantia(clienteNombre)
                                     setCarritoList([])
                                     setPagando(false)
                                     setPagado('')

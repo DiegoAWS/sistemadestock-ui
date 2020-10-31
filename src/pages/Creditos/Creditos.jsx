@@ -87,7 +87,7 @@ const Creditos = () => {
             {
                 name: <div >Detalles</div>,
                 style: cellStyle,
-                cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+                cell: row => <Button variant='contained' color='primary' disabled onClick={() => { verDetalles(row) }} >Detalles</Button>
             },
             {
                 name: 'Producto',
@@ -208,7 +208,7 @@ const Creditos = () => {
         let cantidadAPagar = cuotaX.DebePagar
         let fechaPago = new Date(cuotaX.FechaPago.replace(/-/g, '/'))
 
-        let fechaPagoFormated = fechaPago.getDate() + ' de ' + fechaPago.getMonth() + ' del ' + fechaPago.getFullYear()
+        let fechaPagoFormated = fechaPago.getDate() + '/' + fechaPago.getMonth() + '/' + fechaPago.getFullYear()
         console.log(cuotaX.FechaPago, fechaPago)
 
 
