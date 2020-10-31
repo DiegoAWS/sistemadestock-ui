@@ -9,6 +9,7 @@ import axios from "axios";
 
 var HOST = window.location.protocol + "//" + window.location.hostname;
 
+HOST=HOST.replace('-ui','')
 //#region  SECURITY ----------------------------------
 
 export const register = (newUser) => {
