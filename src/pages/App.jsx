@@ -32,7 +32,7 @@ import Proveedores from './Proveedores/Proveedores'
 
 import Ajustes from './Ajustes/Ajustes'
 import Creditos from './Creditos/Creditos'
-import Cobrar from './Cobrar/Cobrar'
+
 
 
 export default function App() {
@@ -54,7 +54,7 @@ export default function App() {
 
           <SecureRoute path='/facturacion' component={Ventas} />
           <SecureRoute path='/creditos' component={Creditos} />
-          <SecureRoute path='/cobrar' component={Cobrar} />
+
           <SecureRoute path='/stock' component={Stock} />
 
           <SecureRoute path='/proveedores' component={Proveedores} />

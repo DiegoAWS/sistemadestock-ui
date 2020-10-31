@@ -178,6 +178,7 @@ const Proveedores = props => {
             <Datatable data={data}
 
                 sinDatos={sinDatos}
+                SetSinDatos={SetSinDatos}
                 campos={camposProveedores}
                 responsive
                 handleDelete={deleteData}

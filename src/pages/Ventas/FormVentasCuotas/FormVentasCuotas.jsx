@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { makeStyles, MenuItem, Button, Grid, FormControl, Select, InputLabel } from "@material-ui/core"
 
-import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
-import 'react-datepicker/dist/react-datepicker.css'
-
 
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import format from 'date-fns/format'
 import es from 'date-fns/locale/es'
+
+
+import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.css'
+
+
 
 import swal from 'sweetalert';
 
@@ -18,9 +21,9 @@ import SelectsDiaQuincena from './DiasSelect/SelectsDiaQuincena'
 import RadioWeekEnd from './DiasSelect/RadioWeekEnd'
 
 
-
 registerLocale('es', es)
 setDefaultLocale('es')
+
 
 
 const formater = new Intl.NumberFormat("es-PY", {

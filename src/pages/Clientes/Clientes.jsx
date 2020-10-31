@@ -5,9 +5,7 @@ import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 import Datatable from '../../components/Dashboard/Datatable'
 
 
-import { Button, TextField, InputAdornment, IconButton } from '@material-ui/core'
-import CloseIcon from '@material-ui/icons/Close'
-import SearchIcon from '@material-ui/icons/Search'
+import { Button } from '@material-ui/core'
 
 import ContactMailIcon from '@material-ui/icons/ContactMail'
 import AddIcon from '@material-ui/icons/Add'
@@ -25,20 +23,24 @@ const Clientes = props => {
     const [sinDatos, SetSinDatos] = useState(false)
     const [data, setData] = useState([]) //Data de la tabla
 
-    const [search, setSearch] = useState('')
-    const [filterData, setFilterData] = useState([])
+
 
 
     //#region  campos  Cliente----------------------------------
 
     const camposCliente = [
 
-        ['Nombre', 'Nombre', 'varchar'],
-        ['Email', 'Email', 'varchar'],
-        ['Cedula', 'Cédula de Identidad', 'varchar'],
-        ['Direccion', 'Dirección', 'varchar'],
-        ['OtrosDatos', 'Otros', 'varchar']
-
+        ['Nombre', 'Nombre'],
+        ['Email', 'Email'],
+        ['Cedula', 'Cédula de Identidad'],
+        ['Ciudad', 'Ciudad'],
+        ['Barrio', 'Barrio'],
+        ['Telefono', 'Teléfono'],
+        ['Referencia', 'Referencia'],
+        ['FNacimiento', 'Fecha de Nacimiento'],
+        ['Genero', 'Género'],
+        ['Recomendado', 'Recomendado por'],
+        ['Direccion', 'Dirección'],
     ]
     //#endregion campos Cliente
 
@@ -148,30 +150,6 @@ const Clientes = props => {
     const recolocaEditItem = () => {
         setData(data.concat(editingValue.current))
     }
-
-    const handleSearch = text => {
-
-
-        let dataFilter = data.filter(item => {
-            let resp = false
-
-            camposCliente.forEach(camp => {
-                if (item[camp[0]].toLowerCase().includes(text.toLowerCase()))
-                    resp = true
-
-            })
-
-            return resp
-
-        })
-
-        if (dataFilter.length === 0)
-            SetSinDatos(true)
-        else
-            SetSinDatos(false)
-
-        setFilterData(dataFilter)
-    }
     //#endregion Others Functions
 
 
@@ -186,44 +164,24 @@ const Clientes = props => {
         <>
             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
 
-
                 <div>
                     <Button style={{ margin: '10px' }} variant="contained" color="primary"
                         startIcon={<AddIcon />}
                         endIcon={<ContactMailIcon />}
                         onClick={() => { clearform(); setOpenPopup(true) }} > Añadir Cliente </Button>
 
-
                 </div>
-                <div>
-                    <TextField
-                        value={search || ''}
-                        margin="dense"
-                        color={(search.length === 0) ? "primary" : "secondary"}
-                        size="small"
-
-                        onChange={e => { setSearch(e.target.value); handleSearch(e.target.value) }}
-                        variant={(search.length === 0) ? "outlined" : "filled"}
-                        InputProps={{
-                            startAdornment: <InputAdornment position="start"> <SearchIcon color='primary' /></InputAdornment>,
-                            endAdornment: <InputAdornment position="end">
-                                <IconButton
-                                    onClick={e => { setSearch(''); handleSearch('') }}                >
-                                    <CloseIcon />
-                                </IconButton>
-                            </InputAdornment>,
-                        }} />
-                </div>
-
             </div>
 
-            <Datatable data={(search.length === 0) ? data : filterData}
+            <Datatable data={data}
 
                 sinDatos={sinDatos}
+                SetSinDatos={SetSinDatos}
                 campos={camposCliente}
                 responsive
                 handleDelete={deleteData}
                 handleEdit={editData} />
+
             <FormAddCliente
                 openPopup={openPopup}
                 setOpenPopup={setOpenPopup}

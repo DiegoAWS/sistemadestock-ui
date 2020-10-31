@@ -3,32 +3,63 @@ import React, { useState, useEffect, useMemo } from 'react'
 
 import { getRequest } from '../../API/apiFunctions'
 import DataTable from 'react-data-table-component'
-//makeStyles, Grid, Card, TextField, Typography, IconButton, Divider
 
-import { Button } from "@material-ui/core"
+import { Button, makeStyles, Grid, TextField } from "@material-ui/core"
+
 import loading from '../../assets/images/loading.gif'
 
+import swal from '@sweetalert/with-react'
 
+
+
+const formater = new Intl.NumberFormat("es-PY", {
+    style: "currency",
+    currency: "PYG",
+});
+
+//#region JSS
+const useStyle = makeStyles(() => ({
+    search: {
+
+    },
+}))
 const Creditos = () => {
-
+    const classes = useStyle()
     //#region  STATE ----------------------------------
 
     const [sinDatos, SetSinDatos] = useState(false)
     const [dataCreditos, setDataCreditos] = useState([])
-
+    const [searchText, setSearchText] = useState('')
+    const [dataSearched, setDataSearched] = useState([])
     //#endregion CONST's
 
 
+    //#region 
+
+    //#endregion
+
+
+    //#region search!
+
+    const search = e => {
+        let text = e.target.value
+        setSearchText(text)
+
+        const dataSearched = dataCreditos.filter(item => {
+            let nombre = item.Cliente.Nombre.toString().toLowerCase()
+            let cedula = item.Cliente.Cedula.toString().toLowerCase()
+
+
+            return nombre.includes(text.toLowerCase()) || cedula.includes(text.toLowerCase())
+
+        })
+
+        setDataSearched(dataSearched)
+    }
+    //#endregion
+
+
     //#region Columns
-
-
-    // let totalCuotas = itemCreditos.length
-    // let cuotasPagadas = itemCreditosPagados.length
-    // let proximoPago = 'PAGADO'
-
-    // if (itemCreditosPendientes.length > 0)
-    //     proximoPago = itemCreditosPendientes
-    //         .sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)[0].FechaPago
 
     const nextPayment = (row) => {
 
@@ -47,32 +78,38 @@ const Creditos = () => {
     }
 
     var columns =
-        [{
-            name: <div >Detalles</div>,
-            style: cellStyle,
-            cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
-        },
-        {
-            name: 'Producto',
-            style: cellStyle,
-            cell: row => <div>{row.Producto.Producto}</div>
-        },
-        {
-            name: 'Cliente',
-            style: cellStyle,
-            cell: row => <div>{row.Cliente.Nombre}</div>
-        },
-        {
-            name: 'Cuotas',
-            style: cellStyle,
-            cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
-        },
-        {
-            name: 'Próximo Pago',
-            style: cellStyle,
-            selector: 'ProximoPago',
-            cell: nextPayment
-        }
+        [
+            {
+                name: <div >Pagar</div>,
+                style: cellStyle,
+                cell: row => <Button variant='contained' color='secondary' onClick={() => { pagarCuota(row) }} >Pagar</Button>
+            },
+            {
+                name: <div >Detalles</div>,
+                style: cellStyle,
+                cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+            },
+            {
+                name: 'Producto',
+                style: cellStyle,
+                cell: row => <div>{row.Producto.Producto}</div>
+            },
+            {
+                name: 'Cliente',
+                style: cellStyle,
+                cell: row => <div>{row.Cliente.Nombre}</div>
+            },
+            {
+                name: 'Cuotas',
+                style: cellStyle,
+                cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
+            },
+            {
+                name: 'Próximo Pago',
+                style: cellStyle,
+                selector: 'ProximoPago',
+                cell: nextPayment
+            }
 
 
         ]
@@ -161,7 +198,37 @@ const Creditos = () => {
 
     //#endregion
 
+    //#region PAGAR
+    const pagarCuota = row => {
 
+        let cantidadTotalCuotas = row.Creditos.length
+        let cantidadCuotasPagas = 1 + row.CreditosPagos.length
+        let cuotaX = row.CreditosPendientes.sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)[0]
+
+        let cantidadAPagar = cuotaX.DebePagar
+        let fechaPago = new Date(cuotaX.FechaPago.replace(/-/g, '/'))
+
+        let fechaPagoFormated = fechaPago.getDate() + ' de ' + fechaPago.getMonth() + ' del ' + fechaPago.getFullYear()
+        console.log(cuotaX.FechaPago, fechaPago)
+
+
+        if (cantidadAPagar && !isNaN(parseInt(cantidadAPagar))) {
+            let cantidadAPagarFormated = formater.format(cantidadAPagar)
+
+
+            swal({
+                title: cantidadAPagarFormated + '\n\n' + fechaPagoFormated,
+                text: 'Pago de Cuota # ' + cantidadCuotasPagas + ' de ' + cantidadTotalCuotas,
+                icon: "warning",
+                button: "PAGAR",
+            })
+                .then(() => {
+                    console.log(row)
+                })
+            //SEND PAGA CUOTAS
+        }
+    }
+    //#endregion
     //#region Metodos Extra
     const verDetalles = row => {
         console.log(row)
@@ -203,11 +270,18 @@ const Creditos = () => {
 
     return (
         <>
-
-
+            <Grid container spacing={1} >
+                <Grid item xs={12} style={{ textAlign: 'center', backgroundColor: 'black', color: 'gold' }}> <h1>En Construccion...</h1></Grid>
+                <Grid item xs={12} container className={classes.search}>
+                    <TextField variant='outlined' label='Nombre Cédula o RUC' fullWidth
+                        value={searchText}
+                        onChange={search}
+                    />
+                </Grid>
+            </Grid>
             <DataTable
                 columns={useMemo(() => columns, [columns])}
-                data={dataCreditos}
+                data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
                 keyField={'id'}
                 defaultSortField={'ProximoPago'}
                 defaultSortAsc

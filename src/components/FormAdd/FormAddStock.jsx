@@ -280,7 +280,7 @@ const FormAddStock = (
                 </Button>
 
                 <Grid container style={{ border: '1px solid black', borderRadius: '10px', marginBottom: '10px', padding: '10px' }}>
-                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }} >
+                    <Grid item xs={12} sm={12} md={5} style={{ padding: '0 10px', display: 'flex', alignItems: 'center' }} >
 
                         <Autocomplete
                             fullWidth
@@ -312,7 +312,7 @@ const FormAddStock = (
                             showTimeInput
                             timeInputLabel="Hora:"
                             withPortal
-                            
+
                             showMonthDropdown
                             showYearDropdown
                             dateFormat="dd/MM/yyyy"
@@ -520,174 +520,175 @@ const FormAddStock = (
                     {
                         //#region Ventas Por Cuotas
                     }
-
-                    {/* EntradaInicial */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
-                        <TextField label={aplicaEntrada ? 'Entrada Inicial' : 'Entrada Inicial Deshabilitado'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={aplicaEntrada ? EstilizaString(formStock.EntradaInicial) : ''}
-                            disabled={!aplicaEntrada}
-                            InputProps={{
-                                endAdornment: <InputAdornment position="end">
-                                    <Checkbox checked={aplicaEntrada}
-                                        onChange={() => {
-                                            if (!aplicaEntrada && isNaN(parseInt(formStock.CostoUnitario))) {
-                                                alert('Debe Establecer primero un COSTO UNITARIO')
-                                                return
-                                            }
-                                            if (aplicaEntrada)
-                                                AutoFillMoney(0)
-                                            setAplicaEntrada(!aplicaEntrada)
-
-
-                                        }}
-                                        title={aplicaEntrada ? 'Deshabilitar' : 'Activar Entrada Inicial'}
-                                    />  </InputAdornment>
-                            }}
-
-                            onChange={e => {
-                                let d = parseInt(e.target.value.replace(/\D/g, ''))
-
-                                if (d < formStock.CostoUnitario)
-                                    AutoFillMoney(d)
-                                else
-                                    AutoFillMoney(formStock.CostoUnitario)
-                            }} /></Grid>
-
-                    {/* Precio 3 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
-                        <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
-                            value={EstilizaString(formStock.PrecioVenta3Cuotas)}
-
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta3Cuotas: e.target.value.replace(/\D/g, '') }) }}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">3x </InputAdornment >
-                            }}
-                        />
-                        <TextField variant="outlined" value={'+' + ajustesPrecios.p3cuotas + '%'}
-                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
-                            size='small'
-                            onChange={e => {
-                                let d = e.target.value.replace(/[^0-9.]/g, '')
-                                if (d < 0)
-                                    d = 0
-                                if (d > 500)
-                                    d = 500
-                                setAjustesPrecio({ ...ajustesPrecios, p3cuotas: d })
-                            }} />
-                    </Grid>
+                    <Grid item container xs={12} style={{ border: '1px solid black', borderRadius: '10px' }}>
+                        {/* EntradaInicial */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px' }}>
+                            <TextField label={aplicaEntrada ? 'Entrada Inicial' : 'Entrada Inicial Deshabilitado'} variant="outlined" margin='normal' size="small" fullWidth
+                                value={aplicaEntrada ? EstilizaString(formStock.EntradaInicial) : ''}
+                                disabled={!aplicaEntrada}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">
+                                        <Checkbox checked={aplicaEntrada}
+                                            onChange={() => {
+                                                if (!aplicaEntrada && isNaN(parseInt(formStock.CostoUnitario))) {
+                                                    alert('Debe Establecer primero un COSTO UNITARIO')
+                                                    return
+                                                }
+                                                if (aplicaEntrada)
+                                                    AutoFillMoney(0)
+                                                setAplicaEntrada(!aplicaEntrada)
 
 
+                                            }}
+                                            title={aplicaEntrada ? 'Deshabilitar' : 'Activar Entrada Inicial'}
+                                        />  </InputAdornment>
+                                }}
 
-                    {/* Precio 6 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
-                        <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
-                            value={EstilizaString(formStock.PrecioVenta6Cuotas)}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">6x </InputAdornment >
+                                onChange={e => {
+                                    let d = parseInt(e.target.value.replace(/\D/g, ''))
 
-                            }}
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/g, '') }) }} />
-                        <TextField variant="outlined" value={'+' + ajustesPrecios.p6cuotas + '%'}
-                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
-                            size='small'
-                            onChange={e => {
-                                let d = e.target.value.replace(/[^0-9.]/g, '')
-                                if (d < 0)
-                                    d = 0
-                                if (d > 500)
-                                    d = 500
-                                setAjustesPrecio({ ...ajustesPrecios, p6cuotas: d })
-                            }} />
-                    </Grid>
+                                    if (d < formStock.CostoUnitario)
+                                        AutoFillMoney(d)
+                                    else
+                                        AutoFillMoney(formStock.CostoUnitario)
+                                }} /></Grid>
 
-                    {/* Precio 12 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
-                        <TextField label={disabled12 ? 'Deshabilitado' : 'Precio Venta 12 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={disabled12 ? '' : EstilizaString(formStock.PrecioVenta12Cuotas)}
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta12Cuotas: e.target.value.replace(/\D/g, '') }) }}
-                            disabled={disabled12}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">12x </InputAdornment >,
-                                endAdornment: <InputAdornment position="end">
+                        {/* Precio 3 Cuotas */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
+                            <TextField label='Precio Venta 3 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                                value={EstilizaString(formStock.PrecioVenta3Cuotas)}
 
-                                    <Checkbox checked={!disabled12}
-                                        onChange={e => { setdisabled12(!disabled12) }}
-                                        title={disabled12 ? 'Activar 12 Cuotas' : 'Deshabilitar'}
-                                    />
-                                </InputAdornment>
-                            }}
-                        />
-                        <TextField variant="outlined" value={'+' + ajustesPrecios.p12cuotas + '%'}
-                            inputProps={{ style: { width: '5rem', textAlign: 'baseline' } }}
-                            size='small'
-                            onChange={e => {
-                                let d = e.target.value.replace(/[^0-9.]/g, '')
-                                if (d < 0)
-                                    d = 0
-                                if (d > 500)
-                                    d = 500
-                                setAjustesPrecio({ ...ajustesPrecios, p12cuotas: d })
-                            }} />
-                    </Grid>
+                                onChange={e => { setFormStock({ ...formStock, PrecioVenta3Cuotas: e.target.value.replace(/\D/g, '') }) }}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">3x </InputAdornment >
+                                }}
+                            />
+                            <TextField variant="outlined" value={'+' + ajustesPrecios.p3cuotas + '%'}
+                                inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                                size='small'
+                                onChange={e => {
+                                    let d = e.target.value.replace(/[^0-9.]/g, '')
+                                    if (d < 0)
+                                        d = 0
+                                    if (d > 500)
+                                        d = 500
+                                    setAjustesPrecio({ ...ajustesPrecios, p3cuotas: d })
+                                }} />
+                        </Grid>
 
-                    {/* Precio 18 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
 
-                        <TextField label={disabled18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={disabled18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
-                            disabled={disabled18}
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta18Cuotas: e.target.value.replace(/\D/g, '') }) }}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">18x </InputAdornment >,
-                                endAdornment: <InputAdornment position="end">
 
-                                    <Checkbox checked={!disabled18}
-                                        onChange={e => { setdisabled18(!disabled18) }}
-                                        title={disabled18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
-                                    />
-                                </InputAdornment>
-                            }}
-                        />
-                        <TextField variant="outlined" value={'+' + ajustesPrecios.p18cuotas + '%'}
-                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
-                            size='small'
-                            onChange={e => {
-                                let d = e.target.value.replace(/[^0-9.]/g, '')
-                                if (d < 0)
-                                    d = 0
-                                if (d > 500)
-                                    d = 500
-                                setAjustesPrecio({ ...ajustesPrecios, p18cuotas: d })
-                            }} />
-                    </Grid>
+                        {/* Precio 6 Cuotas */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
+                            <TextField label='Precio Venta 6 Cuotas' variant="outlined" margin='normal' size="small" fullWidth
+                                value={EstilizaString(formStock.PrecioVenta6Cuotas)}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">6x </InputAdornment >
 
-                    {/* Precio 24 Cuotas */}
-                    <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
-                        <TextField label={disabled24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
-                            value={disabled24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
-                            disabled={disabled24}
-                            onChange={e => { setFormStock({ ...formStock, PrecioVenta24Cuotas: e.target.value.replace(/\D/g, '') }) }}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">24x </InputAdornment >,
-                                endAdornment: <InputAdornment position="end">
+                                }}
+                                onChange={e => { setFormStock({ ...formStock, PrecioVenta6Cuotas: e.target.value.replace(/\D/g, '') }) }} />
+                            <TextField variant="outlined" value={'+' + ajustesPrecios.p6cuotas + '%'}
+                                inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                                size='small'
+                                onChange={e => {
+                                    let d = e.target.value.replace(/[^0-9.]/g, '')
+                                    if (d < 0)
+                                        d = 0
+                                    if (d > 500)
+                                        d = 500
+                                    setAjustesPrecio({ ...ajustesPrecios, p6cuotas: d })
+                                }} />
+                        </Grid>
 
-                                    <Checkbox checked={!disabled24}
-                                        onChange={e => { setdisabled24(!disabled24) }}
-                                        title={disabled24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
-                                    /></InputAdornment>
-                            }}
-                        />
-                        <TextField variant="outlined" value={'+' + ajustesPrecios.p24cuotas + '%'}
-                            inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
-                            size='small'
-                            onChange={e => {
-                                let d = e.target.value.replace(/[^0-9.]/g, '')
-                                if (d < 0)
-                                    d = 0
-                                if (d > 500)
-                                    d = 500
-                                setAjustesPrecio({ ...ajustesPrecios, p24cuotas: d })
-                            }} />
+                        {/* Precio 12 Cuotas */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
+                            <TextField label={disabled12 ? 'Deshabilitado' : 'Precio Venta 12 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                                value={disabled12 ? '' : EstilizaString(formStock.PrecioVenta12Cuotas)}
+                                onChange={e => { setFormStock({ ...formStock, PrecioVenta12Cuotas: e.target.value.replace(/\D/g, '') }) }}
+                                disabled={disabled12}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">12x </InputAdornment >,
+                                    endAdornment: <InputAdornment position="end">
+
+                                        <Checkbox checked={!disabled12}
+                                            onChange={e => { setdisabled12(!disabled12) }}
+                                            title={disabled12 ? 'Activar 12 Cuotas' : 'Deshabilitar'}
+                                        />
+                                    </InputAdornment>
+                                }}
+                            />
+                            <TextField variant="outlined" value={'+' + ajustesPrecios.p12cuotas + '%'}
+                                inputProps={{ style: { width: '5rem', textAlign: 'baseline' } }}
+                                size='small'
+                                onChange={e => {
+                                    let d = e.target.value.replace(/[^0-9.]/g, '')
+                                    if (d < 0)
+                                        d = 0
+                                    if (d > 500)
+                                        d = 500
+                                    setAjustesPrecio({ ...ajustesPrecios, p12cuotas: d })
+                                }} />
+                        </Grid>
+
+                        {/* Precio 18 Cuotas */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
+
+                            <TextField label={disabled18 ? 'Deshabilitado' : 'Precio Venta 18 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                                value={disabled18 ? '' : EstilizaString(formStock.PrecioVenta18Cuotas)}
+                                disabled={disabled18}
+                                onChange={e => { setFormStock({ ...formStock, PrecioVenta18Cuotas: e.target.value.replace(/\D/g, '') }) }}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">18x </InputAdornment >,
+                                    endAdornment: <InputAdornment position="end">
+
+                                        <Checkbox checked={!disabled18}
+                                            onChange={e => { setdisabled18(!disabled18) }}
+                                            title={disabled18 ? 'Activar 18 Cuotas' : 'Deshabilitar'}
+                                        />
+                                    </InputAdornment>
+                                }}
+                            />
+                            <TextField variant="outlined" value={'+' + ajustesPrecios.p18cuotas + '%'}
+                                inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                                size='small'
+                                onChange={e => {
+                                    let d = e.target.value.replace(/[^0-9.]/g, '')
+                                    if (d < 0)
+                                        d = 0
+                                    if (d > 500)
+                                        d = 500
+                                    setAjustesPrecio({ ...ajustesPrecios, p18cuotas: d })
+                                }} />
+                        </Grid>
+
+                        {/* Precio 24 Cuotas */}
+                        <Grid item xs={12} md={6} lg={4} style={{ padding: '0 10px', display: 'flex', alignItems: 'baseline' }}>
+                            <TextField label={disabled24 ? 'Deshabilidato' : 'Precio Venta 24 Cuotas'} variant="outlined" margin='normal' size="small" fullWidth
+                                value={disabled24 ? '' : EstilizaString(formStock.PrecioVenta24Cuotas)}
+                                disabled={disabled24}
+                                onChange={e => { setFormStock({ ...formStock, PrecioVenta24Cuotas: e.target.value.replace(/\D/g, '') }) }}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">24x </InputAdornment >,
+                                    endAdornment: <InputAdornment position="end">
+
+                                        <Checkbox checked={!disabled24}
+                                            onChange={e => { setdisabled24(!disabled24) }}
+                                            title={disabled24 ? 'Activar 24 Cuotas' : 'Deshabilitar'}
+                                        /></InputAdornment>
+                                }}
+                            />
+                            <TextField variant="outlined" value={'+' + ajustesPrecios.p24cuotas + '%'}
+                                inputProps={{ style: { width: '5rem', textAlign: 'center' } }}
+                                size='small'
+                                onChange={e => {
+                                    let d = e.target.value.replace(/[^0-9.]/g, '')
+                                    if (d < 0)
+                                        d = 0
+                                    if (d > 500)
+                                        d = 500
+                                    setAjustesPrecio({ ...ajustesPrecios, p24cuotas: d })
+                                }} />
+                        </Grid>
                     </Grid>
                     {
                         //#endregion 

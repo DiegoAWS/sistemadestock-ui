@@ -17,7 +17,7 @@ import FormatListNumberedIcon from '@material-ui/icons/FormatListNumbered'
 
 import AssessmentIcon from '@material-ui/icons/Assessment'
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
-import ReceiptIcon from '@material-ui/icons/Receipt';
+
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
 
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
@@ -49,13 +49,8 @@ const SideBar = ({ history }) => {
             texto: 'Facturación'
         },
         {
-            ruta: '/cobrar',
-            icon: AssignmentTurnedInIcon,
-            texto: 'Cobrar'
-        },
-        {
             ruta: '/creditos',
-            icon: ReceiptIcon,
+            icon: AssignmentTurnedInIcon,
             texto: 'Créditos'
         },
         {
