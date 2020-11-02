@@ -64,25 +64,26 @@ function Datatable({ campos, sinDatos, SetSinDatos, data, handleDelete, handleEd
   const [filterData, setFilterData] = useState([])
 
 
+  const columns = useMemo(() => {
 
-  var columns =
-    [{
+    let initColumn = [{
       name: 'Acción',
       grow: 0,
       cell: row => <ActionsButtons data={row} />
     }
     ]
+    let newColumns = initColumn.concat(campos.map(item => ({
+      minWidth: '100px',
+      grow: ['Categoria', 'Producto', 'Proveedor', 'FechaCompra', 'name', 'Nombre', 'Email', 'Telefono', 'OtrosDatos'].includes(item[0]) ? 1 : 0,
 
-  columns = columns.concat(campos.map(item => ({
-    minWidth: '100px',
-    grow: ['Categoria', 'Producto', 'Proveedor', 'FechaCompra', 'name', 'Nombre', 'Email', 'Telefono', 'OtrosDatos'].includes(item[0]) ? 1 : 0,
-
-    name: item[1],
-    selector: item[0],
-    sortable: true
-  })))
+      name: item[1],
+      selector: item[0],
+      sortable: true
+    })))
 
 
+    return newColumns
+  }, [campos])
 
 
 

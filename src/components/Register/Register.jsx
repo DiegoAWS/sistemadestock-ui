@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { withRouter } from 'react-router-dom'
 
-import { FormControl, InputLabel, Select, Grid, Button, TextField } from '@material-ui/core'
+import {  Grid, Button, TextField } from '@material-ui/core'
 
 import logo from '../../assets/images/logo.png'
 import Popup from '../FormAdd/Popup'
@@ -13,17 +13,6 @@ import { register } from '../../API/apiFunctions'
 
 import loading from '../../assets/images/loading.gif'
 
-
-
-// const useStyles = makeStyles({
-
-//     loadingGif: {
-//         width: '15px',
-//         height: '15px',
-//         display: 'inline'
-//     }
-
-// });
 
 const Register = ( { history } ) =>
 {

@@ -1,14 +1,22 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 
 
-import { getRequest } from '../../API/apiFunctions'
+import { getRequest, postRequest } from '../../API/apiFunctions'
 import DataTable from 'react-data-table-component'
 
 import { Button, makeStyles, Grid, TextField } from "@material-ui/core"
 
-import loading from '../../assets/images/loading.gif'
+import loadingGif from '../../assets/images/loading.gif'
 
 import swal from '@sweetalert/with-react'
+
+import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
+
+import 'react-datepicker/dist/react-datepicker.css'
+
+import es from 'date-fns/locale/es'
+registerLocale('es', es)
+setDefaultLocale('es')
 
 
 
@@ -20,7 +28,7 @@ const formater = new Intl.NumberFormat("es-PY", {
 //#region JSS
 const useStyle = makeStyles(() => ({
     search: {
-
+        display: 'flex',
     },
 }))
 const Creditos = () => {
@@ -31,12 +39,9 @@ const Creditos = () => {
     const [dataCreditos, setDataCreditos] = useState([])
     const [searchText, setSearchText] = useState('')
     const [dataSearched, setDataSearched] = useState([])
+    const [fechaDeCobro, setFechaDeCobro] = useState(new Date())
+    const [loading, setLoading] = useState(false)
     //#endregion CONST's
-
-
-    //#region 
-
-    //#endregion
 
 
     //#region search!
@@ -72,47 +77,52 @@ const Creditos = () => {
 
     }
 
-    let cellStyle = {
-        // padding: '5px',
-
-    }
-
-    var columns =
-        [
-            {
-                name: <div >Pagar</div>,
-                style: cellStyle,
-                cell: row => <Button variant='contained' color='secondary' onClick={() => { pagarCuota(row) }} >Pagar</Button>
-            },
-            {
-                name: <div >Detalles</div>,
-                style: cellStyle,
-                cell: row => <Button variant='contained' color='primary' disabled onClick={() => { verDetalles(row) }} >Detalles</Button>
-            },
-            {
-                name: 'Producto',
-                style: cellStyle,
-                cell: row => <div>{row.Producto.Producto}</div>
-            },
-            {
-                name: 'Cliente',
-                style: cellStyle,
-                cell: row => <div>{row.Cliente.Nombre}</div>
-            },
-            {
-                name: 'Cuotas',
-                style: cellStyle,
-                cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
-            },
-            {
-                name: 'Próximo Pago',
-                style: cellStyle,
-                selector: 'ProximoPago',
-                cell: nextPayment
-            }
+    let cellStyle = React.useMemo(() => ({
+        padding: '5px',
+        justifyContent: 'center',
+        display: 'flex',
 
 
-        ]
+    }), [])
+
+    var columns = [
+        {
+            name: <div style={cellStyle}>Pagar</div>,
+            style: cellStyle,
+            cell: row => <Button variant='contained' color='secondary' onClick={() => { pagarCuota(row) }} >Pagar</Button>
+        },
+        {
+            name: <div style={cellStyle}>Detalles</div>,
+            style: cellStyle,
+            cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+        },
+        {
+            name: <div style={cellStyle}>Producto</div>,
+            style: cellStyle,
+            selector: 'Producto.Producto',
+            cell: row => <div>{row.Producto.Producto}</div>
+        },
+        {
+            name: <div style={cellStyle}> Cliente</div>,
+            style: cellStyle,
+            selector: 'Cliente.Nombre',
+            cell: row => <div>{row.Cliente.Nombre}</div>
+        },
+        {
+            name: <div style={cellStyle}>Cuotas</div>,
+            style: cellStyle,
+            cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
+        },
+        {
+            name: <div style={cellStyle}>Próximo Pago</div>,
+            style: cellStyle,
+            selector: 'CreditosPendientes[0].FechaPago',
+
+            cell: nextPayment
+        }
+
+
+    ]
 
 
 
@@ -132,7 +142,7 @@ const Creditos = () => {
         getRequest('/creditos')
             .then(request => {
                 SetSinDatos(true)
-
+                setLoading(false)
                 if (request && request.data) {
 
                     let dataVentas = request.data.Ventas
@@ -198,37 +208,44 @@ const Creditos = () => {
 
     //#endregion
 
+
     //#region PAGAR
     const pagarCuota = row => {
 
-        let cantidadTotalCuotas = row.Creditos.length
-        let cantidadCuotasPagas = 1 + row.CreditosPagos.length
-        let cuotaX = row.CreditosPendientes.sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)[0]
+        const cantidadTotalCuotas = row.Creditos.length
+        const cantidadCuotasPagas = 1 + row.CreditosPagos.length
+        const cuotaX = row.CreditosPendientes.sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)[0]
 
-        let cantidadAPagar = cuotaX.DebePagar
-        let fechaPago = new Date(cuotaX.FechaPago.replace(/-/g, '/'))
-
-        let fechaPagoFormated = fechaPago.getDate() + '/' + fechaPago.getMonth() + '/' + fechaPago.getFullYear()
-        console.log(cuotaX.FechaPago, fechaPago)
+        const cantidadAPagar = cuotaX.DebePagar
 
 
         if (cantidadAPagar && !isNaN(parseInt(cantidadAPagar))) {
-            let cantidadAPagarFormated = formater.format(cantidadAPagar)
+            const cantidadAPagarFormated = formater.format(cantidadAPagar)
 
-
+            const dataFecha = {
+                fechaRealPago: fechaDeCobro.getFullYear() + '-' + fechaDeCobro.getMonth() + '-' + fechaDeCobro.getDate()
+            }
             swal({
-                title: cantidadAPagarFormated + '\n\n' + fechaPagoFormated,
-                text: 'Pago de Cuota # ' + cantidadCuotasPagas + ' de ' + cantidadTotalCuotas,
+                title: cantidadAPagarFormated,
+                text: '\n\nPago de Cuota # ' + cantidadCuotasPagas + ' de ' + cantidadTotalCuotas,
                 icon: "warning",
                 button: "PAGAR",
             })
                 .then(() => {
-                    console.log(row)
+                    setLoading(true)
+                    postRequest('/cobrarcuota/' + cuotaX.id, dataFecha)
+                        .then(resp => {
+                            console.log(resp)
+                            cargaData()
+                        })
+
                 })
-            //SEND PAGA CUOTAS
+
         }
     }
     //#endregion
+
+
     //#region Metodos Extra
     const verDetalles = row => {
         console.log(row)
@@ -240,6 +257,7 @@ const Creditos = () => {
 
     //#endregion
 
+
     //#region Custom Table styles
 
     const customStyles = {
@@ -250,8 +268,8 @@ const Creditos = () => {
         },
         headCells: {
             style: {
-                paddingLeft: '8px', // override the cell padding for head cells
-                paddingRight: '8px',
+                display: 'flex',
+                justifyContent: 'center'
             },
         },
         cells: {
@@ -263,35 +281,51 @@ const Creditos = () => {
     };
     //#endregion
 
+
+
     //#region  Return ----------------------------------
 
 
-
+    const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => (<Button ref={ref} fullWidth variant="contained" color='primary' onClick={onClick} >{value}</Button>))
 
     return (
         <>
             <Grid container spacing={1} >
-                <Grid item xs={12} style={{ textAlign: 'center', backgroundColor: 'black', color: 'gold' }}> <h1>En Construccion...</h1></Grid>
-                <Grid item xs={12} container className={classes.search}>
-                    <TextField variant='outlined' label='Nombre Cédula o RUC' fullWidth
-                        value={searchText}
-                        onChange={search}
-                    />
+                <Grid item xs={12} container justify='space-between' className={classes.search}>
+                    <Grid item xs={12} sm={4} md={3} lg={2}>
+
+                        <DatePicker
+                            selected={fechaDeCobro}
+                            onChange={date => { setFechaDeCobro(date) }}
+                            showMonthDropdown
+                            dateFormat="dd/MMMM/yyyy"
+                            todayButton="Hoy"
+                            customInput={<CustomDateInput />}
+                        />
+                    </Grid>
+
+                    <Grid item xs={12} sm={8} md={6} lg={8}>
+                        <TextField variant='outlined' label='Nombre Cédula o RUC'
+                            value={searchText} fullWidth
+                            onChange={search}
+                        />
+
+                    </Grid>
                 </Grid>
             </Grid>
             <DataTable
-                columns={useMemo(() => columns, [columns])}
+                columns={columns}
                 data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
-                keyField={'id'}
-                defaultSortField={'ProximoPago'}
-                defaultSortAsc
                 customStyles={customStyles}
+                defaultSortField='CreditosPendientes[0].FechaPago'
+                defaultSortAsc={true}
+
                 pagination
                 highlightOnHover
                 dense
                 noHeader
                 responsive
-                noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loading} width='20px' alt='' />}
+                noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loadingGif} width='20px' alt='' />}
                 paginationComponentOptions={{
                     rowsPerPageText: 'Filas por Pagina:',
                     rangeSeparatorText: 'de'
@@ -301,6 +335,18 @@ const Creditos = () => {
             />
 
 
+            {
+                //#region Loading 
+            }
+            <div style={{
+                position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw', zIndex: '100',
+                backgroundColor: 'rgba(0,0,0,0.6)', display: loading ? 'flex' : 'none',
+                justifyContent: 'center', alignItems: 'center'
+            }}>
+                <img src={loadingGif} alt="" height='30px' /></div>
+            {
+                //#endregion
+            }
 
 
 
