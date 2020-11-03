@@ -15,6 +15,8 @@ import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 
 import es from 'date-fns/locale/es'
+import format from 'date-fns/format'
+
 registerLocale('es', es)
 setDefaultLocale('es')
 
@@ -30,9 +32,17 @@ const useStyle = makeStyles(() => ({
     search: {
         display: 'flex',
     },
+    boxText: {
+        border: '1px solid black',
+        borderRadius: '10px',
+        pading: '10px',
+        margin: '10px'
+    }
 }))
 const Creditos = () => {
     const classes = useStyle()
+
+
     //#region  STATE ----------------------------------
 
     const [sinDatos, SetSinDatos] = useState(false)
@@ -77,7 +87,7 @@ const Creditos = () => {
 
     }
 
-    let cellStyle = React.useMemo(() => ({
+    const cellStyle = React.useMemo(() => ({
         padding: '5px',
         justifyContent: 'center',
         display: 'flex',
@@ -85,16 +95,24 @@ const Creditos = () => {
 
     }), [])
 
-    var columns = [
+
+    const ButtonsAction = ({ row }) => (
+        <>
+            <Button variant='contained'
+                disabled={row.CreditosPendientes.length === 0}
+                color='secondary' onClick={() => { pagarCuota(row) }} style={{ marginRight: '5px' }}>Pagar</Button>
+
+            <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+        </>
+    )
+
+
+    const columns = [
         {
-            name: <div style={cellStyle}>Pagar</div>,
+            name: <div style={cellStyle}>Acciones</div>,
             style: cellStyle,
-            cell: row => <Button variant='contained' color='secondary' onClick={() => { pagarCuota(row) }} >Pagar</Button>
-        },
-        {
-            name: <div style={cellStyle}>Detalles</div>,
-            style: cellStyle,
-            cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+            cell: row => <ButtonsAction row={row} />
+
         },
         {
             name: <div style={cellStyle}>Producto</div>,
@@ -213,42 +231,92 @@ const Creditos = () => {
     const pagarCuota = row => {
 
         const cantidadTotalCuotas = row.Creditos.length
-        const cantidadCuotasPagas = 1 + row.CreditosPagos.length
+        const nextCantidadCuotasPagas = 1 + row.CreditosPagos.length
         const cuotaX = row.CreditosPendientes.sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)[0]
 
         const cantidadAPagar = cuotaX.DebePagar
-
-
-        if (cantidadAPagar && !isNaN(parseInt(cantidadAPagar))) {
-            const cantidadAPagarFormated = formater.format(cantidadAPagar)
-
-            const dataFecha = {
-                fechaRealPago: fechaDeCobro.getFullYear() + '-' + fechaDeCobro.getMonth() + '-' + fechaDeCobro.getDate()
-            }
-            swal({
-                title: cantidadAPagarFormated,
-                text: '\n\nPago de Cuota # ' + cantidadCuotasPagas + ' de ' + cantidadTotalCuotas,
-                icon: "warning",
-                button: "PAGAR",
-            })
-                .then(() => {
-                    setLoading(true)
-                    postRequest('/cobrarcuota/' + cuotaX.id, dataFecha)
-                        .then(resp => {
-                            console.log(resp)
-                            cargaData()
-                        })
-
+        const dataFecha = {
+            fechaRealPago: fechaDeCobro.getFullYear() + '-' + fechaDeCobro.getMonth() + '-' + fechaDeCobro.getDate()
+        }
+        const efectuaPago = () => {
+            swal.close()
+            setLoading(true)
+            postRequest('/cobrarcuota/' + cuotaX.id, dataFecha)
+                .then(resp => {
+                    console.log(resp)
+                    cargaData()
                 })
 
         }
+
+
+        const cantidadAPagarFormated = formater.format(cantidadAPagar)
+
+
+        swal(
+            <div>
+                <div style={{ fontSize: '2rem', margin: '10px' }}>PAGO DE CUOTAS</div>
+
+                <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px' }}>{'Fecha: ' + format(fechaDeCobro, "yyyy-MM-dd")}</div>
+
+                <div>Pagando cuota</div>
+                <div>
+                    {nextCantidadCuotasPagas + ' de ' + cantidadTotalCuotas}
+                </div>
+                <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px', fontSize: '1.5rem', margin: '10px 0px' }}>
+                    {cantidadAPagarFormated}
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Button variant='contained' color='primary' onClick={() => { swal.close() }} >Cancelar</Button>
+                    <Button variant='contained' color='secondary' onClick={efectuaPago}>Pagar</Button>
+                </div>
+            </div>, {
+            closeOnClickOutside: false,
+            closeOnEsc: true,
+            buttons: {
+                confirm: false,
+            },
+        }
+        )
+
+
+
     }
     //#endregion
 
 
-    //#region Metodos Extra
+    //#region DETALLES
     const verDetalles = row => {
+
         console.log(row)
+
+        swal(
+            <div>
+                <div style={{ fontSize: '2rem', margin: '10px', textAlign: 'center' }}>Detalles</div>
+
+                <div className={classes.boxText}>{'Cliente: ' + row.Cliente.Nombre}</div>
+                <div className={classes.boxText}>{'Producto: ' + row.Producto.Producto}</div>
+                <div className={classes.boxText}>{'Comprado el: ' + row.Producto.Producto}</div>
+                <br />
+                <div className={classes.boxText}>{'Cuotas pagadas: ' + row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
+                <hr />
+                {row.CreditosPagos.map(item => (
+
+                    <div key={item.id} style={{ display: 'flex', justifyContent: 'space-between' }}>
+
+                        <div style={{ backgroundColor: item.EstadoCredito === 'A' ? 'green' : (item.EstadoCredito === 'B' ? 'yellow' : 'red') }}>{item.EstadoCredito}</div>
+                        <div> {item.FechaPago}</div>
+                        <div> {item.DebePagar}</div>
+
+                    </div>
+
+                ))}
+            </div>, {
+            closeOnClickOutside: true,
+            closeOnEsc: true,
+            buttons: { confirm: 'Ok', },
+        }
+        )
     }
 
 
@@ -290,6 +358,11 @@ const Creditos = () => {
 
     return (
         <>
+
+            {
+                //#region Search
+            }
+
             <Grid container spacing={1} >
                 <Grid item xs={12} container justify='space-between' className={classes.search}>
                     <Grid item xs={12} sm={4} md={3} lg={2}>
@@ -302,6 +375,7 @@ const Creditos = () => {
                             todayButton="Hoy"
                             customInput={<CustomDateInput />}
                         />
+                        <div style={{ textAlign: 'center' }}>Fecha de Cobro</div>
                     </Grid>
 
                     <Grid item xs={12} sm={8} md={6} lg={8}>
@@ -313,6 +387,13 @@ const Creditos = () => {
                     </Grid>
                 </Grid>
             </Grid>
+            {
+                //#endregion
+            }
+            {
+                //#region RDT
+            }
+
             <DataTable
                 columns={columns}
                 data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
@@ -333,6 +414,9 @@ const Creditos = () => {
                 paginationPerPage={10}
                 paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
             />
+            {
+                //#endregion
+            }
 
 
             {

@@ -547,7 +547,9 @@ const FormAddStock = (
                                 onChange={e => {
                                     let d = parseInt(e.target.value.replace(/\D/g, ''))
 
-                                    if (d < formStock.CostoUnitario)
+                                    if (isNaN(d))
+                                        AutoFillMoney(0)
+                                    else if (d < formStock.CostoUnitario)
                                         AutoFillMoney(d)
                                     else
                                         AutoFillMoney(formStock.CostoUnitario)

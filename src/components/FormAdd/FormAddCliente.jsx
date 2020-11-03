@@ -21,7 +21,7 @@ const FormAddCliente = ({
 
     openPopup, setOpenPopup,//Del PopUP
     recolocaEditItem,
-    cargaData
+    cargaData, showLoading = () => { }
 }) => {
 
 
@@ -29,6 +29,7 @@ const FormAddCliente = ({
 
     const saveData = () => {
         setOpenPopup(false)
+        showLoading()
 
         var uri = '/clientes'
 
@@ -74,6 +75,7 @@ const FormAddCliente = ({
                         onChange={e => { SetFormData({ ...formData, Nombre: e.target.value }) }} />
 
                 </Grid>
+
                 <Grid item xs={12} sm={6} lg={4}>
 
                     <TextField label={'Cédula de Identidad o Ruc'} variant="outlined" margin='normal' size="small"
@@ -81,6 +83,7 @@ const FormAddCliente = ({
                         onChange={e => { SetFormData({ ...formData, Cedula: e.target.value }) }} />
 
                 </Grid>
+
                 <Grid item xs={12} >
 
                     <TextField label={'Direccion'} variant="outlined" margin='normal' size="small"
@@ -88,18 +91,20 @@ const FormAddCliente = ({
                         onChange={e => { SetFormData({ ...formData, Direccion: e.target.value }) }} />
 
                 </Grid>
-                <Grid item xs={12} sm={6} lg={4}>
 
-                    <TextField label={'Ciudad'} variant="outlined" margin='normal' size="small"
-                        value={formData.Ciudad || ''} fullWidth
-                        onChange={e => { SetFormData({ ...formData, Ciudad: e.target.value }) }} />
-
-                </Grid>
                 <Grid item xs={12} sm={6} lg={4}>
 
                     <TextField label={'Barrio'} variant="outlined" margin='normal' size="small"
                         value={formData.Barrio || ''} fullWidth
                         onChange={e => { SetFormData({ ...formData, Barrio: e.target.value }) }} />
+
+                </Grid>
+
+                <Grid item xs={12} sm={6} lg={4}>
+
+                    <TextField label={'Ciudad'} variant="outlined" margin='normal' size="small"
+                        value={formData.Ciudad || ''} fullWidth
+                        onChange={e => { SetFormData({ ...formData, Ciudad: e.target.value }) }} />
 
                 </Grid>
 

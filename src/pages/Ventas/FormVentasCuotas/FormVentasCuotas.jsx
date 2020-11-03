@@ -19,7 +19,7 @@ import RadioDiaSemana from './DiasSelect/RadioDiaSemana'
 import SelectDiaDelMes from './DiasSelect/SelectDiaDelMes'
 import SelectsDiaQuincena from './DiasSelect/SelectsDiaQuincena'
 import RadioWeekEnd from './DiasSelect/RadioWeekEnd'
-
+import ButtonCuota from './ButtonCuota'
 
 registerLocale('es', es)
 setDefaultLocale('es')
@@ -41,13 +41,6 @@ const useStyle = makeStyles((theme) => ({
         fontSize: '0.9rem',
         textAlign: 'center'
     },
-    preciosCuotas: {
-        margin: '5px',
-        padding: '5px',
-        borderRadius: '10px',
-        backgroundImage: 'linear-gradient(40deg, #9f93ff 0%, #b5d8ff 74%);',
-        textTransform: 'none'
-    },
     entrada: {
         margin: '5px',
         padding: '5px',
@@ -61,8 +54,6 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
     const classes = useStyle()
 
 
-
-
     //#region STATE
 
 
@@ -74,6 +65,7 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
     const [diaPrimerPago, setDiaPrimerPago] = useState(new Date())
     const [listaDeDiasDePago, setListaDeDiasDePago] = useState([])
     //#endregion
+
 
     //#region useEffect
 
@@ -164,8 +156,10 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
 
     //#endregion
 
-    const PrimerPago = React.forwardRef(({ onClick }, ref) => <Button ref={ref} fullWidth color='primary' variant='contained' onClick={onClick}>{getDia()}</Button>)
 
+    //#region return 
+
+    const PrimerPago = React.forwardRef(({ onClick }, ref) => <Button ref={ref} fullWidth color='primary' variant='contained' onClick={onClick}>{getDia()}</Button>)
 
 
     const getDia = () => {
@@ -176,6 +170,12 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
             return 'INICIO HOY'
         else
             return 'INICIO ' + d.getDate() + '/' + (d.getMonth() + 1) + '/' + d.getFullYear()
+    }
+
+
+    const clickButtonCuota = (cuotas) => {
+
+        setCuotas(cuotas)
     }
 
     return (
@@ -189,7 +189,7 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
                     <div style={{
                         textAlign: 'center', backgroundColor: '#bfffff', margin: '10px 0px 0px',
                         border: '1px solid black', borderBottom: 'none', borderRadius: '10px 10px 0px 0px'
-                    }}>Seleccione las cuotas CUOTAS</div>
+                    }}>Seleccione las cuotas</div>
 
                     <div style={{
                         display: 'flex', justifyContent: 'space-evenly',
@@ -198,11 +198,13 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
                     }}>
 
                         {productoSeleccionado.EntradaInicial && <div className={classes.entrada}>{'ENTRADA: ' + formater.format(productoSeleccionado.EntradaInicial)}</div>}
-                        {productoSeleccionado.PrecioVenta3Cuotas && <Button onClick={() => { setCuotas(3) }} className={classes.preciosCuotas} style={{ border: cuotas === 3 ? '2px solid red' : '' }}>3 x<br />{formater.format(productoSeleccionado.PrecioVenta3Cuotas)}</Button>}
-                        {productoSeleccionado.PrecioVenta6Cuotas && <Button onClick={() => { setCuotas(6) }} className={classes.preciosCuotas} style={{ border: cuotas === 6 ? '2px solid red' : '' }}>6 x<br />{formater.format(productoSeleccionado.PrecioVenta6Cuotas)}</Button>}
-                        {productoSeleccionado.PrecioVenta12Cuotas && <Button onClick={() => { setCuotas(12) }} className={classes.preciosCuotas} style={{ border: cuotas === 12 ? '2px solid red' : '' }}>12 x<br />{formater.format(productoSeleccionado.PrecioVenta12Cuotas)}</Button>}
-                        {productoSeleccionado.PrecioVenta18Cuotas && <Button onClick={() => { setCuotas(18) }} className={classes.preciosCuotas} style={{ border: cuotas === 18 ? '2px solid red' : '' }}>18 x<br />{formater.format(productoSeleccionado.PrecioVenta18Cuotas)}</Button>}
-                        {productoSeleccionado.PrecioVenta24Cuotas && <Button onClick={() => { setCuotas(24) }} className={classes.preciosCuotas} style={{ border: cuotas === 24 ? '2px solid red' : '' }}>24 x<br />{formater.format(productoSeleccionado.PrecioVenta24Cuotas)}</Button>}
+
+                        {productoSeleccionado.PrecioVenta3Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={3} producto={productoSeleccionado} click={clickButtonCuota} />}
+                        {productoSeleccionado.PrecioVenta6Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={6} producto={productoSeleccionado} click={clickButtonCuota} />}
+                        {productoSeleccionado.PrecioVenta12Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={12} producto={productoSeleccionado} click={clickButtonCuota} />}
+                        {productoSeleccionado.PrecioVenta18Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={18} producto={productoSeleccionado} click={clickButtonCuota} />}
+                        {productoSeleccionado.PrecioVenta24Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={24} producto={productoSeleccionado} click={clickButtonCuota} />}
+
 
                     </div>
                 </Grid>
@@ -345,6 +347,8 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
                 </Grid>
             </Grid>
         </div >)
+
+    //#endregion
 
 }
 

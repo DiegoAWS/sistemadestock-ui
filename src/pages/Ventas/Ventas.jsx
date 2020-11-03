@@ -37,6 +37,7 @@ import loadingGif from '../../assets/images/loading.gif'
 
 import shortid from 'shortid'
 
+import ButtonCuota from './FormVentasCuotas/ButtonCuota'
 
 
 const formater = new Intl.NumberFormat("es-PY", {
@@ -114,12 +115,6 @@ const useStyle = makeStyles((theme) => ({
         display: 'flex',
         justifyContent: 'space-around',
         fontWeight: 'bold'
-    },
-    preciosCuotas: {
-        margin: '5px',
-        padding: '5px',
-        borderRadius: '10px',
-        backgroundImage: 'linear-gradient(40deg, #9f93ff 0%, #b5d8ff 74%);',
     },
     entrada: {
         margin: '5px',
@@ -217,8 +212,6 @@ const Ventas = (props) => {
     //#endregion campos Cliente
 
 
-
-
     //#region  State ----------------------------------
 
     const [productoSeleccionado, setProductoSeleccionado] = useState(null)
@@ -266,6 +259,8 @@ const Ventas = (props) => {
 
     const [cuotas, setCuotas] = useState(3)
 
+    const [loading, setLoading] = useState(false)
+
     //#endregion State
 
     const refFijarValue = useRef(false)
@@ -303,11 +298,17 @@ const Ventas = (props) => {
         }
     }, [carritoList])
 
+    useEffect(() => {
+
+        if (!productoSeleccionado)
+            setFormDetails(false)
+    }, [productoSeleccionado])
 
     //#endregion
 
     //#region Carga Data
     const cargaData = () => {
+        setLoading(false)
 
         getRequest('/ventas')
             .then(resp => {
@@ -551,9 +552,9 @@ const Ventas = (props) => {
                                     console.log(response.data.Ventas)//IMPRIMIR COMPROBANTES
 
 
-                                     ImprimirComprobante()
+                                    ImprimirComprobante()
 
-                                     ImprimirGarantia(clienteNombre)
+                                    ImprimirGarantia(clienteNombre)
                                     setCarritoList([])
                                     setPagando(false)
                                     setPagado('')
@@ -789,6 +790,13 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
     }
     //#endregion
 
+    //#region return 
+
+    const clickButtonCuota = (cuotas) => {
+        setFormDetails(true)
+        setVentaCuotas(true)
+        setCuotas(cuotas)
+    }
 
     return <Grid container style={{ width: '100%' }} >
 
@@ -854,6 +862,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                     <IconButton
                         onClick={e => {
                             setClienteSeleccionado(null)
+                            setFormDataAddCliente(initFormAddCliente)
                             setOpenFormAddCliente(true)
                         }}
                         title="Añadir Cliente"
@@ -1151,11 +1160,13 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                             }}>
 
                                                 {productoSeleccionado.EntradaInicial && <div className={classes.entrada}>{'ENTRADA: ' + formater.format(productoSeleccionado.EntradaInicial)}</div>}
-                                                {productoSeleccionado.PrecioVenta3Cuotas && <Button onClick={() => { setCuotas(3); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 3 ? '2px solid red' : '' }}>3 x<br />{formater.format(productoSeleccionado.PrecioVenta3Cuotas)}</Button>}
-                                                {productoSeleccionado.PrecioVenta6Cuotas && <Button onClick={() => { setCuotas(6); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 6 ? '2px solid red' : '' }}>6 x<br />{formater.format(productoSeleccionado.PrecioVenta6Cuotas)}</Button>}
-                                                {productoSeleccionado.PrecioVenta12Cuotas && <Button onClick={() => { setCuotas(12); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 12 ? '2px solid red' : '' }}>12 x<br />{formater.format(productoSeleccionado.PrecioVenta12Cuotas)}</Button>}
-                                                {productoSeleccionado.PrecioVenta18Cuotas && <Button onClick={() => { setCuotas(18); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 18 ? '2px solid red' : '' }}>18 x<br />{formater.format(productoSeleccionado.PrecioVenta18Cuotas)}</Button>}
-                                                {productoSeleccionado.PrecioVenta24Cuotas && <Button onClick={() => { setCuotas(24); setFormDetails(true); setVentaCuotas(true) }} className={classes.preciosCuotas} style={{ border: cuotas === 24 ? '2px solid red' : '' }}>24 x<br />{formater.format(productoSeleccionado.PrecioVenta24Cuotas)}</Button>}
+
+                                                {productoSeleccionado.PrecioVenta3Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={3} producto={productoSeleccionado} click={clickButtonCuota} />}
+                                                {productoSeleccionado.PrecioVenta6Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={6} producto={productoSeleccionado} click={clickButtonCuota} />}
+                                                {productoSeleccionado.PrecioVenta12Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={12} producto={productoSeleccionado} click={clickButtonCuota} />}
+                                                {productoSeleccionado.PrecioVenta18Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={18} producto={productoSeleccionado} click={clickButtonCuota} />}
+                                                {productoSeleccionado.PrecioVenta24Cuotas && <ButtonCuota cuotas={cuotas} cuotasSel={24} producto={productoSeleccionado} click={clickButtonCuota} />}
+
 
                                             </div>
                                         </Grid>
@@ -1284,6 +1295,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
             openPopup={openFormAddCliente}
             setOpenPopup={setOpenFormAddCliente}
 
+            showLoading={() => { setLoading(true) }}
             formData={formDataAddClient}
             SetFormData={setFormDataAddCliente}
 
@@ -1316,6 +1328,21 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
             //#endregion
         }
 
+
+        {
+            //#region Loading 
+        }
+        <div style={{
+            position: 'fixed', top: '0', left: '0', height: '100vh', width: '100vw', zIndex: '100',
+            backgroundColor: 'rgba(0,0,0,0.6)', display: loading ? 'flex' : 'none',
+            justifyContent: 'center', alignItems: 'center'
+        }}>
+            <img src={loadingGif} alt="" height='30px' /></div>
+        {
+            //#endregion
+        }
+
     </Grid >
+    //#endregion
 }
 export default Ventas
