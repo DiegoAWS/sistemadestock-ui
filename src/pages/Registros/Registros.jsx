@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 
-import { getRequest, postRequest } from '../../API/apiFunctions'
+import { postRequest } from '../../API/apiFunctions'
 import DataTable from 'react-data-table-component'
 
 import { Button, makeStyles, Grid, TextField } from "@material-ui/core"
@@ -39,7 +39,7 @@ const useStyle = makeStyles(() => ({
         margin: '10px'
     }
 }))
-const Creditos = () => {
+const Registros = ({ view }) => {
     const classes = useStyle()
 
 
@@ -73,8 +73,45 @@ const Creditos = () => {
     }
     //#endregion
 
+    const cellStyle = {
+        padding: '5px',
+        justifyContent: 'center',
+        display: 'flex',
+        textAlign: 'justify'
+    }
 
-    //#region Columns
+    //#region Ventas cols
+
+    const ventasCols = [
+
+        {
+            name: <div style={cellStyle}>Fecha de Venta</div>,
+            style: cellStyle,
+            selector: 'Producto.Producto',
+            cell: row => <div>{row.Venta.fechaVenta}</div>
+        },
+        {
+            name: <div style={cellStyle}>Producto</div>,
+            style: cellStyle,
+            selector: 'Producto.Producto',
+            cell: row => <div>{row.Producto.Producto}</div>
+        },
+        {
+            name: <div style={cellStyle}> Cliente</div>,
+            style: cellStyle,
+            selector: 'Cliente.Nombre',
+            cell: row => <div>{row.Cliente.Nombre}</div>
+        },
+        {
+            name: <div style={cellStyle}>Cuotas</div>,
+            style: cellStyle,
+            cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
+        }
+
+    ]
+    //#endregion
+
+    //#region Creditos cols
 
     const nextPayment = (row) => {
 
@@ -87,19 +124,12 @@ const Creditos = () => {
 
     }
 
-    const cellStyle = React.useMemo(() => ({
-        padding: '5px',
-        justifyContent: 'center',
-        display: 'flex',
 
-
-    }), [])
 
 
     const ButtonsAction = ({ row }) => (
         <>
-            <Button variant='contained'
-                disabled={row.CreditosPendientes.length === 0}
+            <Button variant='contained' disabled={row.CreditosPendientes.length === 0}
                 color='secondary' onClick={() => { pagarCuota(row) }} style={{ marginRight: '5px' }}>Pagar</Button>
 
             <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
@@ -107,7 +137,8 @@ const Creditos = () => {
     )
 
 
-    const columns = [
+
+    const columnsCreditos = [
         {
             name: <div style={cellStyle}>Acciones</div>,
             style: cellStyle,
@@ -142,9 +173,32 @@ const Creditos = () => {
 
     ]
 
+    //#endregion
+
+    //#region columns
+
+    const columns = () => {
+        const garantia = 'GARANTIA'
+        const ventas = 'VENTAS'
+        const creditos = 'CREDITOS'
+
+        switch (view) {
+
+            case ventas:
+                return ventasCols
+
+            case garantia:
+                return []
 
 
+            case creditos:
+                return columnsCreditos
 
+            default:
+                return null
+        }
+
+    }
 
     //#endregion
 
@@ -157,63 +211,18 @@ const Creditos = () => {
 
     const cargaData = () => {
 
-        getRequest('/creditos')
+
+        let fechasBounds = {
+            fechaInicio: '2020-10-31',
+            fechaFinal: '2020-11-5'
+        }
+        postRequest('/ventarecords', fechasBounds)
             .then(request => {
                 SetSinDatos(true)
                 setLoading(false)
                 if (request && request.data) {
-
-                    let dataVentas = request.data.Ventas
-                    let dataClientes = request.data.Clientes
-                    let dataStock = request.data.Stock
-                    let dataCreditos = request.data.Creditos
-
-
-                    //#region Data 
-
-                    let Data = dataVentas.map(item => {
-
-
-                        let itemCliente = dataClientes.find(ite => ite.id.toString() === item.Cliente_id.toString())
-                        let itemProducto = dataStock.find(ite => ite.id.toString() === item.Stock_id.toString())
-
-                        let fullDataItem = {
-                            Venta: item,
-                            Cliente: itemCliente,
-                            Producto: itemProducto,
-                        }
-
-                        if (item.Pago === "ventaCuotas") {
-
-                            let itemCreditos = dataCreditos.filter(ite => ite.VentaNewId === item.newId).sort((a, b) => a.FechaPago > b.FechaPago ? 1 : -1)
-                            let itemCreditosPagados = itemCreditos.filter(ite => ite.FechaRealDePago.length > 7)
-                            let itemCreditosPendientes = itemCreditos.filter(ite => ite.FechaRealDePago.length === 0)
-
-                            fullDataItem = {
-                                ...fullDataItem,
-                                Creditos: itemCreditos,
-                                CreditosPagos: itemCreditosPagados,
-                                CreditosPendientes: itemCreditosPendientes
-                            }
-
-                        } else {
-
-                            fullDataItem = {
-                                ...fullDataItem,
-                                Creditos: [],
-                                CreditosPagos: [],
-                                CreditosPendientes: []
-                            }
-                        }
-
-
-                        return fullDataItem
-
-                    })
-
-                    //#endregion
-
-                    setDataCreditos(Data)
+                    console.log(request.data)
+                    setDataCreditos(request.data)
 
                 }
                 if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
@@ -359,6 +368,8 @@ const Creditos = () => {
     return (
         <>
 
+            <div style={{ textAlign: 'center', fontSize: '2rem' }}>{view}</div>
+
             {
                 //#region Search
             }
@@ -393,27 +404,27 @@ const Creditos = () => {
             {
                 //#region RDT
             }
-
-            <DataTable
-                columns={columns}
-                data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
-                customStyles={customStyles}
-                defaultSortField='CreditosPendientes[0].FechaPago'
-                defaultSortAsc={true}
-
-                pagination
-                highlightOnHover
-                dense
-                noHeader
-                responsive
-                noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loadingGif} width='20px' alt='' />}
-                paginationComponentOptions={{
-                    rowsPerPageText: 'Filas por Pagina:',
-                    rangeSeparatorText: 'de'
-                }}
-                paginationPerPage={10}
-                paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
-            />
+            <div style={{ marginTop: '10px' }}>
+                <DataTable
+                    columns={columns()}
+                    data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
+                    customStyles={customStyles}
+                    defaultSortField='CreditosPendientes[0].FechaPago'
+                    defaultSortAsc={true}
+                    pagination
+                    highlightOnHover
+                    dense
+                    noHeader
+                    responsive
+                    noDataComponent={sinDatos ? <div><hr /><h3>Sin Resultados que mostrar</h3><hr /></div> : <img src={loadingGif} width='20px' alt='' />}
+                    paginationComponentOptions={{
+                        rowsPerPageText: 'Filas por Pagina:',
+                        rangeSeparatorText: 'de'
+                    }}
+                    paginationPerPage={10}
+                    paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
+                />
+            </div>
             {
                 //#endregion
             }
@@ -442,4 +453,4 @@ const Creditos = () => {
     //#endregion Others Functions
 }
 
-export default Creditos
+export default Registros

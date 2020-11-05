@@ -213,9 +213,15 @@ const FormVentasCuotas = ({ productoSeleccionado, addCartCUOTAS, cuotas, setCuot
                 }
 
                 <Grid container item xs={12} justify='space-between'>
-                    <Grid item xs={12} style={{ textAlign: 'center' }}> Detalles</Grid>
+
 
                     <Grid container item xs={12} spacing={3} justify='space-between' style={{ margin: '5px', border: '1px solid black', borderRadius: '10px' }}>
+                        <Grid item xs={12} style={{
+                            textAlign: 'center', backgroundColor: '#bfffff', borderRadius: '10px 10px 0px 0px', padding: '0px'
+                        }}>
+                            Detalles
+                            </Grid>
+
                         {
                             //#region 1 Fila
                         }

@@ -1025,15 +1025,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                     {
                         productoSeleccionado && <>
 
-                            <h2 className={classes.condicionDePago}>
-                                {formDetails && <IconButton color='secondary' className={classes.iconBack}
-                                    onClick={() => { setFormDetails(false) }} >
-                                    <ArrowBackIcon />  </IconButton>
-                                }
 
-                                Condición de Pago
-
-                                </h2>
 
                             {formDetails ?
                                 <>
@@ -1113,7 +1105,13 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                 </>
 
                                 : <Grid item container style={{ justifyContent: 'space-around' }}>
+                                    <h2 className={classes.condicionDePago}>
+                                        {formDetails && <IconButton color='secondary' className={classes.iconBack}
+                                            onClick={() => { setFormDetails(false) }} >
+                                            <ArrowBackIcon />  </IconButton>
+                                        }
 
+                                Condición de Pago   </h2>
                                     {/* Venta Mayorista */}
                                     {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
 
@@ -1149,7 +1147,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                     {clienteSeleccionado &&
                                         <Grid item xs={12}  >
                                             <div style={{
-                                                textAlign: 'center', backgroundColor: '#bfffff', margin: '10px 0px 0px',
+                                                textAlign: 'center', backgroundColor: '#bfffff', margin: '10px 0px 0px', fontWeight: '600',
                                                 border: '1px solid black', borderBottom: 'none', borderRadius: '10px 10px 0px 0px'
                                             }}>Precios por CUOTAS</div>
 
