@@ -124,7 +124,7 @@ const Registros = ({ view }) => {
             name: <div style={cellStyle}> Cliente</div>,
             style: cellStyle,
             selector: 'Cliente.Nombre',
-            cell: row => <div>{row.Cliente.Nombre}</div>
+            cell: row => <div>{row.Cliente ? row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
         },
         {
             name: <div style={cellStyle}>Cuotas</div>,
@@ -180,7 +180,7 @@ const Registros = ({ view }) => {
             name: <div style={cellStyle}> Cliente</div>,
             style: cellStyle,
             selector: 'Cliente.Nombre',
-            cell: row => <div>{row.Cliente.Nombre}</div>
+            cell: row => <div>{row.Cliente ? row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
         },
         {
             name: <div style={cellStyle}>Cuotas</div>,
@@ -255,7 +255,11 @@ const Registros = ({ view }) => {
                 setLoading(false)
                 if (request && request.data) {
 
-                    setDataCreditos(request.data)
+
+                    if (view === creditos)
+                        setDataCreditos(request.data.filter(item => item.Creditos.length > 0))
+                    else
+                        setDataCreditos(request.data)
                 }
                 if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
                     SetSinDatos(true)
@@ -409,7 +413,7 @@ CONSERVELO
         swal(
             <div>
                 <div style={{ fontSize: '2rem', margin: '10px', textAlign: 'center' }}>Detalles</div>
-                <div className={classes.boxText}>{'Cliente: ' + row.Cliente.Nombre}</div>
+                <div className={classes.boxText}>{row.Cliente ? 'Cliente: ' + row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
 
 
                 <div className={classes.boxText}>{'Producto: ' + row.Producto.Producto}</div>
