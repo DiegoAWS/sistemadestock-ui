@@ -7,3 +7,15 @@ body {
 .swal-modal {
   background: linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);
 }
+.react-datepicker-wrapper {
+  width: auto;
+}
+.react-datepicker__month-container {
+  background-color: white;
+}
+.react-datepicker__header {
+  background-color: white;
+}
+.MuiInputLabel-outlined {
+  z-index: 0;
+}

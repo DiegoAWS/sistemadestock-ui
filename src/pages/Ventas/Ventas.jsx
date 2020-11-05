@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
 import DataTable from 'react-data-table-component'
 
 import { jsPDF } from "jspdf"
-// import Canvg from 'canvg'
+
 
 import Barcode from 'react-barcode'
 
@@ -662,7 +662,7 @@ COMO PROXIMO DIA DE OFERTAS O SIMILARES`
         doc.autoPrint()
 
         doc.addImage(imgLogoURI, 'JPEG', 11, 4, 60, 30)
-        doc.setFontSize(8)
+        doc.setFontSize(10)
         doc.text(texto, 40, 40, null, null, 'center')
 
         doc.output('dataurlnewwindow', 'Comprobante de Pago')
