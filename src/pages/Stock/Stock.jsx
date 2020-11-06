@@ -346,7 +346,7 @@ const Stock = props => {
             format: [90, 29],
             title: "PDF Diego"
         })
-
+        doc.autoPrint()
 
         data.forEach((prod, i) => {
 
@@ -373,12 +373,10 @@ const Stock = props => {
 
                 let imgData = canvas.toDataURL('image/png')
 
-
-
                 doc.rect(1, 1, 88, 27)
                 doc.addImage(logoEtiqueta, 'PNG', 12, 15, 20, 10, null, null, 90)
 
-                doc.addImage(imgData, 'PNG', 15, 15, 20, 10)
+                doc.addImage(imgData, 'PNG', 10, 15, 30, 20)
 
                 doc.setFontSize(11)
 
@@ -423,22 +421,13 @@ const Stock = props => {
 
 
         })
-        doc.autoPrint({ variant: 'non-conform' })
-        // doc.save('Imprimir.pdf')
-        let x = window.open(URL.createObjectURL(doc.output("blob", 'PRINT')))
 
-        x.onload = e => {
 
-            // setTimeout(() => {
-            //     x.close()
-            // }, 20000)
-        }
-        x.onafterprint = e => {
-            alert('AFTERPRINT')
-        }
-        x.onbeforeprint = e => {
-            alert('Before')
-        }
+        // doc.save('test.pdf')
+        console.log(doc)
+        doc.output('dataurlnewwindow', 'Etiquetas')
+
+
 
     }
 
@@ -594,7 +583,11 @@ const Stock = props => {
 
                     <div key={item.id} style={{ display: 'none' }}>
                         <div className={'b-' + i}>
-                            <Barcode value={item.Codigo && item.Codigo.toString().length > 0 ? item.Codigo.toString() : 'SIN CODIGO'} />
+                            <Barcode
+                                width={1}
+                                value={item.Codigo && item.Codigo.toString().length > 0 ? item.Codigo.toString() : 'SIN CODIGO'}
+
+                            />
                         </div>
 
                     </div>
