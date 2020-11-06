@@ -290,8 +290,6 @@ const Stock = props => {
 
     //#region  Edit Delete----------------------------------
 
-
-
     const editData = (item) => {
 
         editingValue.current = item
@@ -328,8 +326,6 @@ const Stock = props => {
     //#endregion Edit Delete
 
 
-
-
     //#region Crear PDF
     const formater = new Intl.NumberFormat("es-PY", {
         style: "currency",
@@ -346,7 +342,7 @@ const Stock = props => {
             format: [90, 29],
             title: "PDF Diego"
         })
-        doc.autoPrint()
+
 
         data.forEach((prod, i) => {
 
@@ -373,10 +369,12 @@ const Stock = props => {
 
                 let imgData = canvas.toDataURL('image/png')
 
+
+
                 doc.rect(1, 1, 88, 27)
                 doc.addImage(logoEtiqueta, 'PNG', 12, 15, 20, 10, null, null, 90)
 
-                doc.addImage(imgData, 'PNG', 10, 15, 30, 20)
+                doc.addImage(imgData, 'PNG', 15, 15, 20, 10)
 
                 doc.setFontSize(11)
 
@@ -421,19 +419,29 @@ const Stock = props => {
 
 
         })
+        doc.autoPrint({ variant: 'non-conform' })
+        // doc.save('Imprimir.pdf')
+        let x = window.open(URL.createObjectURL(doc.output("blob", 'PRINT')))
 
+        x.onload = e => {
 
-        // doc.save('test.pdf')
-        console.log(doc)
-        doc.output('dataurlnewwindow', 'Etiquetas')
-
-
+            // setTimeout(() => {
+            //     x.close()
+            // }, 20000)
+        }
+        x.onafterprint = e => {
+            alert('AFTERPRINT')
+        }
+        x.onbeforeprint = e => {
+            alert('Before')
+        }
 
     }
 
 
 
     //#endregion
+
 
     //#region  Others Functions ----------------------------------
 
