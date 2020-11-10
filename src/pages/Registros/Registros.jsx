@@ -94,17 +94,45 @@ const Registros = ({ view }) => {
     }
     //#endregion
 
-
-
-
     //#region Ventas cols
+    const ingresos = row => {
+        console.log(row)
+        let total = 0
 
+        if (row.Venta.Pago === "ventaCuotas")
+            row.CreditosPagos.forEach(item => { total = total + parseInt(item.DebePagar) })
+
+        if (row.Venta.Pago === "PrecioVentaContadoMinorista")
+            total = row.Producto["PrecioVentaContadoMinorista"]
+
+
+
+        return <div>{formater.format(total)}</div>
+    }
+
+
+    const tipoDeVenta = row => {
+        let tipoVenta
+        if (row.Venta.Pago === "ventaCuotas")
+            tipoVenta = row.Creditos.length + ' cuotas'
+
+        if (row.Venta.Pago === "PrecioVentaContadoMinorista")
+            tipoVenta = 'Contado'
+
+        return <div>{tipoVenta}</div>
+    }
 
     const ventasCols = [
         {
             name: <div style={cellStyle}>Acciones</div>,
             style: cellStyle,
             cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
+
+        },
+        {
+            name: <div style={cellStyle}>Tipo</div>,
+            style: cellStyle,
+            cell: tipoDeVenta
 
         },
         {
@@ -127,9 +155,9 @@ const Registros = ({ view }) => {
             cell: row => <div>{row.Cliente ? row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
         },
         {
-            name: <div style={cellStyle}>Cuotas</div>,
+            name: <div style={cellStyle}>Ingresos</div>,
             style: cellStyle,
-            cell: row => <div>{row.CreditosPagos.length + ' de ' + row.Creditos.length}</div>
+            cell: ingresos
         }
 
     ]
@@ -225,11 +253,9 @@ const Registros = ({ view }) => {
 
     //#endregion
 
-
+    //#region useEffect
 
     useEffect(() => {
-
-
 
         cargaData()
 
@@ -237,6 +263,7 @@ const Registros = ({ view }) => {
         // eslint-disable-next-line
     }, [view, inicioRango, finRango])
 
+    //#endregion
 
     //#region  carga Data ----------------------------------
 

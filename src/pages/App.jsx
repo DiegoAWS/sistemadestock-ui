@@ -32,12 +32,12 @@ import Proveedores from './Proveedores/Proveedores'
 
 import Ajustes from './Ajustes/Ajustes'
 import Registros from './Registros/Registros'
-
+import RegistroVentas from './RegistroVentas/RegistroVentas'
 
 
 export default function App() {
 
-  const ventas = 'VENTAS'
+
   const creditos = 'CREDITOS'
   const garantia = 'GARANTIA'
 
@@ -55,7 +55,7 @@ export default function App() {
           <SecureRoute path='/dashboard' component={RealDashboard} />
           <SecureRoute path='/facturacion' component={Ventas} />
 
-          <SecureRoute path='/ventas' component={Registros} view={ventas} />
+          <SecureRoute path='/ventas' component={RegistroVentas} />
           <SecureRoute path='/creditos' component={Registros} view={creditos} />
           <SecureRoute path='/garantia' component={Registros} view={garantia} />
 

@@ -11,7 +11,7 @@ import format from 'date-fns/format'
 import swal from 'sweetalert';
 
 // MUI--------------------
-import { makeStyles, Grid, Card, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
+import { makeStyles, Grid, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
 
@@ -25,7 +25,6 @@ import LoyaltyIcon from '@material-ui/icons/Loyalty'
 import WarningIcon from '@material-ui/icons/Warning'
 import AddShoppingCartIcon from '@material-ui/icons/AddShoppingCart'
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-
 
 //MUI---------------------
 
@@ -61,7 +60,7 @@ const useStyle = makeStyles((theme) => ({
     },
     seccionStock: {
         border: '1px solid black',
-        padding: '10px 5px',
+        padding: '10px',
         marginBottom: '10px',
         borderRadius: '10px',
     },
@@ -93,12 +92,16 @@ const useStyle = makeStyles((theme) => ({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
+    condicionPagoContainer: {
+        border: '1px solid black',
+        borderRadius: '10px'
+    },
     condicionDePago: {
-        margin: '0 5px',
-        borderRadius: '5px',
+        margin: '0px',
+        borderRadius: '10px 10px 0px 0px',
         textAlign: 'center',
         backgroundColor: '#86fff1',
-        position: 'relative'
+
     },
     iconBack: {
         position: 'absolute',
@@ -107,14 +110,17 @@ const useStyle = makeStyles((theme) => ({
         bottom: '0',
         padding: '0px'
     },
-    preciosCard: {
-        backgroundImage: 'linear-gradient(315deg, #ffffff 0%, #d7e1ec 74%);',
+    preciosMayoristas: {
+        border: '1 solid black',
         borderRadius: '5px'
     },
     mayoristaHeader: {
+        borderRadius: '10px 10px 0px 0px',
+        backgroundColor: '#86fff1',
         display: 'flex',
         justifyContent: 'space-around',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        position: 'relative'
     },
     entrada: {
         margin: '5px',
@@ -373,7 +379,7 @@ const Ventas = (props) => {
     }
     //#endregion
 
-    //#region  Carrito 
+    //#region Carrito 
 
     //Monta en el carrito
     const addCart = key => {
@@ -393,12 +399,15 @@ const Ventas = (props) => {
             }))
 
             setTimeout(() => {
+                setFormDetails(false)
+                setCantidad(1)
                 setProductoSeleccionado(null)
             }, 200)
 
 
         }
     }
+
 
     const addCartCUOTAS = (listaDeDiasDePago, diaPrimerPago) => {
 
@@ -473,6 +482,7 @@ const Ventas = (props) => {
         }))
         setTimeout(() => {
             setFormDetails(false)
+            setCantidad(1)
             setProductoSeleccionado(null)
         }, 200)
 
@@ -1031,20 +1041,25 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                 <>
                                     {
                                         ventaCuotas ?
-                                            <h3>
-                                                <FormVentasCuotas
-                                                    productoSeleccionado={productoSeleccionado}
-                                                    addCartCUOTAS={addCartCUOTAS}
-                                                    cuotas={cuotas}
-                                                    setCuotas={setCuotas}
-                                                />
+                                            <FormVentasCuotas
+                                                productoSeleccionado={productoSeleccionado}
+                                                addCartCUOTAS={addCartCUOTAS}
+                                                cuotas={cuotas}
+                                                setCuotas={setCuotas}
+                                            />
 
-                                            </h3>
-                                            : < Card className={classes.preciosCard} >
+
+                                            : < div className={classes.preciosMayoristas} >
                                                 {
                                                     //#region VENTA MAYORISTA
                                                 }
                                                 <div className={classes.mayoristaHeader} >
+
+                                                    <IconButton color='secondary' className={classes.iconBack}
+                                                        onClick={() => { setFormDetails(false) }} >
+                                                        <ArrowBackIcon />
+                                                    </IconButton>
+
                                                     <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
                                                     <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
                                                 </div>
@@ -1098,54 +1113,55 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                                 {
                                                     //#endregion
                                                 }
-                                            </Card>
+                                            </div>
 
                                     }
 
                                 </>
 
-                                : <Grid item container style={{ justifyContent: 'space-around' }}>
-                                    <h2 className={classes.condicionDePago}>
-                                        {formDetails && <IconButton color='secondary' className={classes.iconBack}
-                                            onClick={() => { setFormDetails(false) }} >
-                                            <ArrowBackIcon />  </IconButton>
+                                : <Grid item container direction='column' style={{ padding: '0px' }} className={classes.condicionPagoContainer}>
+
+                                    <div className={classes.condicionDePago}>
+
+                                        <h2 style={{ margin: '0px' }}>  Condición de Pago   </h2>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-around' }}>
+                                        {/* Venta Mayorista */}
+                                        {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
+
+                                            <Grid item xs={12} sm={4}  >
+                                                <Button fullWidth className={classes.buttonCard}
+                                                    onClick={() => {
+                                                        setFormDetails(true)
+                                                        setVentaCuotas(false)
+                                                    }}
+                                                >
+                                                    <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
+                                                    <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
+
+
+                                                </Button>
+
+                                            </Grid>
                                         }
 
-                                Condición de Pago   </h2>
-                                    {/* Venta Mayorista */}
-                                    {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMayorista)) && clienteSeleccionado && localStorage.UserRole === 'admin' &&
-
-                                        <Grid item xs={12} sm={4}  >
-                                            <Button fullWidth className={classes.buttonCard}
-                                                onClick={() => {
-                                                    setFormDetails(true)
-                                                    setVentaCuotas(false)
-                                                }}
-                                            >
-                                                <div style={{ fontSize: '0.8rem' }}>Precio Mayorista</div>
-                                                <div style={{ fontSize: '1rem' }}>   {formater.format(productoSeleccionado.PrecioVentaContadoMayorista)}  </div>
+                                        {/* Venta Minorista */}
+                                        {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMinorista)) &&
+                                            <Grid item xs={12} sm={4} >
+                                                <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMinorista') }}
+                                                    className={classes.buttonCard} >
+                                                    <div style={{ fontSize: '0.8rem' }}>Precio al Contado</div>
+                                                    <div style={{ fontSize: '1rem' }}>
+                                                        {formater.format(productoSeleccionado.PrecioVentaContadoMinorista)}  </div>
 
 
-                                            </Button>
-                                        </Grid>
-                                    }
-
-                                    {/* Venta Minorista */}
-                                    {!isNaN(parseInt(productoSeleccionado.PrecioVentaContadoMinorista)) &&
-                                        <Grid item xs={12} sm={4} >
-                                            <Button fullWidth onClick={e => { addCart('PrecioVentaContadoMinorista') }}
-                                                className={classes.buttonCard} >
-                                                <div style={{ fontSize: '0.8rem' }}>Precio al Contado</div>
-                                                <div style={{ fontSize: '1rem' }}>
-                                                    {formater.format(productoSeleccionado.PrecioVentaContadoMinorista)}  </div>
-
-
-                                            </Button>
-                                        </Grid>
-                                    }
+                                                </Button>
+                                            </Grid>
+                                        }
+                                    </div>
 
                                     {clienteSeleccionado &&
-                                        <Grid item xs={12}  >
+                                        <Grid item xs={12} style={{ padding: '0px' }} >
                                             <div style={{
                                                 textAlign: 'center', backgroundColor: '#bfffff', margin: '10px 0px 0px', fontWeight: '600',
                                                 border: '1px solid black', borderBottom: 'none', borderRadius: '10px 10px 0px 0px'
@@ -1169,7 +1185,9 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                                             </div>
                                         </Grid>
                                     }
-                                </Grid>}
+                                </Grid>
+                            }
+
                         </>
                     }
 
@@ -1181,7 +1199,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
             </div>
 
-        </Grid>
+        </Grid >
 
 
         {
