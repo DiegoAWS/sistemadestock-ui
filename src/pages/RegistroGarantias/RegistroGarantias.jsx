@@ -52,7 +52,7 @@ const cellStyle = {
 }
 //#endregion
 
-const RegistroVentas = () => {
+const RegistroGarantias = () => {
     const classes = useStyle()
     const isMounted = useRef(false)
     //#region  STATE ----------------------------------
@@ -74,20 +74,20 @@ const RegistroVentas = () => {
 
 
     //#region Ventas cols
-    const ingresos = row => {
+    // const ingresos = row => {
 
-        let total = 0
+    //     let total = 0
 
-        if (row.Venta.Pago === "ventaCuotas")
-            row.CreditosPagos.forEach(item => { total = total + parseInt(item.DebePagar) })
+    //     if (row.Venta.Pago === "ventaCuotas")
+    //         row.CreditosPagos.forEach(item => { total = total + parseInt(item.DebePagar) })
 
-        if (row.Venta.Pago === "PrecioVentaContadoMinorista")
-            total = row.Producto["PrecioVentaContadoMinorista"]
-        if (row.Venta.Pago === "PrecioVentaContadoMayorista")
-            total = row.Venta.CantidadComprada * row.Producto["PrecioVentaContadoMayorista"]
+    //     if (row.Venta.Pago === "PrecioVentaContadoMinorista")
+    //         total = row.Producto["PrecioVentaContadoMinorista"]
 
-        return <div>{formater.format(total)}</div>
-    }
+
+
+    //     return <div>{formater.format(total)}</div>
+    // }
 
 
     const tipoDeVenta = row => {
@@ -136,11 +136,7 @@ const RegistroVentas = () => {
             selector: 'Cliente.Nombre',
             cell: row => <div>{row.Cliente ? row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
         },
-        {
-            name: <div style={cellStyle}>Ingresos</div>,
-            style: cellStyle,
-            cell: ingresos
-        }
+
 
     ]
     //#endregion
@@ -237,6 +233,7 @@ const RegistroVentas = () => {
 
         console.log(row)
         const precio = parseInt(row.Producto[row.Venta.Pago])
+        const garantia = format(new Date(row.Venta.Garantia), "dd' / 'MMMM' /'yyyy")
 
         swal(
             <div>
@@ -248,6 +245,7 @@ const RegistroVentas = () => {
                 <div className={classes.boxText}><div>Producto</div>  <div>{row.Producto.Producto}</div></div>
                 < div className={classes.boxText}><div>Precio</div>  <div>{formater.format(precio)}</div></div>
                 <div className={classes.boxText}><div>Comprado</div>  <div>{row.Venta.fechaVenta}</div></div>
+                <div className={classes.boxText}><div>Garantia vence</div>  <div>{garantia}</div></div>
 
 
                 <br />
@@ -462,4 +460,6 @@ const RegistroVentas = () => {
     //#endregion Others Functions
 }
 
-export default RegistroVentas
+
+
+export default RegistroGarantias

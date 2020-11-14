@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
 
 import { postRequest, deleteRequest } from '../../API/apiFunctions'
 import DataTable from 'react-data-table-component'
 
-import { makeStyles, Button, IconButton, Grid, TextField } from "@material-ui/core"
-import TodayIcon from '@material-ui/icons/Today';
-import EventIcon from '@material-ui/icons/Event';
+import { makeStyles, Button, Grid, TextField } from "@material-ui/core"
+
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import loadingGif from '../../assets/images/loading.gif'
@@ -52,12 +51,11 @@ const cellStyle = {
 //#endregion
 
 
-const Registros = ({ view }) => {
+const RegistroCreditos = () => {
     const classes = useStyle()
+    const isMounted = useRef(false)
 
-    const garantia = 'GARANTIA'
-    const ventas = 'VENTAS'
-    const creditos = 'CREDITOS'
+
 
 
     //#region  STATE ----------------------------------
@@ -67,8 +65,7 @@ const Registros = ({ view }) => {
     const [searchText, setSearchText] = useState('')
     const [dataSearched, setDataSearched] = useState([])
     const [fechaDeCobro, setFechaDeCobro] = useState(new Date())
-    const [inicioRango, setInicioRango] = useState(view === creditos ? new Date(2010, 0, 1) : new Date())
-    const [finRango, setFinRango] = useState(view === creditos ? new Date(2030, 0, 1) : new Date())
+
 
     const [loading, setLoading] = useState(false)
     //#endregion CONST's
@@ -94,74 +91,6 @@ const Registros = ({ view }) => {
     }
     //#endregion
 
-    //#region Ventas cols
-    const ingresos = row => {
-        console.log(row)
-        let total = 0
-
-        if (row.Venta.Pago === "ventaCuotas")
-            row.CreditosPagos.forEach(item => { total = total + parseInt(item.DebePagar) })
-
-        if (row.Venta.Pago === "PrecioVentaContadoMinorista")
-            total = row.Producto["PrecioVentaContadoMinorista"]
-
-
-
-        return <div>{formater.format(total)}</div>
-    }
-
-
-    const tipoDeVenta = row => {
-        let tipoVenta
-        if (row.Venta.Pago === "ventaCuotas")
-            tipoVenta = row.Creditos.length + ' cuotas'
-
-        if (row.Venta.Pago === "PrecioVentaContadoMinorista")
-            tipoVenta = 'Contado'
-
-        return <div>{tipoVenta}</div>
-    }
-
-    const ventasCols = [
-        {
-            name: <div style={cellStyle}>Acciones</div>,
-            style: cellStyle,
-            cell: row => <Button variant='contained' color='primary' onClick={() => { verDetalles(row) }} >Detalles</Button>
-
-        },
-        {
-            name: <div style={cellStyle}>Tipo</div>,
-            style: cellStyle,
-            cell: tipoDeVenta
-
-        },
-        {
-            name: <div style={cellStyle}>Fecha de Venta</div>,
-            style: cellStyle,
-            selector: 'Producto.Producto',
-            cell: row => <div>{row.Venta.fechaVenta}</div>
-        },
-        {
-            name: <div style={cellStyle}>Producto</div>,
-            style: cellStyle,
-            minWidth: '200px',
-            selector: 'Producto.Producto',
-            cell: row => <div>{row.Producto.Producto}</div>
-        },
-        {
-            name: <div style={cellStyle}> Cliente</div>,
-            style: cellStyle,
-            selector: 'Cliente.Nombre',
-            cell: row => <div>{row.Cliente ? row.Cliente.Nombre : 'VENTA AL CONTADO'}</div>
-        },
-        {
-            name: <div style={cellStyle}>Ingresos</div>,
-            style: cellStyle,
-            cell: ingresos
-        }
-
-    ]
-    //#endregion
 
     //#region Creditos cols
 
@@ -228,40 +157,19 @@ const Registros = ({ view }) => {
 
     //#endregion
 
-    //#region columns
 
-    const columns = () => {
-
-
-        switch (view) {
-
-            case ventas:
-                return ventasCols
-
-            case garantia:
-                return []
-
-
-            case creditos:
-                return columnsCreditos
-
-            default:
-                return null
-        }
-
-    }
-
-    //#endregion
 
     //#region useEffect
 
     useEffect(() => {
-
-        cargaData()
-
-        return () => { setSearchText('') }
-        // eslint-disable-next-line
-    }, [view, inicioRango, finRango])
+        isMounted.current = true
+        cargaData();
+        return () => {
+            isMounted.current = false
+            setSearchText('')
+        }
+        // eslint-disable-next-line   
+    }, []);
 
     //#endregion
 
@@ -272,25 +180,21 @@ const Registros = ({ view }) => {
         SetSinDatos(false)
 
 
-        let fechasBounds = {
-            fechaInicio: format(inicioRango, "yyyy'-'MM'-'dd"),
-            fechaFinal: format(finRango, "yyyy'-'MM'-'dd")
-        }
-        postRequest('/ventarecords', fechasBounds)
+        postRequest('/ventarecords')
             .then(request => {
-                SetSinDatos(true)
-                setLoading(false)
-                if (request && request.data) {
 
-
-                    if (view === creditos)
-                        setDataCreditos(request.data.filter(item => item.Creditos.length > 0))
-                    else
-                        setDataCreditos(request.data)
-                }
-                if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
+                if (isMounted) {
                     SetSinDatos(true)
+                    setLoading(false)
+                    if (request && request.data) {
 
+
+                        setDataCreditos(request.data.filter(item => item.Creditos.length > 0))
+
+                    }
+                    if (request && request.statusText === 'OK' && request.data && request.data.length === 0)
+                        SetSinDatos(true)
+                }
             })
     }
 
@@ -508,61 +412,16 @@ CONSERVELO
 
     const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => <Button ref={ref} fullWidth variant='contained' color='primary' size='small' onClick={onClick} >{value}</Button >)
 
-    const CustomDateInputIni = React.forwardRef(({ onClick }, ref) => <IconButton ref={ref} color='primary' size='small' onClick={onClick} ><TodayIcon /></IconButton >)
-    const CustomDateInputFin = React.forwardRef(({ onClick }, ref) => <IconButton ref={ref} color='primary' size='small' onClick={onClick} ><EventIcon /></IconButton >)
 
     return (
         <>
-            {
-                //#region Selector de fechas Inicio y Fin
-            }
-            <div style={{ display: 'flex' }}>
 
-                {view === ventas && <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-
-                    <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: '#ffe6e6', borderRadius: '5px', justifyContent: 'center', minWidth: 'fit-content' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <DatePicker
-                                selected={inicioRango}
-                                onChange={dates => { setInicioRango(dates) }}
-                                startDate={inicioRango}
-                                endDate={finRango}
-                                showMonthDropdown
-                                showYearDropdown
-                                selectsStart
-                                dateFormat="dd/MMMM/yyyy"
-                                customInput={<CustomDateInputIni />}
-                            />
-                            <DatePicker
-                                selected={inicioRango}
-                                onChange={dates => { setFinRango(dates); }}
-                                startDate={inicioRango}
-                                endDate={finRango}
-                                showMonthDropdown
-                                showYearDropdown
-                                selectsEnd
-                                dateFormat="dd/MMMM/yyyy"
-                                customInput={<CustomDateInputFin />}
-                            />
-                        </div>
-                        <div style={{ textAlign: 'right', fontSize: 'small', margin: '5px', marginTop: '-10px' }}>Rango de Fechas</div>
-                        <div style={{ textAlign: 'right', fontSize: 'small', margin: '5px', }}>{'De: ' + format(inicioRango, "dd'/'MMM'/'yyyy")}</div>
-                        {finRango && < div style={{ textAlign: 'center', fontSize: 'small', margin: '5px', }}>{'A: ' + format(finRango, "dd'/'MMM'/'yyyy")}</div>}
-
-                    </div>
-                </div>}
-
-            </div>
-
-            {
-                //#endregion
-            }
 
             {
                 //#region Search
             }
 
-            {view !== ventas && < Grid container spacing={1} >
+            < Grid container spacing={1} >
                 <Grid item xs={12} container justify='flex-end' className={classes.search}>
 
 
@@ -575,7 +434,7 @@ CONSERVELO
 
 
 
-                    {view === creditos && <Grid item xs={12} sm={4} md={3} lg={2} >
+                    <Grid item xs={12} sm={4} md={3} lg={2} >
                         <div style={{ margin: '10px', display: 'flex', flexDirection: 'column' }}>
                             <DatePicker
                                 selected={fechaDeCobro}
@@ -588,11 +447,11 @@ CONSERVELO
                             />
                             <div style={{ textAlign: 'center' }}>Fecha de Cobro</div>
                         </div>
-                    </Grid>}
+                    </Grid>
 
 
                 </Grid>
-            </Grid>}
+            </Grid>
             {
                 //#endregion
             }
@@ -601,7 +460,7 @@ CONSERVELO
             }
             <div style={{ marginTop: '30px' }}>
                 <DataTable
-                    columns={columns()}
+                    columns={columnsCreditos}
                     data={searchText && searchText.length > 0 ? dataSearched : dataCreditos}
                     customStyles={customStyles}
                     defaultSortField='CreditosPendientes[0].FechaPago'
@@ -648,4 +507,4 @@ CONSERVELO
     //#endregion Others Functions
 }
 
-export default Registros
+export default RegistroCreditos

@@ -20,7 +20,7 @@ import MonetizationOnIcon from '@material-ui/icons/MonetizationOn'
 
 import StorefrontIcon from '@material-ui/icons/Storefront';
 import AssignmentTurnedInIcon from '@material-ui/icons/AssignmentTurnedIn';
-// import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
+import MoveToInboxIcon from '@material-ui/icons/MoveToInbox';
 
 import LocalShippingIcon from '@material-ui/icons/LocalShipping'
 import ContactMailIcon from '@material-ui/icons/ContactMail'
@@ -60,11 +60,11 @@ const SideBar = ({ history }) => {
             icon: AssignmentTurnedInIcon,
             texto: 'Créditos'
         },
-        // {
-        //     ruta: '/garantia',
-        //     icon: MoveToInboxIcon,
-        //     texto: 'Garantías'
-        // },
+        {
+            ruta: '/garantia',
+            icon: MoveToInboxIcon,
+            texto: 'Garantías'
+        },
         {
             ruta: '/stock',
             icon: FormatListNumberedIcon,

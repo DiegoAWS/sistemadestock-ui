@@ -11,7 +11,7 @@ import format from 'date-fns/format'
 import swal from 'sweetalert';
 
 // MUI--------------------
-import { makeStyles, Grid, TextField, Typography, IconButton, Button, Divider } from "@material-ui/core"
+import { makeStyles, Grid, TextField, Typography, IconButton, Button, Divider, MenuItem } from "@material-ui/core"
 import Autocomplete, { createFilterOptions } from '@material-ui/lab/Autocomplete'
 
 
@@ -47,7 +47,16 @@ const formater = new Intl.NumberFormat("es-PY", {
 
 //#region JSS
 const useStyle = makeStyles((theme) => ({
-
+    multiplicator: {
+        whiteSpace: 'nowrap',
+        fontSize: 'large',
+        display: 'flex',
+        alignItems: 'center',
+        marginRight: '10px',
+        backgroundColor: 'red',
+        borderRadius: '20px',
+        padding: '5px',
+    },
     leftContainer: {
         display: 'flex',
         flexDirection: 'column',
@@ -87,7 +96,7 @@ const useStyle = makeStyles((theme) => ({
         borderRadius: '10px'
     },
     numberCliente: {
-        fontSize: 'x-large',
+        fontSize: 'large',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -135,26 +144,29 @@ const useStyle = makeStyles((theme) => ({
 
 
 const Ventas = (props) => {
+    const classes = useStyle()
+
 
     //#region Constantes utiles
 
     const filterProducto = createFilterOptions({ stringify: option => option.Codigo + option.Producto })
     const filterCliente = createFilterOptions({ stringify: option => option.Nombre + option.Telefono })
-    const classes = useStyle()
+
 
     //  DataTable Columnas ----------------------------------
     const cols = [
 
         {
-            cell: row => (<div style={{ display: 'flex', padding: '10px 0' }}>
-                {(row.cantidad > 1) && <div style={{ whiteSpace: 'nowrap', fontSize: 'large' }}>{row.cantidad + 'x'} </div>}
-                <div style={{ fontSize: 'large', display: 'flex', alignItems: 'center', textAlign: 'center' }}>{row.Producto}</div>
-                <div style={{ margin: '0 10px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
-                    {formater.format(row.subTotal)}
-                </div>
-                <IconButton color='secondary' onClick={() => { handleBajaCarrito(row) }}>  <CloseIcon />  </IconButton>
+            cell: row => (
+                <div style={{ display: 'flex', padding: '10px 0' }}>
+                    {(row.cantidadComprada > 1) && <div className={classes.multiplicator}>{row.cantidadComprada + ' x '} </div>}
+                    <div style={{ fontSize: 'large', display: 'flex', alignItems: 'center', textAlign: 'center' }}>{row.Producto}</div>
+                    <div style={{ margin: '0 10px', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center' }}>
+                        {formater.format(row.subTotal)}
+                    </div>
+                    <IconButton color='secondary' onClick={() => { handleBajaCarrito(row) }}>  <CloseIcon />  </IconButton>
 
-            </div>)
+                </div>)
 
         }
 
@@ -174,7 +186,6 @@ const Ventas = (props) => {
     const [inputRefCliente, setInputBlurCliente] = useBlur()
 
     //#endregion
-
 
 
     //#region  campos Stock ----------------------------------
@@ -203,6 +214,7 @@ const Ventas = (props) => {
     ]
 
     //#endregion campos Stock
+
 
     //#region  campos  Cliente----------------------------------
 
@@ -267,16 +279,26 @@ const Ventas = (props) => {
 
     const [loading, setLoading] = useState(false)
 
+    const [medioDePago, setMedioDePago] = useState('CASH')
+    const [numeroDeMedioDePago, setNumeroDeMedioDePago] = useState('')
+
     //#endregion State
 
+    const isMounted = useRef(false)
     const refFijarValue = useRef(false)
 
     //#region UseEffect
 
 
-    // eslint-disable-next-line 
-    useEffect(() => { cargaData() }, [])
 
+    useEffect(() => {
+        isMounted.current = true
+        cargaData();
+        return () => {
+            isMounted.current = false
+        }
+        // eslint-disable-next-line   
+    }, []);
 
     useEffect(() => {
         let t = 0
@@ -312,6 +334,7 @@ const Ventas = (props) => {
 
     //#endregion
 
+
     //#region Carga Data
     const cargaData = () => {
         setLoading(false)
@@ -319,57 +342,59 @@ const Ventas = (props) => {
         getRequest('/ventas')
             .then(resp => {
 
+                if (isMounted.current) {
+                    if (resp && resp.statusText && resp.statusText === "OK" && resp.data && resp.data.Clientes && resp.data.Stock && resp.data.Ventas) {
 
-                if (resp && resp.statusText && resp.statusText === "OK" && resp.data && resp.data.Clientes && resp.data.Stock && resp.data.Ventas) {
+                        //#region Stock
 
-                    //#region Stock
+                        if (Array.isArray(resp.data.Stock)) {
+                            const dataStock = []
 
-                    if (Array.isArray(resp.data.Stock)) {
-                        const dataStock = []
+                            resp.data.Stock.forEach(dataRequested => {
+                                if (dataRequested.Cantidad > 0) {
 
-                        resp.data.Stock.forEach(dataRequested => {
-                            if (dataRequested.Cantidad > 0) {
+                                    let instantData = {}
+
+                                    camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+
+                                    dataStock.push({ ...instantData, id: dataRequested.id })
+
+                                }
+
+                            })
+
+                            setDataStock(dataStock)
+
+
+                        }
+                        //#endregion
+
+                        //#region Clientes
+
+                        if (Array.isArray(resp.data.Clientes)) {
+                            setDataClientes(resp.data.Clientes.map(dataRequested => {
 
                                 let instantData = {}
 
-                                camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
+                                camposCliente.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
-                                dataStock.push({ ...instantData, id: dataRequested.id })
+                                return { ...instantData, id: dataRequested.id }
 
-                            }
-
-                        })
-
-                        setDataStock(dataStock)
-
+                            }))
+                        }
+                        //#endregion
+                        if (refFijarValue.current) {
+                            setClienteSeleccionado(formDataAddClient)
+                            refFijarValue.current = false
+                        }
 
                     }
-                    //#endregion
-
-                    //#region Clientes
-
-                    if (Array.isArray(resp.data.Clientes)) {
-                        setDataClientes(resp.data.Clientes.map(dataRequested => {
-
-                            let instantData = {}
-
-                            camposCliente.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
-
-                            return { ...instantData, id: dataRequested.id }
-
-                        }))
-                    }
-                    //#endregion
-                    if (refFijarValue.current) {
-                        setClienteSeleccionado(formDataAddClient)
-                        refFijarValue.current = false
-                    }
-
                 }
-
             })
+
     }
     //#endregion
+
 
     //#region Beep
 
@@ -378,6 +403,7 @@ const Ventas = (props) => {
         snd.play()
     }
     //#endregion
+
 
     //#region Carrito 
 
@@ -504,6 +530,7 @@ const Ventas = (props) => {
     }
     //#endregion
 
+
     //#region PAGAR
     const pagarCuenta = () => {
         setPagando(true)
@@ -553,7 +580,7 @@ const Ventas = (props) => {
                             clienteNombre = clienteSeleccionado.id
 
 
-                        postRequest('/ventas', { productos: carritoList, cliente: clienteNombre })
+                        postRequest('/ventas', { productos: carritoList, cliente: clienteNombre, medioDePago, numeroDeMedioDePago })
                             .then(response => {
                                 setPagando(false)
 
@@ -587,6 +614,7 @@ const Ventas = (props) => {
 
     }
     //#endregion
+
 
     //#region PRINT
 
@@ -673,6 +701,7 @@ COMO PROXIMO DIA DE OFERTAS O SIMILARES`
 
         doc.addImage(imgLogoURI, 'JPEG', 11, 4, 60, 30)
         doc.setFontSize(10)
+
         doc.text(texto, 40, 40, null, null, 'center')
 
         doc.output('dataurlnewwindow', 'Comprobante de Pago')
@@ -724,11 +753,11 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
             doc.addImage(imgLogoURI, 'JPEG', 11, 4, 40, 20)
 
             doc.setFontSize(18)
-            doc.setFont('serif', 'bold')
+            doc.setFont('bold')
             doc.text('Términos y Condiciones de Garantía', 105, 16, 'center')
 
             doc.setFontSize(12)
-            doc.setFont('serif', 'normal')
+            doc.setFont('normal')
             doc.text(texto1, 15, 40, { align: 'justify', maxWidth: '180' })
             doc.text(texto2, 15, 85, { align: 'justify', maxWidth: '180' })
 
@@ -746,7 +775,7 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
             doc.text(`FIRMA Y SELLO\nVERA E HIJOS COMERCIAL`, 160, 280, 'center')
 
-            doc.setFont('serif', 'bold')
+            doc.setFont('bold')
 
             doc.text('Usted, pierde su derecho a la garantía automáticamente', 15, 75, 'justify')
             doc.rect(15, 255, 105, 35)
@@ -770,6 +799,8 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
 
     //#endregion
+
+
 
     //#region Texto Garantia
     const textoGarantia = oldGarantia => {
@@ -799,6 +830,8 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
     }
     //#endregion
+
+
 
     //#region return 
 
@@ -1244,13 +1277,16 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
             <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
 
                 <div>
+
                     <TextField
                         label="Pagado"
                         fullWidth
                         variant="outlined"
+                        margin='dense'
+                        size='small'
                         style={{ flexGrow: "1" }}
                         value={pagado === 0 || pagado.toString().length === 0 ? '' : formater.format(pagado)}
-                        margin='normal'
+
                         onChange={(e) => {
                             let texto = e.target.value.replace(/\D/g, '')
 
@@ -1264,7 +1300,44 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
                     />
 
+                </div>
+                <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
 
+
+                    <div>
+                        <TextField
+                            select
+                            label="Tipo de Pago"
+                            variant="outlined"
+                            margin='dense'
+                            size='small'
+                            value={medioDePago}
+                            onChange={e => { setMedioDePago(e.target.value) }}
+
+                        >
+
+                            <MenuItem value='CASH'> Efectivo </MenuItem>
+                            <MenuItem value='CARD'> Tarjeta de Crédito </MenuItem>
+                            <MenuItem value='CHECK'> Cheque </MenuItem>
+                        </TextField>
+
+
+                    </div>
+                    {(medioDePago === 'CARD' || medioDePago === 'CHECK') && <div>
+                        <TextField
+                            label="Número de serie"
+                            fullWidth
+                            variant="outlined"
+                            margin='dense'
+                            size='small'
+
+                            value={numeroDeMedioDePago}
+
+                            onChange={(e) => { setNumeroDeMedioDePago(e.target.value) }}
+
+
+                        />
+                    </div>}
                 </div>
                 <div style={{ margin: '10px', padding: '10px' }}>
 
@@ -1360,5 +1433,6 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
     </Grid >
     //#endregion
+
 }
 export default Ventas

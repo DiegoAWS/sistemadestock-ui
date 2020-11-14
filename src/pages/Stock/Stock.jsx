@@ -32,7 +32,7 @@ import logoEtiqueta from '../../assets/images/logoEtiqueta.png'
 
 const Stock = props => {
 
-
+    const isMounted = useRef(false)
     //#region  CONST's State ----------------------------------
 
 
@@ -165,8 +165,14 @@ const Stock = props => {
     //#region  use Effect ----------------------------------
 
     // eslint-disable-next-line
-    useEffect(() => { cargaData() }, [])
-
+    useEffect(() => {
+        isMounted.current = true
+        cargaData();
+        return () => {
+            isMounted.current = false
+        }
+        // eslint-disable-next-line   
+    }, []);
     useEffect(() => {
         if (dataStock.length > 0) {
 
@@ -208,75 +214,75 @@ const Stock = props => {
 
     const cargaData = () => {
         getRequest('/stocks').then(request => {
+            if (isMounted) {
+
+                setLoading(false)
+
+                if (openProveedorPopup)
+                    setOpenProveedorPopup(false)
+                else
+                    setOpenPopup(false)
+
+                if (request && request.statusText === 'OK' && request.data && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
+
+                    //#region  Stock ----------------------------------
+
+                    setDataStock(request.data.Stock.map(dataRequested => {
+
+                        let instantData = {}
+
+                        camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
 
-            setLoading(false)
-
-            if (openProveedorPopup)
-                setOpenProveedorPopup(false)
-            else
-                setOpenPopup(false)
-
-            if (request && request.statusText === 'OK' && request.data && request.data.Proveedors && request.data.Stock && request.data.Ajuste) {
-
-                //#region  Stock ----------------------------------
-
-                setDataStock(request.data.Stock.map(dataRequested => {
-
-                    let instantData = {}
-
-                    camposStock.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
 
+                        return { ...instantData, id: dataRequested.id }
+
+                    }))
+
+                    //#endregion Stock
 
 
-                    return { ...instantData, id: dataRequested.id }
+                    //#region Proveedores
+                    const dataProveedores = request.data.Proveedors.map(dataRequested => {
 
-                }))
+                        let instantData = {}
 
-                //#endregion Stock
+                        camposProveedores.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
 
+                        return { ...instantData, id: dataRequested.id }
 
-                //#region Proveedores
-                const dataProveedores = request.data.Proveedors.map(dataRequested => {
-
-                    let instantData = {}
-
-                    camposProveedores.forEach(item => { instantData[item[0]] = (!dataRequested[item[0]]) ? '' : dataRequested[item[0]] })
-
-                    return { ...instantData, id: dataRequested.id }
-
-                })
-                //#endregion
-                setProveedores(dataProveedores)
+                    })
+                    //#endregion
+                    setProveedores(dataProveedores)
 
 
-                //#region  Ajuste Precio ----------------------------------
+                    //#region  Ajuste Precio ----------------------------------
 
-                if (request.data.Ajuste && request.data.Ajuste.length === 7) {
+                    if (request.data.Ajuste && request.data.Ajuste.length === 7) {
 
-                    let dataRequested = request.data.Ajuste
+                        let dataRequested = request.data.Ajuste
 
-                    let newAjuste = {}
-                    dataRequested.forEach(item => { newAjuste = { ...newAjuste, [item.campo]: item.valor } })
+                        let newAjuste = {}
+                        dataRequested.forEach(item => { newAjuste = { ...newAjuste, [item.campo]: item.valor } })
 
-                    setAjustesPrecio(newAjuste)
+                        setAjustesPrecio(newAjuste)
 
 
-                } else {
+                    } else {
 
-                    setAjustesPrecio(initAjuste)
+                        setAjustesPrecio(initAjuste)
+
+                    }
+                    //#endregion Ajuste Precio
 
                 }
-                //#endregion Ajuste Precio
 
+
+
+                if (request && request.statusText === 'OK' && request.data && request.data.Stock.length === 0)
+                    SetSinDatos(true)
             }
-
-
-
-            if (request && request.statusText === 'OK' && request.data && request.data.Stock.length === 0)
-                SetSinDatos(true)
-
         })
     }
 

@@ -31,15 +31,13 @@ import Proveedores from './Proveedores/Proveedores'
 
 
 import Ajustes from './Ajustes/Ajustes'
-import Registros from './Registros/Registros'
+import RegistroCreditos from './RegistroCreditos/RegistroCreditos'
 import RegistroVentas from './RegistroVentas/RegistroVentas'
-
+import RegistroGarantias from './RegistroGarantias/RegistroGarantias'
 
 export default function App() {
 
 
-  const creditos = 'CREDITOS'
-  const garantia = 'GARANTIA'
 
   return (
     <Router>
@@ -56,8 +54,8 @@ export default function App() {
           <SecureRoute path='/facturacion' component={Ventas} />
 
           <SecureRoute path='/ventas' component={RegistroVentas} />
-          <SecureRoute path='/creditos' component={Registros} view={creditos} />
-          <SecureRoute path='/garantia' component={Registros} view={garantia} />
+          <SecureRoute path='/creditos' component={RegistroCreditos} />
+          <SecureRoute path='/garantia' component={RegistroGarantias} />
 
           <SecureRoute path='/stock' component={Stock} />
 

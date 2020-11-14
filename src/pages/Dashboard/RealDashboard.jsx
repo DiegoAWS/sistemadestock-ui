@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import { Grid, Card } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -54,6 +54,7 @@ const formater = new Intl.NumberFormat("es-PY", {
 const RealDashboard = () => {
     const classes = useStyles();
 
+    const isMounted = useRef(false)
 
     //#region STATE
 
@@ -113,8 +114,15 @@ const RealDashboard = () => {
     //#endregion
 
 
-    // eslint-disable-next-line
-    useEffect(() => { cargaData(); }, []);
+
+    useEffect(() => {
+        isMounted.current = true
+        cargaData();
+        return () => {
+            isMounted.current = false
+        }
+        // eslint-disable-next-line   
+    }, []);
 
 
 
@@ -154,7 +162,6 @@ const RealDashboard = () => {
                 //#endregion Stock
 
 
-                setDataStock(newDataStock)
 
 
                 //#region  Ventas ----------------------------------
@@ -175,7 +182,6 @@ const RealDashboard = () => {
                 //#endregion Ventas
 
 
-                setDataVentas(newDataVentas)
 
                 //#region Calculando Datos
                 let faltantesP = newDataStock.filter((item) => item.Cantidad === 0 || item.Cantidad === '0' || !item.Cantidad).length;
@@ -188,12 +194,15 @@ const RealDashboard = () => {
                     valorSt = valorSt + item.PrecioVentaContadoMinorista * item.Cantidad
                 })
 
+                if (isMounted.current) {
+                    setDataStock(newDataStock)
 
-
-                setProductosFaltantes(faltantesP);
-                setCantidadProductos(newDataStock.length - faltantesP);
-                setInversionStock(inversion);
-                setValorStock(valorSt)
+                    setDataVentas(newDataVentas)
+                    setProductosFaltantes(faltantesP);
+                    setCantidadProductos(newDataStock.length - faltantesP);
+                    setInversionStock(inversion);
+                    setValorStock(valorSt)
+                }
                 //#endregion
 
 

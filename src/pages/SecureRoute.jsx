@@ -4,7 +4,7 @@ import { withRouter } from 'react-router-dom'
 import { Route } from 'react-router-dom'
 import { getProfile } from '../API/apiFunctions'
 
-const SecureRoute = ({ path, component: Component, history, view = '' }) => {
+const SecureRoute = ({ path, component: Component, history }) => {
 
 
     if (!localStorage.usertoken) {
@@ -44,7 +44,7 @@ const SecureRoute = ({ path, component: Component, history, view = '' }) => {
 
 
 
-    return <Route exact path={path} render={(props) => (<Component view={view} {...props} />)} />
+    return <Route exact path={path} render={(props) => (<Component  {...props} />)} />
 
 
 }
