@@ -3,7 +3,7 @@ import { getRequest, deleteRequest } from '../../API/apiFunctions'
 
 import FormAddProveedor from '../../components/FormAdd/FormAddProveedor'
 
-import Datatable from '../../components/Dashboard/Datatable'
+import Datatable from '../../components/Datatable/Datatable'
 
 
 import { Button } from '@material-ui/core'

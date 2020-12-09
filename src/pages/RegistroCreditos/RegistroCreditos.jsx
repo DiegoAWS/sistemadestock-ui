@@ -65,11 +65,9 @@ const RegistroCreditos = () => {
     const [searchText, setSearchText] = useState('')
     const [dataSearched, setDataSearched] = useState([])
     const [fechaDeCobro, setFechaDeCobro] = useState(new Date())
-
-
     const [loading, setLoading] = useState(false)
-    //#endregion CONST's
 
+    //#endregion CONST's
 
 
     //#region search!
@@ -148,7 +146,6 @@ const RegistroCreditos = () => {
             name: <div style={cellStyle}>Próximo Pago</div>,
             style: cellStyle,
             selector: 'CreditosPendientes[0].FechaPago',
-
             cell: nextPayment
         }
 
@@ -156,7 +153,6 @@ const RegistroCreditos = () => {
     ]
 
     //#endregion
-
 
 
     //#region useEffect
@@ -172,6 +168,7 @@ const RegistroCreditos = () => {
     }, []);
 
     //#endregion
+
 
     //#region  carga Data ----------------------------------
 
@@ -404,8 +401,50 @@ CONSERVELO
             },
         },
     };
-    //#endregion
 
+    const getCondicion = row => {
+        let condicion = "A"
+        row.CreditosPendientes.forEach(item => {
+            if (item.EstadoCredito === "B")
+                condicion = "B"
+
+        })
+        row.CreditosPendientes.forEach(item => {
+            if (item.EstadoCredito === "C")
+                condicion = "C"
+
+        })
+        return condicion
+
+    }
+const condicionB=row=>    getCondicion(row)==="B"
+const condicionC=row=>    getCondicion(row)==="C"
+
+    const conditionalRowStyles = [
+        {
+            when: condicionB,
+            style: {
+                backgroundColor: 'gold',
+                color: 'black',
+                '&:hover': {
+                    backgroundColor: 'gold',
+                    color: 'black'
+                }
+            }
+        },
+        {
+            when: condicionC,
+            style: {
+                backgroundColor: 'red',
+                color: 'white',
+                '&:hover': {
+                    backgroundColor: 'red',
+                    color: 'white'
+                }
+            }
+        }
+    ]
+    //#endregion
 
     //#region  Return ----------------------------------
 
@@ -455,6 +494,8 @@ CONSERVELO
             {
                 //#endregion
             }
+
+
             {
                 //#region RDT
             }
@@ -477,6 +518,7 @@ CONSERVELO
                     }}
                     paginationPerPage={10}
                     paginationRowsPerPageOptions={[5, 10, 25, 50, 100, 200]}
+                    conditionalRowStyles={conditionalRowStyles}
                 />
             </div>
             {

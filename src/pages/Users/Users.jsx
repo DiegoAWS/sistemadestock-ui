@@ -5,7 +5,7 @@ import Popup from '../../components/FormAdd/Popup'
 import { getRequest, postRequest, deleteRequest } from '../../API/apiFunctions'
 
 import logo from '../../assets/images/logo.png'
-import Datatable from '../../components/Dashboard/Datatable'
+import Datatable from '../../components/Datatable/Datatable'
 
 import GroupAddIcon from '@material-ui/icons/GroupAdd'
 import AddIcon from '@material-ui/icons/Add'
@@ -271,7 +271,7 @@ const Users = () => {
                             variant="outlined" >
 
                             <option value={"vendedor"}>Vendedor(a)</option>
-                            {/* <option value={"cobrador"}>Cobrador</option> */}
+                            <option value={"cobrador"}>Cobrador</option>
 
                             <option value={"admin"}>Administrador</option>
 

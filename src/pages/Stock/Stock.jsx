@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { getRequest, deleteRequest } from '../../API/apiFunctions'
 
-import Datatable from '../../components/Dashboard/Datatable'
+import Datatable from '../../components/Datatable/Datatable'
 import FormAddStock from '../../components/FormAdd/FormAddStock'
 
 

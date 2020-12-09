@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { getRequest, deleteRequest } from '../../API/apiFunctions'
 import FormAddCliente from '../../components/FormAdd/FormAddCliente'
 
-import Datatable from '../../components/Dashboard/Datatable'
+import Datatable from '../../components/Datatable/Datatable'
 
 
 import { Button } from '@material-ui/core'

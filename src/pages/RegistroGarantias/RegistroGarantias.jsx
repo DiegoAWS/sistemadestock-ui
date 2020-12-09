@@ -231,7 +231,7 @@ const RegistroGarantias = () => {
 
     const verDetalles = row => {
 
-        console.log(row)
+         console.log(row)
         const precio = parseInt(row.Producto[row.Venta.Pago])
         const garantia = format(new Date(row.Venta.Garantia), "dd' / 'MMMM' /'yyyy")
 
