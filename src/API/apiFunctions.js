@@ -1,11 +1,6 @@
 import axios from "axios";
 
-// import axiosCancel from 'axios-cancel';
 
-// axiosCancel(axios, {
-//   debug: false // default
-// });
-//"http://localhost"
 
 var HOST = window.location.protocol + "//" + window.location.hostname;
 

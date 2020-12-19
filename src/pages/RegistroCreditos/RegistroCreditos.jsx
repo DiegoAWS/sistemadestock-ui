@@ -1,19 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react'
-
-
 import { postRequest, deleteRequest } from '../../API/apiFunctions'
 import DataTable from 'react-data-table-component'
 
-import { makeStyles, Button, Grid, TextField } from "@material-ui/core"
-
+import { TextField, makeStyles, Button, Grid, Modal } from "@material-ui/core"
+import swal from '@sweetalert/with-react'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import loadingGif from '../../assets/images/loading.gif'
 
-import swal from '@sweetalert/with-react'
 import { jsPDF } from "jspdf"
 import DatePicker, { registerLocale, setDefaultLocale } from 'react-datepicker'
-
 import 'react-datepicker/dist/react-datepicker.css'
 
 import es from 'date-fns/locale/es'
@@ -66,7 +62,9 @@ const RegistroCreditos = () => {
     const [dataSearched, setDataSearched] = useState([])
     const [fechaDeCobro, setFechaDeCobro] = useState(new Date())
     const [loading, setLoading] = useState(false)
-
+    const [openModalPago,setOpenModalPago]=useState(false)
+    const[dataModal,setDataModal]=useState({})
+    const [pagoParcial, setPagoParcial] = useState(false)
     //#endregion CONST's
 
 
@@ -200,6 +198,7 @@ const RegistroCreditos = () => {
     //#endregion
 
 
+
     //#region PAGAR CUOTA
     const pagarCuota = row => {
 
@@ -213,49 +212,28 @@ const RegistroCreditos = () => {
         const dataFecha = {
             fechaRealPago: format(fechaDeCobro, "yyyy'-'MM'-'dd", { locale: es })
         }
-        const efectuaPago = (row) => {
-            swal.close()
-            ImprimirComprobante(row)
-            postRequest('/cobrarcuota/' + cuotaX.id, dataFecha)
-                .then(resp => {
-
-                    cargaData()
-                })
-
-        }
-
-
-
-
-        swal(
-            <div>
-                <div style={{ fontSize: '2rem', margin: '10px' }}>PAGO DE CUOTAS</div>
-
-                {/* <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px' }}>{'Fecha: ' + format(fechaDeCobro, "yyyy-MM-dd")}</div> */}
-
-                <div>{'Pagando cuota # ' + nextCantidadCuotasPagas}</div>
-
-                <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px', fontSize: '1.5rem', margin: '10px 0px' }}>
-                    {cantidadAPagarFormated}
-                </div>
-                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <Button variant='contained' color='primary' onClick={() => { swal.close() }} >Cancelar</Button>
-                    <Button variant='contained' color='secondary' onClick={() => { efectuaPago(row) }}>Pagar</Button>
-                </div>
-            </div>, {
-            closeOnClickOutside: false,
-            closeOnEsc: true,
-            buttons: {
-                confirm: false,
-            },
-        }
-        )
-
-
-
+        setTimeout(() => { setOpenModalPago(true) })
+        setTimeout(() => {
+            setDataModal({
+                nextCantidadCuotasPagas,
+                cuotaX,
+                cantidadAPagarFormated,
+                dataFecha
+            })
+        })
     }
     //#endregion
 
+   const efectuaPago = (row) => {
+    if(dataModal&&dataModal.cuotaX){
+            ImprimirComprobante(row)
+            postRequest('/cobrarcuota/' + dataModal.cuotaX.id, dataModal.dataFecha)
+                .then(resp => {
+
+                    cargaData()
+                })}
+
+        }
 
     //#region Imprimir Comprobante
 
@@ -320,7 +298,7 @@ CONSERVELO
     const borraCuota = item => {
         console.log(item)
         if (window.confirm('Está seguro que desea BORRAR este pago??\n\nEsta acción NO SE PUEDE DESHACER')) {
-            swal.close()
+
 
             deleteRequest('/borrarcuota/' + item.id)
                 .then(request => {
@@ -417,8 +395,8 @@ CONSERVELO
         return condicion
 
     }
-const condicionB=row=>    getCondicion(row)==="B"
-const condicionC=row=>    getCondicion(row)==="C"
+    const condicionB = row => getCondicion(row) === "B"
+    const condicionC = row => getCondicion(row) === "C"
 
     const conditionalRowStyles = [
         {
@@ -446,7 +424,7 @@ const condicionC=row=>    getCondicion(row)==="C"
     ]
     //#endregion
 
-    //#region  Return ----------------------------------
+    //#region  Return ---------------------------------
 
 
     const CustomDateInput = React.forwardRef(({ value, onClick }, ref) => <Button ref={ref} fullWidth variant='contained' color='primary' size='small' onClick={onClick} >{value}</Button >)
@@ -540,7 +518,48 @@ const condicionC=row=>    getCondicion(row)==="C"
             }
 
 
+{
+    //#region 
+}
+<Modal
+        open={openModalPago}
+       
+      >{dataModal &&
+          <div style={{position:'fixed', width:'100%',height:'100%',display:'flex',justifyContent:'center',alignItems:'center'}}>
+              <div style={{backgroundColor:'white',width:'40vw',borderRadius:'10px',padding:'15px'}}>
+                <div style={{ fontSize: '2rem', margin: '10px' }}>PAGO DE CUOTAS</div>
 
+                {/* <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px' }}>{'Fecha: ' + format(fechaDeCobro, "yyyy-MM-dd")}</div> */}
+
+                <div style={{ display: '', justifyContent: 'center' }}>
+                    {pagoParcial ?
+                        <>
+                            <div style={{ textAlign: 'center' }}>{'PAGO PARCIAL '}</div>
+                            <TextField fullWidth label="Pago parcial" variant="outlined"/>
+                        </>
+                        :
+                        <>
+                            <div>{'Pagando cuota # ' + dataModal.nextCantidadCuotasPagas}</div>
+                            <div style={{ border: '1px solid black', borderRadius: '10px', pading: '10px', fontSize: '1.5rem', margin: '10px 0px' }}>
+                                {dataModal.cantidadAPagarFormated}
+                            </div>
+                        </>
+                    }
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <Button variant='contained' color='primary' onClick={() => { setOpenModalPago(false) }} >Cancelar</Button>
+                    <Button variant='contained' color={pagoParcial ? 'primary':'secondary'} 
+                    onClick={() => {  setPagoParcial(!pagoParcial) }} >
+                        Pago parcial
+                        </Button>
+                    <Button variant='contained' color='secondary' onClick={() => { efectuaPago() }}>Pagar</Button>
+                </div>
+                </div>
+            </div>}
+      </Modal>
+{
+    //#endregion
+}
 
 
         </>

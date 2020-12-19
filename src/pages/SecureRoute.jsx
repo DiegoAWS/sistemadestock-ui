@@ -17,7 +17,7 @@ const SecureRoute = ({ path, component: Component, history }) => {
 
 
     getProfile(path).then((response) => {
-        console.log('RESPONSE', response.data)
+
         if (response && response.data) {
 
             localStorage.setItem("UserOficialName", response.data.name)
