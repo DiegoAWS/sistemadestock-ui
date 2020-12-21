@@ -93,13 +93,15 @@ const useStyle = makeStyles((theme) => ({
         padding: '5px',
         margin: '5px',
         flexGrow: '1',
-        borderRadius: '10px'
+        borderRadius: '10px',
     },
     numberCliente: {
         fontSize: 'large',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
+        borderRadius: '10px',
+        padding: '0px 10px'
     },
     condicionPagoContainer: {
         border: '1px solid black',
@@ -259,7 +261,6 @@ const Ventas = (props) => {
 
     const [dataClientes, setDataClientes] = useState([])
     const [dataStock, setDataStock] = useState([])
-    // const [ dataVentas, setDataVentas ] = useState( [] )
 
 
     const [cantidad, setCantidad] = useState(1)
@@ -282,6 +283,13 @@ const Ventas = (props) => {
     const [medioDePago, setMedioDePago] = useState('CASH')
     const [numeroDeMedioDePago, setNumeroDeMedioDePago] = useState('')
 
+
+
+    const [cantidadComprasCliente, setCantidadComprasCliente] = useState(0)
+
+    const [categoriaClienteSeleccionado, setCategoriaClienteSeleccionado] = useState('')
+
+    const [pagosAtrasados, setPagosAtrasados] = useState('')
     //#endregion State
 
     const isMounted = useRef(false)
@@ -395,7 +403,40 @@ const Ventas = (props) => {
     }
     //#endregion
 
+    //#region CARGA DATOS CLIENTE SELECCIONADO
 
+    const cargaDatosClienteSel = id => {
+
+
+        getRequest('/clientesInfo/' + id)
+            .then(resp => {
+
+
+                if (isMounted.current && resp && resp.statusText && resp.statusText === "OK" && resp.data && Array.isArray(resp.data)) {
+
+
+                    setCantidadComprasCliente(resp.data.length)
+
+                    setCategoriaClienteSeleccionado(getCategoria(resp.data))
+
+                    setPagosAtrasados(getCreditosAtrasados(resp.data))
+
+
+                }
+
+            })
+    }
+
+    //#endregion
+
+    const clearClienteSeleccionado = () => {
+        setProductoSearchText('')
+        setClienteSeleccionado(null)
+        setCantidadComprasCliente(0)
+        setCategoriaClienteSeleccionado('')
+        setPagosAtrasados('')
+
+    }
     //#region Beep
 
     function beep() {
@@ -831,6 +872,63 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
     }
     //#endregion
 
+    //#region getCategoria
+
+    const getCategoria = (data) => {
+        let categoria = 'A'
+
+
+        if (data.length > 0) {
+
+            data.forEach(item => {
+                if (item && item.Venta && item.Creditos && item.Venta.Pago && item.Venta.Pago === "ventaCuotas") {
+                    item.Creditos.forEach(itemCreditoPendiente => {
+                        if (itemCreditoPendiente.EstadoCredito === "B")
+                            categoria = "B"
+                    })
+                }
+            })
+
+            data.forEach(item => {
+                if (item && item.Venta && item.Creditos && item.Venta.Pago && item.Venta.Pago === "ventaCuotas") {
+                    item.Creditos.forEach(itemCreditoPendiente => {
+                        if (itemCreditoPendiente.EstadoCredito === "C")
+                            categoria = "C"
+                    })
+                }
+            })
+        }
+
+
+
+        return categoria
+    }
+    //#endregion
+
+
+    //#region getCreditosAtrasados
+
+    const getCreditosAtrasados = (data) => {
+        let creditosAtrasados = 0
+
+
+        if (data.length > 0) {
+
+            data.forEach(item => {
+                if (item && item.Venta && item.Creditos && item.Venta.Pago && item.Venta.Pago === "ventaCuotas") {
+                    item.Creditos.forEach(itemCredito => {
+                        if (itemCredito.EstadoCredito === "B" || itemCredito.EstadoCredito === "C")
+                            creditosAtrasados++
+                    })
+                }
+            })
+        }
+
+
+
+        return creditosAtrasados
+    }
+    //#endregion
 
 
     //#region return 
@@ -870,12 +968,13 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                         filterOptions={(options, params) => {
                             let filtered = filterCliente(options, params)
 
-                            if (filtered.length === 1) {
+                            if (filtered.length === 1 && filtered[0] && filtered[0].id) {
 
                                 setTimeout(() => {
                                     setInputBlurCliente()
+                                    cargaDatosClienteSel(filtered[0].id)
                                     setClienteSeleccionado(filtered[0])
-                                }, 1000)
+                                }, 500)
 
 
                             }
@@ -883,7 +982,19 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                         }}
 
                         value={clienteSeleccionado}
-                        onChange={(e, newValue) => { setClienteSeleccionado(newValue) }}
+                        onChange={(e, newValue) => {
+
+                            setClienteSeleccionado(newValue)
+
+                            if (newValue && newValue.id) {
+                                cargaDatosClienteSel(newValue.id)
+                            }
+                            else {
+                                clearClienteSeleccionado()
+                            }
+
+
+                        }}
 
                         getOptionSelected={(option, value) => {
 
@@ -946,25 +1057,48 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
                             <div>
                                 <IconButton
                                     onClick={e => {
-                                        if (clienteSeleccionado)
-                                            setOpenFormAddCliente(true)
+                                        swal(
+                                            {
+                                                title: "Confirmar?",
+                                                text: "Seguro que desea editar los datos de este Cliente??",
+                                                icon: "warning",
+                                                buttons: ["Cancelar", "Aceptar"],
+                                                dangerMode: true,
+                                            })
+                                            .then((value) => {
+                                                if(value)
+                                                setOpenFormAddCliente(true)
+                                            })
                                     }}
                                     title="Editar Cliente"
-
                                     size="small"
+                                    disabled={!clienteSeleccionado}
                                     variant="contained"
                                 >
                                     <EditIcon style={{ color: clienteSeleccionado ? '#ff5353' : '#b5b5b5' }} />
                                 </IconButton>
                             </div>
-                            <div>
+                            <div style={{display:'none'}}>
                                 <IconButton
                                     onClick={e => {
-                                        swal('Historial de Compras del Cliente')
+                                     
+                                        swal(
+                                            {
+                                                title: "Confirmar?",
+                                                text: "Seguro que desea ver el historial de este Cliente??",
+                                                icon: "warning",
+                                                buttons: ["Cancelar", "Aceptar"],
+                                                dangerMode: true,
+                                            })
+                                            .then((value) => {
+                                                if(value){
 
+                                                }
+                                            })
+                                        
                                     }}
                                     title="Historial del Cliente"
-
+                                    disabled={!clienteSeleccionado}
                                     size="small"
                                     variant="contained"
                                 >
@@ -977,25 +1111,29 @@ Para usufructuar la garantía debe acercar su producto a nuestro establecimiento
 
 
                         <div style={{ margin: '10px 0', display: 'flex' }}>
-                            <div className={classes.textoCliente}>
+                            <div className={classes.textoCliente} style={{ background: !clienteSeleccionado ? '#b5b5b5' : '' }}>
                                 <div>Compras Realizadas </div>
-                                <div className={classes.numberCliente} style={{ color: 'blue' }}><ShoppingCartIcon />0</div>
+                                <div className={classes.numberCliente} style={{ color: 'blue' }}><ShoppingCartIcon />{clienteSeleccionado ? cantidadComprasCliente : ''}</div>
                             </div>
 
                             <Divider flexItem orientation="vertical" />
 
-                            <div className={classes.textoCliente}>
+                            <div className={classes.textoCliente} style={{ background: !clienteSeleccionado ? '#b5b5b5' : '' }}>
 
-                                <div>Puntos de Fidelidad </div>
-                                <div className={classes.numberCliente} style={{ color: 'green' }}><LoyaltyIcon /> 0</div>
+                                <div>Categoría</div>
+                                <div className={classes.numberCliente} style={{
+                                    color: 'green',
+                                    backgroundColor: categoriaClienteSeleccionado === "B" ? 'gold' : categoriaClienteSeleccionado === "C" && 'red'
+                                }
+                                }><LoyaltyIcon />{categoriaClienteSeleccionado}</div>
 
                             </div>
 
                             <Divider flexItem orientation="vertical" />
 
-                            <div className={classes.textoCliente}>
+                            <div className={classes.textoCliente} style={{ background: !clienteSeleccionado ? '#b5b5b5' : '' }}>
                                 <div>  Pagos Atrasados </div>
-                                <div className={classes.numberCliente} style={{ color: 'red' }}><WarningIcon />0</div>
+                                <div className={classes.numberCliente} style={{ color: 'red' }}><WarningIcon />{pagosAtrasados}</div>
                             </div>
                         </div>
 

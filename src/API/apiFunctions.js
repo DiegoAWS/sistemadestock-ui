@@ -2,9 +2,11 @@ import axios from "axios";
 
 
 
-var HOST = window.location.protocol + "//" + window.location.hostname;
+// var HOST = window.location.protocol + "//" + window.location.hostname;
 
-HOST=HOST.replace('-ui','')
+
+// HOST=HOST.replace('-ui','')
+let HOST='https://sistemadestock.herokuapp.com'
 //#region  SECURITY ----------------------------------
 
 export const register = (newUser) => {
